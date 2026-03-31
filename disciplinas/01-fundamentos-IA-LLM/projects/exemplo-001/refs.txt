@@ -1,0 +1,13 @@
+https://medium.com/@GeorgePerry/finding-intent-to-buy-from-instagram-comments-with-tensorflow-js-3f764c132be7
+
+https://blog.paperspace.com/dino-run/
+https://developer.ibm.com/tutorials/coding-a-deep-learning-model-using-tensorflow-javascript/
+
+https://medium.com/@pierrerouhard/reinforcement-learning-in-the-browser-an-introduction-to-tensorflow-js-9a02b143c099
+https://github.com/prouhard/tfjs-mountaincar?source=post_page-----9a02b143c099---------------------------------------
+https://scribbler.live/2024/06/28/Reinforcement-Learning-in-JavaScript.html
+
+https://mlu-explain.github.io/neural-networks/
+https://github.com/aws-samples/aws-mlu-explain
+https://medium.com/analytics-vidhya/awesome-machine-learning-visualizations-5208f1617ec5
+https://nitaiaharoni1.medium.com/introducing-vector-storage-a-lightweight-vector-database-for-the-browser-bc10775fd9dd

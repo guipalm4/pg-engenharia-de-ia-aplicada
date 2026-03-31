@@ -19,6 +19,8 @@
    Do instead: sempre gerar/atualizar `README.md` a partir de `.cursor/templates/README_TEMPLATE.md`, preenchendo todos os campos e mantendo checklist útil.
 2. **[2026-03-30] Commit padronizado com data**
    Do instead: sempre usar `.cursor/templates/COMMIT_TEMPLATE.md` e incluir `Finalizado em: DD/MM/AAAA` (data local do dia).
+3. **[2026-03-31] Evitar versionar dependências**
+   Do instead: garantir `.gitignore` cobrindo `node_modules/` e revisar `git status` antes de commitar para não incluir artefatos gerados.
 
 ## Shell & Command Reliability
 1. **[2026-03-30] Evitar ruído e reduzir tokens**

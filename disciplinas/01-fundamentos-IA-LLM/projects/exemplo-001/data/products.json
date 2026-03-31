@@ -1,0 +1,72 @@
+[
+    {
+        "id": 1,
+        "name": "Fones de Ouvido Sem Fio",
+        "category": "eletrônicos",
+        "price": 129.99,
+        "color": "preto"
+    },
+    {
+        "id": 2,
+        "name": "Relógio Inteligente",
+        "category": "eletrônicos",
+        "price": 199.99,
+        "color": "prata"
+    },
+    {
+        "id": 3,
+        "name": "Caixa de Som Bluetooth",
+        "category": "eletrônicos",
+        "price": 89.99,
+        "color": "azul"
+    },
+    {
+        "id": 4,
+        "name": "Camiseta Estampada",
+        "category": "vestuário",
+        "price": 49.99,
+        "color": "branco"
+    },
+    {
+        "id": 5,
+        "name": "Calça Jeans Slim",
+        "category": "vestuário",
+        "price": 99.99,
+        "color": "azul"
+    },
+    {
+        "id": 6,
+        "name": "Tênis Esportivo",
+        "category": "calçados",
+        "price": 149.99,
+        "color": "vermelho"
+    },
+    {
+        "id": 7,
+        "name": "Sandália Casual",
+        "category": "calçados",
+        "price": 69.99,
+        "color": "bege"
+    },
+    {
+        "id": 8,
+        "name": "Boné Estiloso",
+        "category": "acessórios",
+        "price": 39.99,
+        "color": "preto"
+    },
+    {
+        "id": 9,
+        "name": "Mochila Executiva",
+        "category": "acessórios",
+        "price": 159.99,
+        "color": "cinza"
+    },
+    {
+        "id": 10,
+        "name": "Óculos de Sol",
+        "category": "acessórios",
+        "price": 89.99,
+        "color": "marrom"
+    }
+]

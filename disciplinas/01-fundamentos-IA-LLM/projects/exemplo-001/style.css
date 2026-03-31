@@ -1,0 +1,81 @@
+body {
+    padding-top: 20px;
+    padding-bottom: 50px;
+}
+
+.container-xxl {
+    max-width: 1600px;
+}
+
+.product-card {
+    margin-bottom: 20px;
+    height: 100%;
+}
+
+.past-purchase {
+    background-color: #f8f9fa;
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+    font-size: 0.9em;
+    border-left: 3px solid #0d6efd;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.past-purchase:hover {
+    background-color: #f8d7da;
+    border-left: 3px solid #dc3545;
+}
+
+.past-purchase-highlight {
+    background-color: #d4edda;
+    border-left: 3px solid #28a745;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.buy-now-btn {
+    margin-top: auto;
+}
+
+#productList .col-md-3 {
+    margin-bottom: 20px;
+}
+
+.user-purchase-summary {
+    border-bottom: 1px solid #dee2e6;
+    padding: 8px 0;
+}
+
+.user-purchase-summary:last-child {
+    border-bottom: none;
+}
+
+.model-controls {
+    margin-bottom: 20px;
+}
+
+.train-model-btn {
+    margin-right: 10px;
+}
+
+.training-status {
+    display: none;
+    margin-top: 10px;
+}
+
+.training-progress {
+    height: 5px;
+}
+
+.main {
+    padding: 20px;
+}
+
+.user-purchases-data {
+    transition: max-height 0.3s ease;
+}

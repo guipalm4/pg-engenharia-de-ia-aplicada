@@ -61,6 +61,7 @@ exemplo-000/
 - [x] Como mapear dados tabulares simples para tensores e treinar um modelo supervisionado.
 - [ ] O que faria diferente: ampliar dataset, separar treino/validação e medir generalização (evitar overfitting).
 
+
 ## Referências
 - [x] TensorFlow.js (Node): `@tensorflow/tfjs-node` (npm)
 - [x] Conceitos: softmax, cross-entropy, Adam, ReLU
