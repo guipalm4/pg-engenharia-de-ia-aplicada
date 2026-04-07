@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web AI Demo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>🤖 Web AI Demo</h1>
+
+        <form id="question-form">
+            <div class="parameters">
+                <div class="param-group">
+                    <label for="temperature">Temperature: <span id="temp-value" class="value-display"></span></label>
+                    <input type="range" id="temperature" name="temperature" step="0.1">
+                    <div class="param-description">Controla a criatividade das respostas. Valores baixos = mais focado,
+                        valores altos = mais criativo</div>
+                </div>
+
+                <div class="param-group">
+                    <label for="topK">Top K: <span id="topk-value" class="value-display"></span></label>
+                    <input type="number" id="topK" name="topK">
+                    <div class="param-description">Limita a seleção às K palavras mais prováveis. Valores menores = mais
+                        previsível</div>
+                </div>
+            </div>
+
+            <label for="question">Converse com ela:</label>
+            <textarea name="question" id="question" placeholder="Digite sua pergunta aqui..."></textarea>
+
+            <button type="submit" id="ask-button">Enviar</button>
+        </form>
+
+        <div id="output"></div>
+
+        <footer class="copyright">
+            Erick Wendel - Engenharia de Software com IA Aplicada - UNIPDS - <span id="year"></span>
+        </footer>
+    </div>
+
+    <script type="module" src="./index.js"></script>
+</body>
+
+</html>
