@@ -1,18 +1,8 @@
 # Skill: readme-projeto
 
-Cria o README.md de um projeto de exemplo do repositório `unipds-engenharia-de-ia-aplicada`, faz o commit e o push.
+Cria o README.md do projeto **$ARGUMENTS**, faz o commit e o push.
 
-## Uso
-
-```
-/readme-projeto <caminho-do-projeto>
-```
-
-**Exemplos:**
-```
-/readme-projeto disciplinas/01-fundamentos-IA-LLM/projects/exemplo-005-xyz
-/readme-projeto exemplo-005-xyz   ← resolve automaticamente dentro de disciplinas/
-```
+> Se `$ARGUMENTS` for apenas o nome do exemplo (ex: `exemplo-005-xyz`), procure o caminho completo com `find` dentro de `disciplinas/`. Se for um caminho completo, use diretamente.
 
 ## O que esta skill faz (passo a passo)
 
