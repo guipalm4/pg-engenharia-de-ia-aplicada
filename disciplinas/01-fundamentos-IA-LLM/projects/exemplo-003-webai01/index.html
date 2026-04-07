@@ -1,0 +1,48 @@
+<output id="output"></output>
+<!-- https://www.jsdelivr.com/package/npm/markdown -->
+<script src="https://cdn.jsdelivr.net/npm/markdown@0.5.0/lib/markdown.min.js"></script>
+
+<script>
+    const output = document.getElementById('output');
+
+    ; (async () => {
+        const params = await LanguageModel.params()
+        console.log("Language Model Params:", params);
+
+        const temperature = params.defaultTemperature
+        const topK = params.defaultTopK
+
+        const initialPrompts = [
+            {
+                role: 'system',
+                content: `Você é um assistente de IA que responde de forma clara e objetiva.`
+            }
+        ]
+
+        const question = 'Quem inventou o JavaScript?'
+        output.innerHTML = "Gerando resposta...";
+
+        const session = await LanguageModel.create({
+            expectedInputLanguages: ["pt"],
+            temperature,
+            topK,
+            initialPrompts,
+        })
+
+        const responseStream = await session.promptStreaming([
+            {
+                role: 'user',
+                content: question
+            }
+        ])
+        output.innerHTML = ""
+        let fullText = ""
+        for await (const token of responseStream) {
+            fullText += token;
+            output.innerHTML = markdown.toHTML(fullText);
+
+            // console.log(token)
+        }
+    })();
+
+</script>
