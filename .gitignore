@@ -84,3 +84,6 @@ config/local/
 
 **/docs/**
 **/.tool-versions
+
+# claude
+.claude/settings.json
