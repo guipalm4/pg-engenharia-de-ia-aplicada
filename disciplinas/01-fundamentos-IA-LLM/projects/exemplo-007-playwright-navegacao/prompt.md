@@ -1,0 +1,3 @@
+Navegue até o formulário https://forms.gle/5mGHXVKDLMFtjwBz7 e veja quais campos são necessários o preenchimento.
+
+Então navegue até a página do palestrante em https://sessionize.com/erickwendel, obtenha todos os dados do perfil que o formulário pede a partir desta página e então escolha uma palestra em portugues que tenha javascript no titulo e preencha o formulário. Não aperte o botão submit pois quero validar o processo. Garanta que todas as informações são em português do site sessionize.
