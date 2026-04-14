@@ -99,4 +99,3 @@ Valores padrão do Gemini Nano: `temperature=1`, `topK=3`, `maxTemperature=2`, `
 - [http-server — npm](https://www.npmjs.com/package/http-server)
 
 ---
-> Gerado automaticamente por agente IA. Atualize conforme necessário.

@@ -75,4 +75,3 @@ exemplo-001/
 - [x] Links em `refs.txt` (curadoria de leituras)
 
 ---
-> Gerado automaticamente por agente IA. Atualize conforme necessário.

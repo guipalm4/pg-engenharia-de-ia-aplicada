@@ -119,4 +119,3 @@ onFormSubmit()
 - [http-server — npm](https://www.npmjs.com/package/http-server)
 
 ---
-> Gerado automaticamente por agente IA. Atualize conforme necessário.

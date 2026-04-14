@@ -111,4 +111,3 @@ Usuário acessa /login
 - [better-sqlite3](https://github.com/WiseLibs/better-sqlite3)
 
 ---
-> Gerado automaticamente por agente IA. Atualize conforme necessário.

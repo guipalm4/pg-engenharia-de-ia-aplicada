@@ -60,7 +60,6 @@ e como se relaciona com os conceitos da disciplina. Citar tecnologias principais
 ...
 
 ---
-> Gerado automaticamente por agente IA. Atualize conforme necessário.
 ```
 
 ---

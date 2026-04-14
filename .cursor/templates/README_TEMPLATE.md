@@ -38,5 +38,4 @@ Explique de forma sucinta o que o projeto faz, quais problemas resolve e os prin
 - [ ] Links, artigos, papers, vídeos
 
 ---
-> Gerado automaticamente por agente IA. Atualize conforme necessário.
 

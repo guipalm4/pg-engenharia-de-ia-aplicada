@@ -123,4 +123,3 @@ CI (GitHub Actions)
 - [GitHub Actions — Playwright workflow](https://playwright.dev/docs/ci-intro)
 
 ---
-> Gerado automaticamente por agente IA. Atualize conforme necessário.

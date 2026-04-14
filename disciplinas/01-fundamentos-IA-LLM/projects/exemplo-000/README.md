@@ -67,5 +67,4 @@ exemplo-000/
 - [x] Conceitos: softmax, cross-entropy, Adam, ReLU
 
 ---
-> Gerado automaticamente por agente IA. Atualize conforme necessário.
 

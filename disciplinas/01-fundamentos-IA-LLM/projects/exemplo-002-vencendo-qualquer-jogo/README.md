@@ -86,4 +86,3 @@ exemplo-002-vencendo-qualquer-jogo/
 - [Repositório original Duck Hunt JS](https://github.com/MattSurabian/DuckHunt-JS)
 
 ---
-> Gerado automaticamente por agente IA. Atualize conforme necessário.

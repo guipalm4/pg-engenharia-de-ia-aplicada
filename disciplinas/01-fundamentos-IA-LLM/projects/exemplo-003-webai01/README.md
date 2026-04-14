@@ -78,4 +78,3 @@ for await (token of stream)     → acumula tokens e re-renderiza o Markdown em 
 - [Web Neural Network API (WebNN)](https://www.w3.org/TR/webnn/)
 
 ---
-> Gerado automaticamente por agente IA. Atualize conforme necessário.

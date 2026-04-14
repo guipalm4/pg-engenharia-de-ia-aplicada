@@ -98,4 +98,3 @@ Passo 3 — preenchimento cruzado
 - [Perfil do palestrante — Sessionize: Erick Wendel](https://sessionize.com/erickwendel)
 
 ---
-> Gerado automaticamente por agente IA. Atualize conforme necessário.
