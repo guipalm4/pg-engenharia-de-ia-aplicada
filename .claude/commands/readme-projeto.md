@@ -1,88 +1,71 @@
 # Skill: readme-projeto
 
-Cria o README.md do projeto **$ARGUMENTS**, faz o commit e o push.
+Cria o README.md do projeto **$ARGUMENTS**, atualiza o índice raiz, faz commit e push.
 
-> Se `$ARGUMENTS` for apenas o nome do exemplo (ex: `exemplo-005-xyz`), procure o caminho completo com `find` dentro de `disciplinas/`. Se for um caminho completo, use diretamente.
+## Passos
 
-## O que esta skill faz (passo a passo)
+1. **Localiza o projeto** — use `Glob` com `**/exemplo-*$ARGUMENTS*/` se receber só o nome; se for path completo, use diretamente. Nunca use `find`.
 
-1. **Lê todos os arquivos do projeto** (exceto `node_modules/` e `package-lock.json`) para entender o que foi construído.
-2. **Lê `shared/templates/README_TEMPLATE.md`** (relativo à raiz do repositório) como referência canônica de estrutura e seções.
-3. **Escreve o README.md** seguindo o padrão estabelecido (ver seção abaixo), enriquecendo o template com o conteúdo real do projeto.
-4. **Faz o commit** com a mensagem no padrão do repositório.
-5. **Faz o push** para o remote.
+2. **Lê os arquivos do projeto** — se os arquivos já estiverem no contexto da conversa, pule esta etapa. Caso contrário, leia os arquivos relevantes (exceto `node_modules/`, `package-lock.json`, `package-lock.json`, `.DS_Store`). Priorize: `package.json`, arquivos de entrada (`index`, `app`, `main`), configs, e qualquer `prompt.md` ou doc interna.
+
+3. **Lê o template** — `shared/templates/README_TEMPLATE.md` (relativo à raiz do repo). Use como referência de estrutura e profundidade.
+
+4. **Escreve `README.md`** no diretório raiz do projeto seguindo a estrutura abaixo.
+
+5. **Atualiza o índice raiz** — lê o `README.md` raiz, adiciona o novo projeto na seção e tema corretos, atualiza a contagem de exemplos.
+
+6. **Commit único** com ambos os arquivos + push.
 
 ---
 
-## Padrão de README a seguir
+## Estrutura do README
 
-```markdown
-# <Título do Projeto> — <Subtítulo descritivo>
-
-> <Uma frase resumindo o que o projeto demonstra e qual tecnologia usa>
+```
+# Exemplo NNN — <Título descritivo>
+> <Uma frase: o que demonstra + tecnologia principal>
 
 ## Contexto
-- Disciplina: <nome da disciplina>
-- Período: <Mês/Ano>
-- Autor: guipalm4
+- Disciplina / Período / Autor: guipalm4
 
 ## Descrição
-<2-4 parágrafos explicando o que o projeto faz, qual problema resolve,
-e como se relaciona com os conceitos da disciplina. Citar tecnologias principais.>
+<2–4 parágrafos: o que faz, qual problema resolve, relação com a disciplina>
 
 ## Tecnologias e Ferramentas
-- [x] <tecnologia 1>
-- [x] <tecnologia 2>
-...
+- [x] <tecnologia>
 
-## Pré-requisitos  ← incluir apenas se houver setup especial (ex: flags do Chrome, chaves de API)
-<instruções detalhadas de configuração>
+## Pré-requisitos          ← só se houver setup especial (API keys, flags de browser, etc.)
 
 ## Como executar
-<bloco de código bash com os comandos necessários>
+```bash
+<comandos>
+```
 
-## Estrutura do Projeto  ← incluir apenas se o projeto tiver mais de 2 arquivos
-<árvore de arquivos com descrição de cada um>
+## Estrutura do Projeto    ← só se houver mais de 2–3 arquivos
+<árvore comentada>
 
-## Como funciona  ← bloco de pseudocódigo ou diagrama textual do fluxo principal
-<fluxo das funções/módulos principais>
+## Como funciona           ← obrigatório se a lógica não for óbvia
+<pseudocódigo ou diagrama textual>
 
 ## Conceitos trabalhados
-- [x] **<conceito>** — <uma frase explicando como aparece no código>
-...
+- [x] **<conceito>** — <como aparece no código>
 
 ## Aprendizados
-- [x] <insight concreto derivado da implementação>
-...
+- [x] <insight concreto>
 
 ## Referências
-- [<nome>](<url>)
-...
-
----
+- [nome](url)
 ```
 
 ---
 
-## Padrão de commit
+## Regras
 
-```
-feat: adiciona <nome-do-exemplo> (<título resumido>) Finalizado em: <DD/MM/AAAA>
-```
-
-**Exemplo:**
-```
-feat: adiciona exemplo-005-xyz (descrição breve) Finalizado em: 07/04/2026
-```
-
-A data deve ser a data atual (`currentDate` do contexto de sessão).
-
----
-
-## Regras importantes
-
-- **Não inventar**: o conteúdo do README deve vir exclusivamente do código lido. Não assumir funcionalidades não implementadas.
-- **Consistência**: seguir a estrutura de `shared/templates/README_TEMPLATE.md` como referência canônica; o padrão detalhado inline acima é a especificação autoritativa de formato e profundidade.
-- **Seções opcionais**: "Pré-requisitos" só aparece se houver setup especial. "Estrutura do Projeto" só aparece se houver mais de 2-3 arquivos. "Como funciona" é obrigatório se houver lógica não óbvia.
-- **Commit inclui todos os arquivos do projeto** (não só o README) caso sejam arquivos novos (untracked). Nunca incluir `node_modules/`.
+- **Não inventar** — conteúdo vem exclusivamente do código lido.
+- **Seções opcionais** são as marcadas acima; as demais são obrigatórias.
+- **Commit**: inclui apenas o README do projeto e o README raiz. Arquivos-fonte não rastreados pelo git **não** devem ser commitados por esta skill — são responsabilidade do usuário.
+- **Padrão de commit**:
+  ```
+  feat: adiciona <nome-do-exemplo> (<título resumido>) Finalizado em: DD/MM/AAAA
+  ```
+  Use a data atual do `currentDate` do contexto de sessão.
 - **Sempre fazer push** ao final.
