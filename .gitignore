@@ -93,3 +93,8 @@ config/local/
 
 # claude
 .claude/settings.json
+.claude/credentials.json
+.claude/settings.local.json
+
+**/settings.json
+**/settings.local.json
