@@ -1,0 +1,177 @@
+services:
+  alumnus-postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-alumnus_app}
+      POSTGRES_USER: ${POSTGRES_USER:-alumnus}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-alumnus_dev_password}
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./storage/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U alumnus -d alumnus_app"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+  opentelemetry-collector:
+    hostname: opentelemetry-collector
+    image: otel/opentelemetry-collector:0.140.0
+    command: ["--config=/etc/otel-collector-config.yml", "--feature-gates=pkg.translator.prometheus.NormalizeName"]
+    volumes:
+      - ./otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yml
+    restart: unless-stopped
+    ports:
+      - "8889:8889"   # Prometheus exporter metrics
+      - "4317:4317"   # OTLP gRPC receiver
+    environment:
+      - TEMPO_ENDPOINT=${TEMPO_ENDPOINT:-tempo:4317}
+      - PROM_ENDPOINT=${PROM_ENDPOINT:-0.0.0.0:9090}
+      - LOKI_ENDPOINT=${LOKI_ENDPOINT:-http://loki:3100/otlp}
+
+    links:
+      - tempo
+      - prometheus
+      - loki
+
+  blackbox:
+    image: prom/blackbox-exporter:v0.27.0
+    container_name: blackbox
+    restart: unless-stopped
+    ports:
+      - "9115:9115"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./blackbox/blackbox.yaml:/etc/blackbox/blackbox.yaml
+    command: --config.file=/etc/blackbox/blackbox.yaml
+    cap_add:
+      - NET_RAW  # Required for ICMP probes
+    links:
+      - prometheus
+      - tempo
+      - loki
+      - opentelemetry-collector
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9115/-/healthy"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  grafana:
+    image: grafana/grafana:12.1.4
+    ports:
+      - '3000:3000'
+    links:
+      - prometheus
+      - loki
+      - tempo
+    depends_on:
+      - prometheus
+      - loki
+      - tempo
+    volumes:
+      - ./storage/grafana:/var/lib/grafana
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD:-admin}
+      - GF_AUTH_ANONYMOUS_ENABLED=${GF_AUTH_ANONYMOUS_ENABLED:-true}
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=${GF_AUTH_ANONYMOUS_ORG_ROLE:-Admin}
+      - GF_AUTH_DISABLE_LOGIN_FORM=${GF_AUTH_DISABLE_LOGIN_FORM:-true}
+      - GF_INSTALL_PLUGINS=${GF_INSTALL_PLUGINS:-https://storage.googleapis.com/integration-artifacts/grafana-exploretraces-app/grafana-exploretraces-app-latest.zip;grafana-traces-app}
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  prometheus:
+    image: prom/prometheus:v3.7.3
+    command:
+      - --config.file=/etc/prometheus/prometheus.yaml
+      - --web.enable-remote-write-receiver
+      - --enable-feature=otlp-write-receiver
+      - --enable-feature=exemplar-storage
+      - --enable-feature=native-histograms
+    volumes:
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - ./prometheus/alerts.yaml:/etc/prometheus/alerts.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - ./storage/prometheus:/prometheus
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    ports:
+      - "9090:9090"
+
+  loki:
+    image: grafana/loki:3.5.8
+    container_name: loki
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./loki/loki-config.yaml:/etc/loki/local-config.yaml
+      - ./storage/loki:/data/loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3100/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  tempo:
+    image: grafana/tempo:main-6fc8947
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./tempo/tempo-config.yaml:/etc/tempo.yaml
+      - ./storage/tempo:/var/tempo
+    ports:
+      - 3200:3200   # tempo
+      - 4317  # otlp grpc
+
+  # Tempo healthcheck sidecar (since tempo image has no shell/curl/wget)
+  tempo-healthcheck:
+    image: curlimages/curl:8.11.1
+    depends_on:
+      - tempo
+    command: >
+      sh -c "
+        until curl -f http://tempo:3200/ready; do
+          echo 'Waiting for Tempo...';
+          sleep 2;
+        done;
+        echo 'Tempo is ready!';
+        tail -f /dev/null
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://tempo:3200/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  mcp-grafana:
+    image: mcp/grafana@sha256:bd85b2644ea409ce8222088a20fd01b132047f3dcb85240bbce2b2030872a4f7
+    container_name: mcp-grafana
+    restart: unless-stopped
+    # stdin_open: true
+    # tty: false
+    environment:
+      - GRAFANA_URL=http://grafana:3000
+    command: ["-t", "streamable-http"]
+    ports:
+      - "8000:8000"
+    depends_on:
+      grafana:
+        condition: service_healthy

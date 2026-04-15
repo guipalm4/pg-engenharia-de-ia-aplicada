@@ -1,0 +1,29 @@
+include:
+  - ./docker-compos.yaml
+
+services:
+  alumnus-test:
+    build: ../_alumnus
+    links:
+      - opentelemetry-collector
+      - alumnus-postgres
+      - loki
+      - tempo
+      - prometheus
+
+    depends_on:
+      alumnus-postgres:
+        condition: service_healthy
+      loki:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
+      opentelemetry-collector:
+        condition: service_started
+    command: pnpm run test
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://alumnus:alumnus_dev_password@alumnus-postgres:5432/alumnus_app}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://opentelemetry-collector:4317}
+      - LOKI_URL=${LOKI_URL:-http://loki:3100}
+      - TEMPO_URL=${TEMPO_URL:-http://tempo:3200}
+      - PROMETHEUS_URL=${PROMETHEUS_URL:-http://prometheus:9090}

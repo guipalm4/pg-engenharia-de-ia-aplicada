@@ -1,0 +1,282 @@
+# config file version
+apiVersion: 1
+
+# List of rule groups to import or update
+groups:
+  - orgId: 1
+    name: Service Availability Alerts
+    folder: Infrastructure
+    interval: 30s
+    rules:
+      # HTTP Services Down
+      - uid: http_service_down
+        title: HTTP Service Down
+        condition: C
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              editorMode: code
+              expr: probe_success{job="blackbox-http"}
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: B
+            queryType: ''
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: [0, 0]
+                    type: lt
+                  operator:
+                    type: and
+                  query:
+                    params: []
+                  reducer:
+                    params: []
+                    type: avg
+                  type: query
+              datasource:
+                name: Expression
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            queryType: ''
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: [1, 0]
+                    type: lt
+                  operator:
+                    type: and
+                  query:
+                    params: []
+                  reducer:
+                    params: []
+                    type: avg
+                  type: query
+              datasource:
+                name: Expression
+                type: __expr__
+                uid: __expr__
+              expression: B
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: NoData
+        execErrState: Error
+        for: 1m
+        annotations:
+          summary: "HTTP Service {{ $labels.instance }} is down"
+          description: "The service {{ $labels.instance }} has been unreachable for more than 1 minute"
+        labels:
+          severity: critical
+          category: availability
+
+      # Database Connection Down
+      - uid: database_down
+        title: Database Connection Failed
+        condition: C
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              editorMode: code
+              expr: probe_success{job="blackbox-tcp"}
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: B
+            queryType: ''
+            datasourceUid: __expr__
+            model:
+              expression: A
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            queryType: ''
+            datasourceUid: __expr__
+            model:
+              expression: B
+              refId: C
+              type: threshold
+              conditions:
+                - evaluator:
+                    params: [1, 0]
+                    type: lt
+        noDataState: NoData
+        execErrState: Error
+        for: 1m
+        annotations:
+          summary: "Database {{ $labels.instance }} is unreachable"
+          description: "Cannot establish TCP connection to {{ $labels.instance }}"
+        labels:
+          severity: critical
+          category: database
+
+      # Service Unreachable (ICMP)
+      - uid: service_unreachable
+        title: Service Network Unreachable
+        condition: C
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              editorMode: code
+              expr: probe_success{job="blackbox-icmp"}
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: B
+            queryType: ''
+            datasourceUid: __expr__
+            model:
+              expression: A
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            queryType: ''
+            datasourceUid: __expr__
+            model:
+              expression: B
+              refId: C
+              type: threshold
+              conditions:
+                - evaluator:
+                    params: [1, 0]
+                    type: lt
+        noDataState: NoData
+        execErrState: Error
+        for: 2m
+        annotations:
+          summary: "Service {{ $labels.instance }} is unreachable"
+          description: "ICMP ping to {{ $labels.instance }} has failed"
+        labels:
+          severity: warning
+          category: network
+
+      # Slow Response Time
+      - uid: slow_response
+        title: Service Slow Response
+        condition: C
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              editorMode: code
+              expr: probe_duration_seconds{job="blackbox-http"}
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: B
+            queryType: ''
+            datasourceUid: __expr__
+            model:
+              expression: A
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            queryType: ''
+            datasourceUid: __expr__
+            model:
+              expression: B
+              refId: C
+              type: threshold
+              conditions:
+                - evaluator:
+                    params: [5, 0]
+                    type: gt
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "Service {{ $labels.instance }} responding slowly"
+          description: "Response time is {{ $values.B.Value }}s (threshold: 5s)"
+        labels:
+          severity: warning
+          category: performance
+
+  - orgId: 1
+    name: Infrastructure Health
+    folder: Infrastructure
+    interval: 30s
+    rules:
+      # OpenTelemetry Collector Down
+      - uid: otel_collector_down
+        title: OpenTelemetry Collector Down
+        condition: C
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              editorMode: code
+              expr: up{job="otel-collector-metrics"}
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: B
+            queryType: ''
+            datasourceUid: __expr__
+            model:
+              expression: A
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            queryType: ''
+            datasourceUid: __expr__
+            model:
+              expression: B
+              refId: C
+              type: threshold
+              conditions:
+                - evaluator:
+                    params: [1, 0]
+                    type: lt
+        noDataState: Alerting
+        execErrState: Error
+        for: 1m
+        annotations:
+          summary: "OpenTelemetry Collector is down"
+          description: "Telemetry data collection may be interrupted"
+        labels:
+          severity: critical
+          category: observability

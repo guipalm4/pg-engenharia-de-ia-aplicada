@@ -1,0 +1,43 @@
+{
+  "name": "@erickwendel/alumnus-wrapper",
+  "version": "0.0.1",
+  "description": "N|Sentinel alumnus - Demo observability application for testing OpenTelemetry integration with Prometheus, Grafana, Loki and Tempo",
+  "main": "_alumnus/src/index.js",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "serve": "cd _alumnus && node --experimental-strip-types --watch src/index.ts",
+    "start": "cd _alumnus && node --experimental-strip-types src/index.ts",
+    "test": "cd _alumnus && NODE_ENV=test node --experimental-strip-types --test test/*.test.ts",
+    "test:watch": "cd _alumnus && NODE_ENV=test node --watch --experimental-strip-types --test test/*.test.ts",
+    "test:docker": "cd apps/alumnus && docker compose -f infra/docker-compose-test.yaml up --build --abort-on-container-exit --exit-code-from alumnus-test",
+    "test:docker:down": "cd apps/alumnus && docker compose -f infra/docker-compose-test.yaml down --volumes",
+    "lint": "eslint _alumnus",
+    "lint:fix": "eslint _alumnus --fix",
+    "docker:infra:up": "docker compose -f infra/docker-compose-infra.yaml up -d --wait",
+    "docker:infra:down": "docker compose -f infra/docker-compose-infra.yaml down",
+    "docker:infra:cleanup": "docker compose -f infra/docker-compose-infra.yaml down --volumes --remove-orphans && rm -rf infra/storage",
+    "docker:infra:logs": "docker compose -f infra/docker-compose-infra.yaml logs -f",
+    "docker:app": "docker compose up --build",
+    "docker:app:down": "docker compose down"
+  },
+  "keywords": [
+    "observability",
+    "opentelemetry",
+    "prometheus",
+    "grafana",
+    "loki",
+    "tempo",
+    "demo",
+    "fastify",
+    "nodejs"
+  ],
+  "author": "ErickWendel",
+  "license": "private",
+  "dependencies": {
+    "env-var": "^7.5.0"
+  }
+}

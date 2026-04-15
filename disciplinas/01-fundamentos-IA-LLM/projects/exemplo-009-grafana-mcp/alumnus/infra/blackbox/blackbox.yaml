@@ -1,0 +1,32 @@
+modules:
+  # HTTP probe for services with health endpoints
+  http_2xx:
+    prober: http
+    timeout: 5s
+    http:
+      method: GET
+      preferred_ip_protocol: "ip4"
+      valid_status_codes: [200, 204]
+
+  # HTTP probe for services that return non-200 status codes
+  http_any:
+    prober: http
+    timeout: 5s
+    http:
+      method: GET
+      preferred_ip_protocol: "ip4"
+      valid_status_codes: []  # Accept any status code
+
+  # TCP probe for database services
+  tcp_connect:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      preferred_ip_protocol: "ip4"
+
+  # ICMP probe for basic connectivity
+  icmp_ping:
+    prober: icmp
+    timeout: 5s
+    icmp:
+      preferred_ip_protocol: "ip4"

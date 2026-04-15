@@ -1,0 +1,138 @@
+groups:
+  - name: service_availability
+    interval: 30s
+    rules:
+      # HTTP Service Down Alerts
+      - alert: ServiceDown
+        expr: probe_success{job="blackbox-http"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: availability
+        annotations:
+          summary: "Service {{ $labels.instance }} is down"
+          description: "HTTP probe failed for {{ $labels.instance }} for more than 1 minute."
+
+      # TCP Service Down Alerts (Database)
+      - alert: DatabaseDown
+        expr: probe_success{job="blackbox-tcp"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: database
+        annotations:
+          summary: "Database {{ $labels.instance }} is unreachable"
+          description: "TCP connection to {{ $labels.instance }} has failed for more than 1 minute."
+
+      # ICMP Ping Failures
+      - alert: ServiceUnreachable
+        expr: probe_success{job="blackbox-icmp"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          category: network
+        annotations:
+          summary: "Service {{ $labels.instance }} is unreachable via ICMP"
+          description: "ICMP ping to {{ $labels.instance }} has failed for more than 2 minutes."
+
+      # HTTP Probe Duration (Slow Response)
+      - alert: ServiceSlowResponse
+        expr: probe_duration_seconds{job="blackbox-http"} > 5
+        for: 5m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "Service {{ $labels.instance }} is responding slowly"
+          description: "HTTP probe duration for {{ $labels.instance }} is {{ $value }}s (threshold: 5s)."
+
+      # SSL Certificate Expiry Warning
+      - alert: SSLCertificateExpiringSoon
+        expr: probe_ssl_earliest_cert_expiry{job="blackbox-http"} - time() < 86400 * 30
+        for: 1h
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "SSL certificate for {{ $labels.instance }} expiring soon"
+          description: "SSL certificate for {{ $labels.instance }} will expire in {{ $value | humanizeDuration }}."
+
+  - name: infrastructure_health
+    interval: 30s
+    rules:
+      # Generic scrape failure alert for all services
+      # This covers: otel-collector, tempo, grafana, loki, blackbox, alumnus, postgres
+      - alert: ServiceHealthCheckFailed
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: infrastructure
+        annotations:
+          summary: "{{ $labels.job }} health check failed"
+          description: "Service {{ $labels.job }} ({{ $labels.instance }}) has been unreachable for more than 1 minute."
+
+  - name: resource_usage
+    interval: 30s
+    rules:
+      # High Memory Usage (if available from exporters)
+      - alert: HighMemoryUsage
+        expr: (process_resident_memory_bytes / 1024 / 1024 / 1024) > 2
+        for: 5m
+        labels:
+          severity: warning
+          category: resources
+        annotations:
+          summary: "High memory usage on {{ $labels.job }}"
+          description: "{{ $labels.job }} is using {{ $value | humanize }}GB of memory."
+
+      # Prometheus TSDB Compaction Issues
+      - alert: PrometheusCompactionFailing
+        expr: rate(prometheus_tsdb_compactions_failed_total[1h]) > 0
+        for: 15m
+        labels:
+          severity: warning
+          category: storage
+        annotations:
+          summary: "Prometheus TSDB compaction is failing"
+          description: "Prometheus has {{ $value }} compaction failures in the last hour."
+
+  - name: data_quality
+    interval: 1m
+    rules:
+      # No Data Being Scraped
+      - alert: NoMetricsScraped
+        expr: rate(prometheus_tsdb_head_samples_appended_total[5m]) == 0
+        for: 5m
+        labels:
+          severity: warning
+          category: data
+        annotations:
+          summary: "Prometheus is not receiving any metrics"
+          description: "No metrics have been scraped by Prometheus in the last 5 minutes."
+
+      # High Scrape Duration
+      - alert: HighScrapeDuration
+        expr: scrape_duration_seconds > 10
+        for: 5m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "High scrape duration for {{ $labels.job }}"
+          description: "Scraping {{ $labels.job }} is taking {{ $value }}s (threshold: 10s)."
+
+  - name: supporting_services
+    interval: 30s
+    rules:
+      # PostgreSQL Down
+      - alert: PostgreSQLDown
+        expr: probe_success{job="blackbox-tcp",instance="alumnus-postgres:5432"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: database
+          service: postgresql
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "PostgreSQL at alumnus-postgres:5432 has been unreachable for more than 1 minute."
