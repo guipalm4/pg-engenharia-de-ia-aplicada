@@ -3,8 +3,8 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-package-lock.json  # Opcional: inclua se preferir yarn.lock; remova para npm lock
-yarn.lock          # Comente se usar npm
+package-lock.json
+yarn.lock
 
 # Ambientes e Configurações Locais
 .env
@@ -45,24 +45,24 @@ Thumbs.db
 Thumbs.db:Encryptable
 
 # Experimentos e Saídas de Execução (JS Scripts)
-experiments/*.json  # Outputs temporários de runs (ex.: resultados de treinamento)
-experiments/*.csv   # Se gerados dinamicamente
+experiments/*.json
+experiments/*.csv
 *.out
 *.pid
 *.seed
 *.pid.lock
 
 # Dados e Modelos Grandes (IA com JS: armazene externamente em Hugging Face, Kaggle ou Drive)
-data/raw/*.csv      # Datasets brutos grandes (>100MB; use DVC ou links no README)
+data/raw/*.csv
 data/raw/*.json
 data/processed/*.json
-data/processed/*.pkl  # Se usar libs como ml-matrix
-models/*.bin        # Pesos binários do TensorFlow.js (pesados)
+data/processed/*.pkl
+models/*.bin
 models/weights.bin
-models/*.h5         # Se integrar com TensorFlow (híbrido)
+models/*.h5
 datasets/*.zip
 datasets/*.tar.gz
-*.joblib            # Serializações de objetos ML
+*.joblib
 
 # Arquivos de Backup e Temp
 *~
