@@ -40,3 +40,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# BDs locais e arquivos de configuração
+*.sqlite
+*.sqlite3
+*.db
