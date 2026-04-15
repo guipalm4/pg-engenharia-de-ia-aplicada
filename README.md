@@ -11,7 +11,7 @@
 
 | # | Disciplina | Projetos |
 |---|-----------|---------|
-| 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 11 exemplos |
+| 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 12 exemplos |
 
 ---
 
@@ -63,6 +63,12 @@ Série sobre agentes que controlam um browser real via **Playwright MCP** — na
 | # | Projeto | O que demonstra |
 |---|---------|----------------|
 | 010 | [Modelos Locais com Ollama: Censura, Alinhamento e Chain-of-Thought](disciplinas/01-fundamentos-IA-LLM/projects/exemplo-010-ollama/README.md) | Comparação entre modelo sem guardrails (`llama2-uncensored:7b`) e modelo alinhado (`gpt-oss:20b`) com raciocínio interno visível via campo `thinking` — tudo rodando localmente via Ollama |
+
+### LLMs via API Gateway
+
+| # | Projeto | O que demonstra |
+|---|---------|----------------|
+| 011 | [Acesso Unificado a LLMs com OpenRouter](disciplinas/01-fundamentos-IA-LLM/projects/exemplo-011-openrouter/README.md) | Uso do OpenRouter como gateway OpenAI-compatível para acessar o Gemma 3 27B (Google AI Studio) via tier gratuito — com roteamento transparente e rastreamento de custo por token |
 
 ---
 
