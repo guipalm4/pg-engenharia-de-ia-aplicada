@@ -85,5 +85,11 @@ config/local/
 **/docs/**
 **/.tool-versions
 
+# Docker / Observabilidade
+**/storage/
+**/*.sqlite
+**/storage/tempo/
+**/storage/loki/
+
 # claude
 .claude/settings.json
