@@ -11,7 +11,7 @@
 
 | # | Disciplina | Projetos |
 |---|-----------|---------|
-| 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 9 exemplos |
+| 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 10 exemplos |
 
 ---
 
@@ -56,6 +56,7 @@ Série sobre agentes que controlam um browser real via **Playwright MCP** — na
 | # | Projeto | O que demonstra |
 |---|---------|----------------|
 | 008 | [Context7 MCP + Better Auth + Next.js](disciplinas/01-fundamentos-IA-LLM/projects/exemplo-008-context7/README.md) | Uso do Context7 MCP para consultar documentação atualizada durante a geração de código — aplicado a um demo de autenticação OAuth com Next.js e SQLite |
+| 009 | [Grafana MCP + Observabilidade + Diagnóstico de Bugs](disciplinas/01-fundamentos-IA-LLM/projects/exemplo-009-grafana-mcp/README.md) | Uso do Grafana MCP para investigar bugs de produção via linguagem natural no IDE — consultando métricas, logs e traces de uma app Node.js com OpenTelemetry |
 
 ---
 
