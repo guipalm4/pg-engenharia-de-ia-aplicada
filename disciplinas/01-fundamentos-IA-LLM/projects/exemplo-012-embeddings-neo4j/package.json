@@ -1,0 +1,29 @@
+{
+  "name": "app",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "node --env-file .env --experimental-strip-types src/index.ts",
+    "dev": "node --no-warnings --env-file .env --watch --experimental-strip-types src/index.ts",
+    "infra:up": "docker-compose up -d --wait",
+    "infra:down": "docker-compose down --volumes"
+  },
+  "keywords": [],
+  "author": "erickwendel",
+  "license": "MIT",
+  "description": "",
+  "engines": {
+    "node": "v22.13.1"
+  },
+  "type": "module",
+  "dependencies": {
+    "@huggingface/inference": "^4.13.5",
+    "@huggingface/transformers": "^3.8.1",
+    "@langchain/community": "^0.3.59",
+    "@langchain/core": "^0.3.80",
+    "@langchain/openai": "^0.4.2",
+    "@xenova/transformers": "^2.17.2",
+    "neo4j-driver": "^5.28.0",
+    "pdf-parse": "^1.1.1"
+  }
+}
