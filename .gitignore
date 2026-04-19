@@ -98,3 +98,5 @@ config/local/
 
 **/settings.json
 **/settings.local.json
+
+**/neo4j
