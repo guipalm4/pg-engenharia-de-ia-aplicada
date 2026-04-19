@@ -11,7 +11,7 @@
 
 | # | Disciplina | Projetos |
 |---|-----------|---------|
-| 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 12 exemplos |
+| 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 13 exemplos |
 
 ---
 
@@ -69,6 +69,12 @@ Série sobre agentes que controlam um browser real via **Playwright MCP** — na
 | # | Projeto | O que demonstra |
 |---|---------|----------------|
 | 011 | [Acesso Unificado a LLMs com OpenRouter](disciplinas/01-fundamentos-IA-LLM/projects/exemplo-011-openrouter/README.md) | Uso do OpenRouter como gateway OpenAI-compatível para acessar o Gemma 3 27B (Google AI Studio) via tier gratuito — com roteamento transparente e rastreamento de custo por token |
+
+### Embeddings e Busca Semântica
+
+| # | Projeto | O que demonstra |
+|---|---------|----------------|
+| 012 | [Busca Semântica em PDF com Embeddings e Neo4j](disciplinas/01-fundamentos-IA-LLM/projects/exemplo-012-embeddings-neo4j/README.md) | Pipeline completo de indexação vetorial: PDF → chunks → embeddings locais (HuggingFace Transformers) → Neo4j Vector Store → busca por similaridade semântica em linguagem natural |
 
 ---
 
