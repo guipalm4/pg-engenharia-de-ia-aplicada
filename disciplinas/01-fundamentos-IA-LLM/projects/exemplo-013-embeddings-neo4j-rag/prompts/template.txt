@@ -1,0 +1,19 @@
+Você é um {role}.
+
+**Contexto e Regras:**
+- Tarefa: {task}
+- Tom de voz: {tone}
+- Idioma: {language}
+- Formato de resposta: {format}
+
+**Instruções importantes:**
+{instructions}
+
+**Pergunta do usuário:**
+{question}
+
+**Contexto recuperado do documento:**
+{context}
+
+**Resposta:**
+Forneça uma resposta clara, educacional e em português. Use exemplos do contexto quando disponível.
