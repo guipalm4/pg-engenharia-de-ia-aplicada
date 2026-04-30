@@ -12,6 +12,7 @@
 | # | Disciplina | Projetos |
 |---|-----------|---------|
 | 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 14 exemplos |
+| 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 1 projeto |
 
 ---
 
@@ -76,6 +77,18 @@ Série sobre agentes que controlam um browser real via **Playwright MCP** — na
 |---|---------|----------------|
 | 012 | [Busca Semântica em PDF com Embeddings e Neo4j](disciplinas/01-fundamentos-IA-LLM/projects/exemplo-012-embeddings-neo4j/README.md) | Pipeline completo de indexação vetorial: PDF → chunks → embeddings locais (HuggingFace Transformers) → Neo4j Vector Store → busca por similaridade semântica em linguagem natural |
 | 013 | [RAG Completo com Embeddings, Neo4j e OpenRouter](disciplinas/01-fundamentos-IA-LLM/projects/exemplo-013-embeddings-neo4j-rag/README.md) | Pipeline RAG end-to-end: indexação de PDF com embeddings locais no Neo4j Vector Store e geração de respostas via LLM (OpenRouter) orquestrado pelo LangChain com `RunnableSequence` |
+
+---
+
+## 02 · APIs de IA Generativa e Prompt Engineering
+
+Explora o consumo de APIs de IA generativa em produção: autenticação, roteamento inteligente entre modelos, prompt engineering e testabilidade de integrações com LLMs.
+
+### Roteamento e Gateway de LLMs
+
+| # | Projeto | O que demonstra |
+|---|---------|----------------|
+| 001 | [Smart Model Router Gateway](disciplinas/02-APIs-IA-generativa-prompt-engineering/projects/001-smart-model-router-gateway/README.md) | Gateway HTTP (Fastify) que roteia requisições para o melhor LLM de um pool via OpenRouter, selecionando por estratégia configurável de preço, latência ou throughput |
 
 ---
 
