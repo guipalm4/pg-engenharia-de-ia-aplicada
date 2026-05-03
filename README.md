@@ -12,7 +12,7 @@
 | # | Disciplina | Projetos |
 |---|-----------|---------|
 | 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 14 exemplos |
-| 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 1 projeto |
+| 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 2 projetos |
 
 ---
 
@@ -89,6 +89,12 @@ Explora o consumo de APIs de IA generativa em produção: autenticação, roteam
 | # | Projeto | O que demonstra |
 |---|---------|----------------|
 | 001 | [Smart Model Router Gateway](disciplinas/02-APIs-IA-generativa-prompt-engineering/projects/001-smart-model-router-gateway/README.md) | Gateway HTTP (Fastify) que roteia requisições para o melhor LLM de um pool via OpenRouter, selecionando por estratégia configurável de preço, latência ou throughput |
+
+### Grafos de Agentes com LangGraph
+
+| # | Projeto | O que demonstra |
+|---|---------|----------------|
+| 002 | [Roteador de Intenções com LangGraph](disciplinas/02-APIs-IA-generativa-prompt-engineering/projects/002-langchain-intro/README.md) | Grafo de estado (LangGraph) com roteamento condicional que detecta intenção em mensagens de texto (uppercase / lowercase / fallback) e expõe o grafo via API Fastify e LangGraph Studio |
 
 ---
 
