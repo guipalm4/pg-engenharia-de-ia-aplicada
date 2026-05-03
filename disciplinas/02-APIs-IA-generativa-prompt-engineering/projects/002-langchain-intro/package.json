@@ -1,0 +1,23 @@
+{
+  "name": "02-langchain-intro",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --env-file .env --inspect --watch src/index.ts",
+    "test:dev": "node --env-file .env --inspect --watch --test ./tests/**/*.test.ts",
+    "test": "node --env-file .env --test  ./tests/**/*.test.ts",
+    "langgraph:serve": "npx @langchain/langgraph-cli@latest dev",
+    "langgraph:serve:safari": "npx @langchain/langgraph-cli@latest dev --tunnel"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@langchain/core": "^1.1.19",
+    "@types/node": "^24.10.13",
+    "fastify": "^5.7.4",
+    "langchain": "^1.2.17"
+  }
+}

@@ -100,3 +100,5 @@ config/local/
 **/settings.local.json
 
 **/neo4j
+
+TO-DO.md
