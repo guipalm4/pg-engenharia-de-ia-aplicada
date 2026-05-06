@@ -1,0 +1,7 @@
+{
+  "node_version": "20",
+  "graphs": {
+    "medical_appointments": "./src/graph/factory.ts:graph"
+  },
+  "env": ".env"
+}
