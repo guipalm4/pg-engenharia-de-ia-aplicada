@@ -12,7 +12,7 @@
 | # | Disciplina | Projetos |
 |---|-----------|---------|
 | 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 14 exemplos |
-| 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 3 projetos |
+| 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 4 projetos |
 
 ---
 
@@ -96,6 +96,7 @@ Explora o consumo de APIs de IA generativa em produção: autenticação, roteam
 |---|---------|----------------|
 | 002 | [Roteador de Intenções com LangGraph](disciplinas/02-APIs-IA-generativa-prompt-engineering/projects/002-langchain-intro/README.md) | Grafo de estado (LangGraph) com roteamento condicional que detecta intenção em mensagens de texto (uppercase / lowercase / fallback) e expõe o grafo via API Fastify e LangGraph Studio |
 | 003 | [Agendamento Médico Conversacional](disciplinas/02-APIs-IA-generativa-prompt-engineering/projects/003-medical-appointment-z/README.md) | Sistema de agendamento e cancelamento de consultas por linguagem natural: LangGraph com roteamento condicional real, extração de entidades via structured output Zod, serviço in-memory com verificação de conflito e LangSmith tracing |
+| 004 | [Recomendador de Músicas com Memória Persistente](disciplinas/02-APIs-IA-generativa-prompt-engineering/projects/004-song-highlights-z/README.md) | Chatbot conversacional de recomendação musical com grafo LangGraph multi-nó (chat, savePreferences, summarize), memória de longo prazo em PostgreSQL via checkpointer/store, preferências por usuário em SQLite e sumarização automática de histórico com Zod structured output |
 
 ---
 
