@@ -4,27 +4,29 @@ Commita os arquivos-fonte do projeto **$ARGUMENTS** com o padrão do repositóri
 
 ## Passos
 
-1. **Localiza o projeto** — use Glob com `**/exemplo-*$ARGUMENTS*/` se receber só o nome; se for path completo, use diretamente.
+### 1. Descoberta + git state (script único — leia só o output)
 
-2. **Lê o README.md do projeto** — extrai o título da linha `# Exemplo NNN — <Título>` para usar na mensagem de commit. Se o README ainda não existir, usa o nome do diretório.
+```bash
+PROJECT=$(find . -maxdepth 7 -type d -name "*$ARGUMENTS*" ! -path "*/node_modules/*" | head -1)
+TITLE=$(head -1 "$PROJECT/README.md" 2>/dev/null | sed 's/^# //' || echo "$ARGUMENTS")
+echo "PROJECT=$PROJECT"
+echo "TITLE=$TITLE"
+echo "=== Fontes não rastreados (excl. README.md) ==="
+git ls-files --others --exclude-standard -- "$PROJECT" | grep -v "README.md$"
+echo "=== Fontes modificados ==="
+git diff --name-only -- "$PROJECT" | grep -v "README.md$"
+```
 
-3. **Verifica o que será commitado**:
-   ```bash
-   git status
-   git diff --staged --stat
-   ```
-   Artefatos indesejados (`node_modules/`, `storage/`, `*.sqlite`, lock files, `.DS_Store`) já são ignorados pelo `.gitignore` raiz.
+### 2. Stage, commit e push
 
-4. **Staged e commit**:
-   ```bash
-   git add <caminho-do-projeto>
-   ```
-   Não commitar o `README.md` do projeto — responsabilidade do `/readme-projeto`.
+```bash
+# Stage apenas fontes (exclui README.md, responsabilidade do /readme-projeto)
+git ls-files --others --exclude-standard -- "$PROJECT" | grep -v "README.md$" | xargs -r git add
+git diff --name-only -- "$PROJECT" | grep -v "README.md$" | xargs -r git add
 
-5. **Commit** com o padrão:
-   ```
-   feat: adiciona <nome-do-exemplo> (<título>) Finalizado em: DD/MM/AAAA
-   ```
-   Use a data atual do `currentDate` do contexto de sessão.
+git commit -m "feat: adiciona $ARGUMENTS (<título do passo 1>) Finalizado em: DD/MM/AAAA"
+git push
+```
 
-6. **Push** ao final.
+Use a data atual do `currentDate` do contexto de sessão.
+Artefatos indesejados (`node_modules/`, `*.sqlite`, lock files, `.DS_Store`) são ignorados pelo `.gitignore` raiz.

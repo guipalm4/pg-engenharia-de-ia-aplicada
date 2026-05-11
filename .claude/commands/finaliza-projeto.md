@@ -1,18 +1,21 @@
-# Skill: readme-projeto
+# Skill: finaliza-projeto
 
-Cria o README.md do projeto **$ARGUMENTS**, atualiza o índice raiz, faz commit e push.
+Cria o README.md, atualiza o índice raiz e commita tudo (documentação + código-fonte) do projeto **$ARGUMENTS**.
+
+Equivale a `/readme-projeto` seguido de `/commit-projeto`, em sequência otimizada com descoberta única do projeto.
 
 ## Passos
 
-### 1. Descoberta do projeto (script único)
+### 1. Descoberta + git state (script único — leia só o output)
 
 ```bash
-find . -maxdepth 7 -type d -name "*$ARGUMENTS*" ! -path "*/node_modules/*" | head -1
+PROJECT=$(find . -maxdepth 7 -type d -name "*$ARGUMENTS*" ! -path "*/node_modules/*" | head -1)
+echo "PROJECT=$PROJECT"
+echo "=== Fontes não rastreados (excl. README.md) ==="
+git ls-files --others --exclude-standard -- "$PROJECT" | grep -v "README.md$"
 ```
 
 ### 2. Dump dos arquivos-fonte (script único — leia só o output)
-
-Substitua `$PROJECT` pelo path retornado no passo 1.
 
 ```bash
 find "$PROJECT" -type f \
@@ -45,9 +48,9 @@ Baseie-se exclusivamente no output do passo 2. Não inventar.
 ## Pré-requisitos          ← só se houver setup especial (API keys, flags de browser, etc.)
 
 ## Como executar
-```bash
+\`\`\`bash
 <comandos>
-```
+\`\`\`
 
 ## Estrutura do Projeto    ← só se houver mais de 2–3 arquivos
 <árvore comentada>
@@ -71,7 +74,7 @@ Seções marcadas com `←` são opcionais; as demais são obrigatórias.
 
 Lê o `README.md` raiz, adiciona o projeto na seção e tema corretos, atualiza a contagem de projetos.
 
-### 5. Commit + push
+### 5. Commit 1 — documentação
 
 ```bash
 git add "$PROJECT/README.md" README.md
@@ -79,5 +82,13 @@ git commit -m "feat: adiciona $ARGUMENTS (<título resumido>) Finalizado em: DD/
 git push
 ```
 
+### 6. Commit 2 — código-fonte
+
+```bash
+git ls-files --others --exclude-standard -- "$PROJECT" | grep -v "README.md$" | xargs -r git add
+git commit -m "feat: adiciona $ARGUMENTS (<título resumido>) Finalizado em: DD/MM/AAAA"
+git push
+```
+
 Use a data atual do `currentDate` do contexto de sessão.
-Apenas o README do projeto e o README raiz entram neste commit. Arquivos-fonte são responsabilidade do `/commit-projeto`.
+Artefatos indesejados (`node_modules/`, `*.sqlite`, lock files, `.DS_Store`) são ignorados pelo `.gitignore` raiz.
