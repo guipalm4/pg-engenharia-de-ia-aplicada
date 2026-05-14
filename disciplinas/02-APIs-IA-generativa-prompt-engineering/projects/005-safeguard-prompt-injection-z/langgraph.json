@@ -1,0 +1,6 @@
+{
+  "graphs": {
+    "safeguard": "./src/graph/factory.ts:graph"
+  },
+  "env": ".env"
+}

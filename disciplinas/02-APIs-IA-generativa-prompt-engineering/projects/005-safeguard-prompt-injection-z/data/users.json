@@ -1,0 +1,14 @@
+{
+  "erickwendel": {
+    "username": "erickwendel",
+    "role": "admin",
+    "permissions": ["read_package", "execute_commands"],
+    "displayName": "Erick Wendel"
+  },
+  "ananeri": {
+    "username": "ananeri",
+    "role": "member",
+    "permissions": [],
+    "displayName": "Ana Neri"
+  }
+}
