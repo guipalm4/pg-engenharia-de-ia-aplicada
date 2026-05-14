@@ -1,0 +1,14 @@
+🛡️ **Security Alert: Request Blocked**
+
+Your message was blocked by our LLM-based security guardrails.
+
+**Reason:** {REASON}
+
+{ANALYSIS}
+
+**Your Current Role:** {USER_ROLE}
+**Available Permissions:** {PERMISSIONS}
+
+💡 **Tip:** You can only access tools you have explicit permission for. Trying to bypass these restrictions through prompt manipulation will be blocked by our safeguard model.
+
+If you believe this is an error, please contact an administrator.
