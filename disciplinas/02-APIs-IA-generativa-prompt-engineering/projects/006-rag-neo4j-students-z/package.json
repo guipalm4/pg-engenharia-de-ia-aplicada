@@ -1,0 +1,45 @@
+{
+  "name": "rag-neo4j-students",
+  "version": "1.0.0",
+  "description": "RAG Neo4j Students",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "node --env-file .env src/index.ts",
+    "dev": "node --watch --inspect --env-file .env src/index.ts",
+    "test": "node --env-file .env --test tests/**/*.test.ts",
+    "seed": "node --env-file .env --watch data/seed.ts",
+    "test:dev": "node --inspect --env-file .env --test --watch tests/**/*.test.ts",
+    "test:e2e:dev": "node --inspect --env-file .env --test --watch tests/**/*e2e.test.ts",
+    "test:e2e": "node --inspect --env-file .env --test tests/**/*e2e.test.ts",
+    "langgraph:serve": "npx @langchain/langgraph-cli dev",
+    "docker:infra:up": "docker compose up -d --wait",
+    "docker:infra:down": "docker compose down",
+    "docker:infra:cleanup": "docker compose down --volumes --remove-orphans && rm -rf storage",
+    "docker:infra:logs": "docker compose logs -f"
+  },
+  "keywords": [
+    "langchain",
+    "prompt-chaining",
+    "article-generator",
+    "openrouter",
+    "ollama"
+  ],
+  "author": "erickwendel",
+  "license": "MIT",
+  "dependencies": {
+    "@langchain/community": "^1.1.17",
+    "@langchain/core": "^1.1.27",
+    "@langchain/openai": "^1.2.9",
+    "fastify": "^5.7.4",
+    "langchain": "^1.2.25",
+    "neo4j-driver": "^5.28.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^9.4.0",
+    "@types/node": "^24.10.12"
+  },
+  "engines": {
+    "node": ">=24.10.0"
+  }
+}
