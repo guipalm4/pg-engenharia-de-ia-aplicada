@@ -1,0 +1,7 @@
+{
+  "node_version": "20",
+  "graphs": {
+    "sales_qa": "./src/graph/factory.ts:graph"
+  },
+  "env": ".env"
+}
