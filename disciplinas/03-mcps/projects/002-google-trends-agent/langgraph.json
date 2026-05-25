@@ -1,0 +1,7 @@
+{
+  "node_version": "20",
+  "graphs": {
+    "google_trends": "./src/graph/factory.ts:graph"
+  },
+  "env": ".env"
+}
