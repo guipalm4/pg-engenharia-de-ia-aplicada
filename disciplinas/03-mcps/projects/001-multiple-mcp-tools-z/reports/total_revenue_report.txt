@@ -1,0 +1,15 @@
+Total Revenue Report
+====================
+
+Total Revenue: $71.33
+
+Calculation Details:
+- 1 shampoo @ $10.99 = $10.99
+- 1 soap @ $5.49 = $5.49
+- 1 toothpaste @ $3.99 = $3.99
+- 1 rice @ $22.90 = $22.90
+- 4 beans @ $6.99 = $27.96
+
+Total: $71.33
+
+Report generated on: 2024-01-01

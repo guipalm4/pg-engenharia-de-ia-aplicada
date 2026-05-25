@@ -1,0 +1,7 @@
+Top 5 Most Sold Products:
+
+1. beans - 4 units sold
+2. toothpaste - 1 unit sold
+3. soap - 1 unit sold
+4. rice - 1 unit sold
+5. shampoo - 1 unit sold
