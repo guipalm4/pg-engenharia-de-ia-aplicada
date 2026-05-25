@@ -1,0 +1,7 @@
+{
+  "node_version": "20",
+  "graphs": {
+    "multiple_mcp_tools": "./src/graph/factory.ts:graph"
+  },
+  "env": ".env"
+}
