@@ -13,7 +13,7 @@
 |---|-----------|---------|
 | 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 14 exemplos |
 | 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 6 projetos |
-| 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 1 projeto |
+| 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 2 projetos |
 
 ---
 
@@ -112,6 +112,7 @@ Explora a criação e composição de servidores MCP para conectar agentes LLM a
 | # | Projeto | O que demonstra |
 |---|---------|----------------|
 | 001 | [Agente com Múltiplos MCP Tools](disciplinas/03-mcps/projects/001-multiple-mcp-tools-z/README.md) | Agente LangGraph que coordena três MCP tools (MongoDB, Filesystem e CSV-to-JSON) para executar um pipeline de dados completo via linguagem natural: CSV → JSON → MongoDB → query analítica → relatório em disco |
+| 002 | [Agente Google Trends: Transformando Serviços em Ferramentas](disciplinas/03-mcps/projects/002-google-trends-agent/README.md) | Agente LangGraph que encapsula a API SerpAPI/Google Trends como `tool()` LangChain para recomendar títulos de vídeo com dados reais de tendência via grafo researcher → responder exposto por API Fastify |
 
 ---
 
