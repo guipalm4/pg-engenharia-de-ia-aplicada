@@ -13,6 +13,7 @@
 |---|-----------|---------|
 | 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 14 exemplos |
 | 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 6 projetos |
+| 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 1 projeto |
 
 ---
 
@@ -99,6 +100,18 @@ Explora o consumo de APIs de IA generativa em produção: autenticação, roteam
 | 004 | [Recomendador de Músicas com Memória Persistente](disciplinas/02-APIs-IA-generativa-prompt-engineering/projects/004-song-highlights-z/README.md) | Chatbot conversacional de recomendação musical com grafo LangGraph multi-nó (chat, savePreferences, summarize), memória de longo prazo em PostgreSQL via checkpointer/store, preferências por usuário em SQLite e sumarização automática de histórico com Zod structured output |
 | 005 | [Defesa contra Prompt Injection com LangGraph e Guardrails LLM](disciplinas/02-APIs-IA-generativa-prompt-engineering/projects/005-safeguard-prompt-injection-z/README.md) | Demo educacional de ataque e defesa: grafo LangGraph com nó guardrail dedicado (`gpt-oss-safeguard-20b`) que intercepta prompts maliciosos antes do agente principal, demonstrando por que regras em system prompt são insuficientes sem um modelo de segurança separado |
 | 006 | [RAG com NL2Cypher: Análise de Vendas em Neo4j](disciplinas/02-APIs-IA-generativa-prompt-engineering/projects/006-rag-neo4j-students-z/README.md) | Pipeline RAG que converte perguntas em linguagem natural para Cypher via LangGraph multi-nó (planejamento, geração, execução, autocorreção e síntese analítica), consultando grafo Neo4j de estudantes/vendas/progresso e exposto via API Fastify |
+
+---
+
+## 03 · Model Context Protocol (MCPs)
+
+Explora a criação e composição de servidores MCP para conectar agentes LLM a fontes de dados externas, sistemas de arquivos e bancos de dados — transformando ferramentas arbitrárias em primitivas nativas de agente.
+
+### Agentes com Múltiplos MCP Tools
+
+| # | Projeto | O que demonstra |
+|---|---------|----------------|
+| 001 | [Agente com Múltiplos MCP Tools](disciplinas/03-mcps/projects/001-multiple-mcp-tools-z/README.md) | Agente LangGraph que coordena três MCP tools (MongoDB, Filesystem e CSV-to-JSON) para executar um pipeline de dados completo via linguagem natural: CSV → JSON → MongoDB → query analítica → relatório em disco |
 
 ---
 
