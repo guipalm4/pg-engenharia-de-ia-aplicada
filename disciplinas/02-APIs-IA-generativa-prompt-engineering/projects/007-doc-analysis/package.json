@@ -1,0 +1,38 @@
+{
+  "name": "doc-qa-pipeline",
+  "version": "1.0.0",
+  "description": "Document Q&A Pipeline with LangGraph",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "node --env-file .env src/index.ts",
+    "dev": "node --watch --inspect --env-file .env src/index.ts",
+    "test": "node --env-file .env --test tests/**/*.test.ts",
+    "test:dev": "node --inspect --env-file .env --test --watch tests/**/*.test.ts",
+    "langgraph:serve": "npx @langchain/langgraph-cli dev"
+  },
+  "keywords": [
+    "langchain",
+    "document-qa",
+    "pdf-analysis",
+    "openrouter"
+  ],
+  "author": "erickwendel",
+  "license": "MIT",
+  "dependencies": {
+    "@fastify/multipart": "^9.0.3",
+    "@langchain/community": "^1.1.17",
+    "@langchain/core": "^1.1.27",
+    "@langchain/openai": "^1.2.9",
+    "fastify": "^5.7.4",
+    "form-data": "^4.0.1",
+    "langchain": "^1.2.25"
+  },
+  "devDependencies": {
+    "@types/form-data": "^2.5.0",
+    "@types/node": "^24.10.12"
+  },
+  "engines": {
+    "node": ">=24.10.0"
+  }
+}

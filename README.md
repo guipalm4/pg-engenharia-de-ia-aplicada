@@ -12,7 +12,7 @@
 | # | Disciplina | Projetos |
 |---|-----------|---------|
 | 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 14 exemplos |
-| 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 6 projetos |
+| 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 7 projetos |
 | 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 2 projetos |
 
 ---
@@ -100,6 +100,7 @@ Explora o consumo de APIs de IA generativa em produção: autenticação, roteam
 | 004 | [Recomendador de Músicas com Memória Persistente](disciplinas/02-APIs-IA-generativa-prompt-engineering/projects/004-song-highlights-z/README.md) | Chatbot conversacional de recomendação musical com grafo LangGraph multi-nó (chat, savePreferences, summarize), memória de longo prazo em PostgreSQL via checkpointer/store, preferências por usuário em SQLite e sumarização automática de histórico com Zod structured output |
 | 005 | [Defesa contra Prompt Injection com LangGraph e Guardrails LLM](disciplinas/02-APIs-IA-generativa-prompt-engineering/projects/005-safeguard-prompt-injection-z/README.md) | Demo educacional de ataque e defesa: grafo LangGraph com nó guardrail dedicado (`gpt-oss-safeguard-20b`) que intercepta prompts maliciosos antes do agente principal, demonstrando por que regras em system prompt são insuficientes sem um modelo de segurança separado |
 | 006 | [RAG com NL2Cypher: Análise de Vendas em Neo4j](disciplinas/02-APIs-IA-generativa-prompt-engineering/projects/006-rag-neo4j-students-z/README.md) | Pipeline RAG que converte perguntas em linguagem natural para Cypher via LangGraph multi-nó (planejamento, geração, execução, autocorreção e síntese analítica), consultando grafo Neo4j de estudantes/vendas/progresso e exposto via API Fastify |
+| 007 | [Análise de Documentos com LLM Multimodal e LangGraph](disciplinas/02-APIs-IA-generativa-prompt-engineering/projects/007-doc-analysis/README.md) | Pipeline Q&A sobre PDFs: LangGraph com `StateGraph` Zod, PDF enviado como `image_url` base64 para modelo de visão (Gemini 2.5 Flash via OpenRouter) e exposto via Fastify com upload multipart |
 
 ---
 
