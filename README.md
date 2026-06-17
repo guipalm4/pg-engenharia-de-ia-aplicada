@@ -13,7 +13,7 @@
 |---|-----------|---------|
 | 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 14 exemplos |
 | 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 7 projetos |
-| 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 4 projetos |
+| 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 5 projetos |
 
 ---
 
@@ -116,6 +116,12 @@ Explora a criação e composição de servidores MCP para conectar agentes LLM a
 | 002 | [Agente Google Trends: Transformando Serviços em Ferramentas](disciplinas/03-mcps/projects/002-google-trends-agent/README.md) | Agente LangGraph que encapsula a API SerpAPI/Google Trends como `tool()` LangChain para recomendar títulos de vídeo com dados reais de tendência via grafo researcher → responder exposto por API Fastify |
 | 003 | [Agentes de Desenvolvimento com GitHub Copilot Custom Agents](disciplinas/03-mcps/projects/003-dev-instructions-agents/README.md) | Quatro agentes especializados definidos em `.github/agents/*.agent.md` cobrindo o pipeline completo de qualidade: developer TDD, playwright planner, test generator e test healer autônomo — com servidor MCP Playwright declarado inline nas definições |
 | 004 | [Skills: Conhecimento Modular para Agentes de IA](disciplinas/03-mcps/projects/004-skills/README.md) | Instalação e uso de skills via `npx skills` — pacotes de conhecimento (`ffmpeg`, `find-skills`, `neo4j-cypher-guide`) que complementam MCPs estendendo agentes com guias especializados rastreados por `skills-lock.json` |
+
+### Criação de Servidores MCP
+
+| # | Projeto | O que demonstra |
+|---|---------|----------------|
+| 005 | [MCP do Zero: Servidor de Criptografia](disciplinas/03-mcps/projects/005-mcps-do-zero-z/README.md) | Servidor MCP construído do zero com o `@modelcontextprotocol/sdk` que expõe criptografia AES-256-CBC (chave derivada por scrypt) como Tools (`encrypt_message`/`decrypt_message`), Resource (`encryption://info`) e Prompt — schemas Zod tipados, transporte Stdio e testes de integração com `Client` MCP real |
 
 ---
 
