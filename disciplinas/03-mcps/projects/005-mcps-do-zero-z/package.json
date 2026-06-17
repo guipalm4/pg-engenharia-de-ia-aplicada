@@ -1,0 +1,25 @@
+{
+  "name": "05-mcps-do-zero-template",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.ts",
+    "dev": "node --watch --inspect src/index.ts",
+    "test": "node --test tests/**/*.test.ts",
+    "mcp:inspect": "npx @modelcontextprotocol/inspector node src/index.ts",
+    "test:dev": "node --inspect --test --watch tests/**/*.test.ts"
+  },
+  "keywords": [],
+  "author": "erickwendel",
+  "license": "ISC",
+  "type": "module",
+  "engines": {
+    "node": "v24.14.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "@types/node": "^24.11.0",
+    "zod": "^3.25.76"
+  }
+}
