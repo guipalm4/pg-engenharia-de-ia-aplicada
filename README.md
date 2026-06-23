@@ -14,6 +14,7 @@
 | 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 14 exemplos |
 | 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 7 projetos |
 | 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 6 projetos |
+| 04 | [Criação de Agentes](#04--criação-de-agentes) | 1 projeto |
 
 ---
 
@@ -123,6 +124,18 @@ Explora a criação e composição de servidores MCP para conectar agentes LLM a
 |---|---------|----------------|
 | 005 | [MCP do Zero: Servidor de Criptografia](disciplinas/03-mcps/projects/005-mcps-do-zero-z/README.md) | Servidor MCP construído do zero com o `@modelcontextprotocol/sdk` que expõe criptografia AES-256-CBC (chave derivada por scrypt) como Tools (`encrypt_message`/`decrypt_message`), Resource (`encryption://info`) e Prompt — schemas Zod tipados, transporte Stdio e testes de integração com `Client` MCP real |
 | 006 | [Sua API Legada como MCP](disciplinas/03-mcps/projects/06-your-legacy-api-as-mcp/README.md) | Padrão *legacy API as MCP*: uma camada MCP fina envolve uma API REST legada (Fastify + MongoDB) e expõe o CRUD de clientes como Tools (list/get/create/update/delete), Resource (`customers://api-info`) e Prompt — separação em camadas DDD, `CustomerHttpClient` falando HTTP com a API e testes de integração via `Client` MCP real |
+
+---
+
+## 04 · Criação de Agentes
+
+Explora a construção de agentes autônomos do zero: o ciclo perceber→planejar→agir→avaliar, guardrails de segurança, observabilidade e a separação entre a definição declarativa do agente e o runtime que o executa.
+
+### Agentes Orientados a Contratos
+
+| # | Projeto | O que demonstra |
+|---|---------|----------------|
+| 001 | [Agentes Orientados a Contratos](disciplinas/04-criacao-de-agentes/projects/001-contratos/README.md) | Runtime Python genérico que executa agentes definidos 100% por contratos Markdown/YAML (nove arquivos: identidade, ciclo, decisão, skills, limites, ganchos, memória) — loop perceber→planejar→agir→avaliar com structured output forçado, circuit breaker com autocorreção, guardrails (ferramentas obrigatórias, confirmação humana, limites de tempo/tokens/estagnação), telemetria estruturada em `trace.json` e quatro modos de operação |
 
 ---
 
