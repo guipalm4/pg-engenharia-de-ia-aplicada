@@ -14,7 +14,7 @@
 | 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 14 exemplos |
 | 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 7 projetos |
 | 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 6 projetos |
-| 04 | [Criação de Agentes](#04--criação-de-agentes) | 3 projetos |
+| 04 | [Criação de Agentes](#04--criação-de-agentes) | 4 projetos |
 
 ---
 
@@ -138,6 +138,7 @@ Explora a construção de agentes autônomos do zero: o ciclo perceber→planeja
 | 001 | [Agentes Orientados a Contratos](disciplinas/04-criacao-de-agentes/projects/001-contratos/README.md) | Runtime Python genérico que executa agentes definidos 100% por contratos Markdown/YAML (nove arquivos: identidade, ciclo, decisão, skills, limites, ganchos, memória) — loop perceber→planejar→agir→avaliar com structured output forçado, circuit breaker com autocorreção, guardrails (ferramentas obrigatórias, confirmação humana, limites de tempo/tokens/estagnação), telemetria estruturada em `trace.json` e quatro modos de operação |
 | 002 | [Por Dentro do Runtime](disciplinas/04-criacao-de-agentes/projects/002-runtime/README.md) | Mergulho nos internos do runtime de 001: mesmo código, perspectiva invertida — mapeia cada chave YAML do contrato ao módulo Python que a lê (`contratos.py`, `ciclo.py`, `planejador.py`, `ferramentas.py`, `executor.py`, `telemetria.py`), detalhando o circuit breaker e o debug de agentes via `trace.json` (relacionar cada etapa do trace ao código que a gerou) |
 | 003 | [Observabilidade: um Agente que Analisa Outro](disciplinas/04-criacao-de-agentes/projects/003-observabilidade/README.md) | Introduz o `trace-analyzer`, um segundo agente declarativo (sem código próprio) que roda no mesmo runtime e consome o `trace.json` do `monitor-agent` para diagnosticar a execução via pipeline obrigatório de 5 análises (saúde → performance → conformidade → anomalias → veredito), emitindo `analise.json` e um relatório `analise-agente.md` — prova de que o runtime é agnóstico ao domínio |
+| 004 | [Tipos de Agente: o Goal-Oriented `backlog-decomposer`](disciplinas/04-criacao-de-agentes/projects/004-tipos-agentes-e-projetos/README.md) | Introduz o `backlog-decomposer`, agente do tipo `goal_oriented` que decompõe um objetivo de produto em backlog estruturado (épicos → stories → critérios → riscos → perguntas → backlog) — demonstrando que trocar o campo `tipo` no contrato muda as instruções injetadas no prompt e todo o comportamento, com três agentes de tipos/domínios distintos no mesmo runtime |
 
 ---
 
