@@ -52,6 +52,8 @@ python main.py rastreamento
 python main.py replay --agente ../monitor-agent
 
 # 6. analisar o trace com um agente analyzer (gera analise-agente.md)
+#    o runtime já suporta este comando; o agente ../trace-analyzer é
+#    introduzido em um projeto posterior desta disciplina
 python main.py analisar --agente ../trace-analyzer
 ```
 
@@ -128,7 +130,7 @@ contratos/*.md ──load──▶  │  PERCEBER ──▶ PLANEJAR(LLM) ──
 - [x] **Telemetria estruturada** — trace ID, timing por fase, health metrics e audit logs em `trace.json`
 - [x] **Modos de operação** — `task_based`, `interactive`, `goal_oriented`, `autonomous`
 - [x] **Execução offline** — planejador e ferramentas mock quando não há `OPENAI_API_KEY`
-- [x] **Meta-agente** — comando `analisar` roda um agente sobre o trace de outro e emite relatório `.md`
+- [x] **Meta-agente** — o runtime já traz o comando `analisar`, que roda um agente sobre o trace de outro e emite relatório `.md` (o `trace-analyzer` chega em projeto posterior)
 
 ## Aprendizados
 - [x] Separar contrato (o que o agente é) de runtime (como ele roda) torna a criação de um novo agente um exercício de **escrever YAML**, não de programar — o mesmo runtime serve qualquer domínio.
