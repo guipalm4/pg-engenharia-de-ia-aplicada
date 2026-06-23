@@ -1,0 +1,27 @@
+{
+  "name": "@erickwendel/ew-customers-mcp",
+  "version": "0.0.1",
+  "description": "MCP server that exposes a customer CRUD API as tools for use with GitHub Copilot and other MCP-compatible agents",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "node src/index.ts",
+    "start:dev": "node --watch --inspect src/index.ts",
+    "test": "node --test tests/**/*.test.ts",
+    "mcp:inspect": "npx @modelcontextprotocol/inspector node src/index.ts",
+    "test:dev": "node --inspect --test --watch tests/**/*.test.ts"
+  },
+  "keywords": [],
+  "author": "erickwendel",
+  "license": "ISC",
+  "type": "module",
+  "engines": {
+    "node": "v24.14.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.11.1"
+  }
+}
