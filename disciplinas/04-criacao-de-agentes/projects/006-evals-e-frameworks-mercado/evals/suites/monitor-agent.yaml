@@ -1,0 +1,20 @@
+# Eval Suite — monitor-agent
+# Define dataset, metricas e limiares para avaliacao comparativa de arquiteturas.
+
+dataset: ../datasets/incidentes.json
+
+metricas:
+  - taxa_conclusao          # % de cenarios que finalizaram sem erro
+  - media_etapas            # media de etapas por execucao
+  - media_tokens            # media de tokens consumidos
+  - tokens_planejamento     # tokens gastos apenas no planejamento
+  - media_tempo_segundos    # tempo medio de execucao
+  - taxa_sucesso_ferramentas # % de ferramentas que rodaram sem erro
+  - circuit_breaker_total   # total de ativacoes do circuit breaker
+  - reflexoes_total         # total de reflexoes (so reflection)
+  - cobertura_ferramentas   # % de ferramentas esperadas que foram chamadas
+
+limiares:
+  taxa_conclusao: 80        # minimo 80% dos cenarios devem completar
+  taxa_sucesso_ferramentas: 90
+  cobertura_ferramentas: 75
