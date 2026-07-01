@@ -14,7 +14,7 @@
 | 01 | [Fundamentos de IA e LLMs](#01--fundamentos-de-ia-e-llms) | 14 exemplos |
 | 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 7 projetos |
 | 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 6 projetos |
-| 04 | [Criação de Agentes](#04--criação-de-agentes) | 5 projetos |
+| 04 | [Criação de Agentes](#04--criação-de-agentes) | 6 projetos |
 
 ---
 
@@ -140,6 +140,7 @@ Explora a construção de agentes autônomos do zero: o ciclo perceber→planeja
 | 003 | [Observabilidade: um Agente que Analisa Outro](disciplinas/04-criacao-de-agentes/projects/003-observabilidade/README.md) | Introduz o `trace-analyzer`, um segundo agente declarativo (sem código próprio) que roda no mesmo runtime e consome o `trace.json` do `monitor-agent` para diagnosticar a execução via pipeline obrigatório de 5 análises (saúde → performance → conformidade → anomalias → veredito), emitindo `analise.json` e um relatório `analise-agente.md` — prova de que o runtime é agnóstico ao domínio |
 | 004 | [Tipos de Agente: o Goal-Oriented `backlog-decomposer`](disciplinas/04-criacao-de-agentes/projects/004-tipos-agentes-e-projetos/README.md) | Introduz o `backlog-decomposer`, agente do tipo `goal_oriented` que decompõe um objetivo de produto em backlog estruturado (épicos → stories → critérios → riscos → perguntas → backlog) — demonstrando que trocar o campo `tipo` no contrato muda as instruções injetadas no prompt e todo o comportamento, com três agentes de tipos/domínios distintos no mesmo runtime |
 | 005 | [Arquiteturas Cognitivas: ReAct Plugável sobre o Mesmo Runtime](disciplinas/04-criacao-de-agentes/projects/005-arquiteturas-cognitivas/README.md) | Generaliza o `formato_saida` do planejador para ser lido do contrato (em vez de fixo no código) e introduz a arquitetura ReAct via flag `--arquitetura`, que sobrescreve `planner.md`/`executor.md` do agente em `architectures/react/` sem alterar o runtime — campo `raciocinio` obrigatório força a LLM a explicitar o que sabe, o que falta e por que escolheu a próxima ação, visível como `[raciocinio]` no console e persistido no `trace.json` |
+| 006 | [Evals e Frameworks de Mercado: Comparando Arquiteturas Cognitivas](disciplinas/04-criacao-de-agentes/projects/006-evals-e-frameworks-mercado/README.md) | Adiciona as arquiteturas Plan-and-Execute (plano gerado 1x, executado sem nova chamada à LLM) e Reflection (autocrítica com limiar de aprovação e teto de reflexões), e um eval harness (`benchmark`/`comparar`) que roda um dataset de 5 incidentes contra as 4 arquiteturas (padrão, ReAct, Plan-and-Execute, Reflection), medindo taxa de conclusão, tokens, cobertura de ferramentas e tempo — mais `equivalencias/`, mapeando linha a linha os mesmos contratos para `AgentExecutor`/`create_react_agent` (LangChain) e `StateGraph` (LangGraph) |
 
 ---
 
