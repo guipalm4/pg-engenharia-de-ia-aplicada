@@ -1,0 +1,32 @@
+[
+  {
+    "id": "inc-001",
+    "entrada": "alerta de latencia elevada no servico de pagamentos, p99 acima de 500ms",
+    "dificuldade": "facil",
+    "ferramentas_esperadas": ["consultar_metricas", "buscar_logs", "relatorio_incidente"]
+  },
+  {
+    "id": "inc-002",
+    "entrada": "erro 500 intermitente no servico de checkout apos deploy da versao 2.4.1",
+    "dificuldade": "medio",
+    "ferramentas_esperadas": ["consultar_metricas", "buscar_logs", "historico_deploys", "relatorio_incidente"]
+  },
+  {
+    "id": "inc-003",
+    "entrada": "queda de throughput no servico de autenticacao, possivel vazamento de memoria",
+    "dificuldade": "medio",
+    "ferramentas_esperadas": ["consultar_metricas", "buscar_logs", "relatorio_incidente"]
+  },
+  {
+    "id": "inc-004",
+    "entrada": "timeout generalizado nos servicos downstream do gateway de API",
+    "dificuldade": "dificil",
+    "ferramentas_esperadas": ["consultar_metricas", "buscar_logs", "historico_deploys", "relatorio_incidente"]
+  },
+  {
+    "id": "inc-005",
+    "entrada": "alerta de taxa de erro acima de 15% no servico de notificacoes",
+    "dificuldade": "facil",
+    "ferramentas_esperadas": ["consultar_metricas", "buscar_logs", "relatorio_incidente"]
+  }
+]

@@ -1,0 +1,6 @@
+openai>=1.0
+pyyaml
+python-dotenv
+requests
+fastapi
+uvicorn
