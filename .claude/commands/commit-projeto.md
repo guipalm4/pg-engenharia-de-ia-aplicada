@@ -11,18 +11,18 @@ PROJECT=$(find . -maxdepth 7 -type d -name "*$ARGUMENTS*" ! -path "*/node_module
 TITLE=$(head -1 "$PROJECT/README.md" 2>/dev/null | sed 's/^# //' || echo "$ARGUMENTS")
 echo "PROJECT=$PROJECT"
 echo "TITLE=$TITLE"
-echo "=== Fontes não rastreados (excl. README.md) ==="
-git ls-files --others --exclude-standard -- "$PROJECT" | grep -v "README.md$"
+echo "=== Fontes não rastreados (excl. README.md raiz; READMEs internos entram) ==="
+git ls-files --others --exclude-standard -- "$PROJECT" | grep -vx "${PROJECT#./}/README.md"
 echo "=== Fontes modificados ==="
-git diff --name-only -- "$PROJECT" | grep -v "README.md$"
+git diff --name-only -- "$PROJECT" | grep -vx "${PROJECT#./}/README.md"
 ```
 
 ### 2. Stage, commit e push
 
 ```bash
-# Stage apenas fontes (exclui README.md, responsabilidade do /readme-projeto)
-git ls-files --others --exclude-standard -- "$PROJECT" | grep -v "README.md$" | xargs -r git add
-git diff --name-only -- "$PROJECT" | grep -v "README.md$" | xargs -r git add
+# Stage fontes + READMEs internos (exclui só o README.md raiz do projeto, responsabilidade do /readme-projeto)
+git ls-files --others --exclude-standard -- "$PROJECT" | grep -vx "${PROJECT#./}/README.md" | xargs -r git add
+git diff --name-only -- "$PROJECT" | grep -vx "${PROJECT#./}/README.md" | xargs -r git add
 
 git commit -m "feat: adiciona $ARGUMENTS (<título do passo 1>) Finalizado em: DD/MM/AAAA"
 git push
