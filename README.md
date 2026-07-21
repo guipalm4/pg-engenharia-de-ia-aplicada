@@ -15,7 +15,7 @@
 | 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 7 projetos |
 | 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 6 projetos |
 | 04 | [Criação de Agentes](#04--criação-de-agentes) | 7 projetos |
-| 05 | [Ferramentas de IA para UX & UI](#05--ferramentas-de-ia-para-ux--ui) | 1 projeto |
+| 05 | [Ferramentas de IA para UX & UI](#05--ferramentas-de-ia-para-ux--ui) | 2 projetos |
 
 ---
 
@@ -155,6 +155,12 @@ Explora a IA como camada de Engenharia de Software aplicada ao ciclo de produto 
 | # | Projeto | O que demonstra |
 |---|---------|----------------|
 | 001 | [Discovery & Refinement: Requisitos, Dados e UX Writing com IA](disciplinas/05-ferramentas-de-IA-para-UI-UX/projects/001-discovery-refinement/README.md) | Pipeline de três estágios via System Instructions do Google AI Studio: refina um requisito ambíguo de Pix Agendado em análise de risco e fluxo Mermaid, sanitiza/prioriza feedbacks brutos de usuários em backlog, e gera mensagens de UX writing padronizadas em JSON |
+
+### Figma/Stitch to Code com Design Tokens
+
+| # | Projeto | O que demonstra |
+|---|---------|----------------|
+| 002 | [PixApp: Figma/Stitch to Code com Design Tokens em Angular 21](disciplinas/05-ferramentas-de-IA-para-UI-UX/projects/002-pix-app/README.md) | App Angular 21 (Standalone Components) de transferência Pix onde cada tela nasce de um prompt que converte briefing de branding, spec do Figma Dev Mode ou HTML bruto do Google Stitch em componentes que consomem exclusivamente CSS Custom Properties como Design Tokens, com acessibilidade (WAI-ARIA) especificada via prompt dedicado |
 
 ---
 
