@@ -1,0 +1,1 @@
+Agora, configure a rota '/extrato' no arquivo @app.routes.ts apontando para o recém-criado PixHistoryComponent. Depois, atualize a nossa barra de navegação lateral no @app.component.html adicionando um novo link para 'Extrato' logo abaixo do link do 'Pix', usando a diretiva routerLink oficial do Angular e mantendo as classes de estilo do nosso menu.

@@ -1,0 +1,31 @@
+@if (transferReceiptData(); as receipt) {
+<app-pix-receipt [nome]="receipt.nome" [valor]="receipt.valor"></app-pix-receipt>
+} @else {
+<section>
+    <h2>Transferência Pix</h2>
+    <form (ngSubmit)="onSubmit()">
+        <div>
+            <label for="pixKey">Chave Pix</label>
+            <input type="text" id="pixKey" name="pixKey" [(ngModel)]="pixKey" required>
+        </div>
+
+        <div>
+            <label for="transferAmount">Valor da Transferência</label>
+            <input type="number" id="transferAmount" name="transferAmount" [(ngModel)]="transferAmount" required>
+        </div>
+
+        <div>
+            <label for="schedulingDate">Data de Agendamento</label>
+            <input type="date" id="schedulingDate" name="schedulingDate" [(ngModel)]="schedulingDate" required>
+        </div>
+
+        <button type="submit">Confirmar</button>
+    </form>
+</section>
+}
+
+@if (showErrorModal()) {
+<app-error-modal title="Limite Excedido"
+    message="Para sua segurança, transferências Pix acima de R$ 5.000,00 precisam ser aprovadas pelo seu gerente."
+    (close)="showErrorModal.set(false)"></app-error-modal>
+}

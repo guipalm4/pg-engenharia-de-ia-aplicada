@@ -1,0 +1,65 @@
+section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-large);
+    background-color: var(--color-background);
+    padding: var(--spacing-extra-large);
+    border-radius: var(--spacing-medium);
+}
+
+h2 {
+    font-family: var(--font-heading);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-medium);
+    margin-top: var(--spacing-small);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-medium);
+}
+
+form div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-small);
+}
+
+label {
+    font-family: var(--font-heading);
+    color: var(--color-text);
+    font-weight: bold;
+}
+
+input {
+    font-family: var(--font-body);
+    padding: var(--spacing-medium);
+    border-style: solid;
+    border-color: var(--color-primary);
+    border-radius: var(--spacing-small);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    outline-style: none;
+}
+
+input:focus {
+    border-color: var(--color-action);
+}
+
+button {
+    font-family: var(--font-heading);
+    font-weight: bold;
+    padding: var(--spacing-medium) var(--spacing-large);
+    background-color: var(--color-action);
+    color: var(--color-primary);
+    border-style: none;
+    border-radius: var(--spacing-small);
+    cursor: pointer;
+    margin-top: var(--spacing-large);
+}
+
+button:hover {
+    background-color: var(--color-primary);
+    color: var(--color-action);
+}

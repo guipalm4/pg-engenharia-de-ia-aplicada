@@ -1,0 +1,63 @@
+<main class="receipt-container">
+  <div class="receipt-card">
+    <!-- Success Header -->
+    <div class="receipt-header">
+      <div class="success-icon">
+        <span class="material-symbols-outlined check-icon">check_circle</span>
+      </div>
+      <h1 class="receipt-title">Transferência Realizada</h1>
+      <p class="receipt-amount">{{ valor() | currency:'BRL':'symbol':'1.2-2' }}</p>
+      <div class="divider"></div>
+
+      <!-- Transfer Details -->
+      <div class="details-section">
+        <div class="detail-row">
+          <span class="detail-label">Destinatário</span>
+          <span class="detail-value highlight">{{ nome() }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Data e Hora</span>
+          <div class="detail-time">
+            <span class="detail-value block">24 de Maio, 2024</span>
+            <span class="detail-subvalue">14:30:45</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Instituição</span>
+          <span class="detail-value block">Banco Neon</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">ID da Transação</span>
+          <span class="detail-value mono">PIX9823749823BCN9283</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons Grid -->
+    <div class="actions-grid">
+      <button class="action-btn">
+        <span class="material-symbols-outlined action-icon">share</span>
+        <span class="action-label">Compartilhar</span>
+      </button>
+      <button class="action-btn">
+        <span class="material-symbols-outlined action-icon">file_download</span>
+        <span class="action-label">Baixar PDF</span>
+      </button>
+      <button class="action-btn">
+        <span class="material-symbols-outlined action-icon">print</span>
+        <span class="action-label">Imprimir</span>
+      </button>
+    </div>
+
+    <!-- Main Footer Button -->
+    <div class="footer-actions">
+      <button class="primary-btn">
+        <span class="material-symbols-outlined">home</span>
+        Voltar ao Início
+      </button>
+      <button class="secondary-btn">
+        Fazer nova transferência
+      </button>
+    </div>
+  </div>
+</main>

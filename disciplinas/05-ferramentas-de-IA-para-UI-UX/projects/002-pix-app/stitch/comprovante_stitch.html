@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0f49bd",
+                        "accent": "#39ff14", // Neon Green
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "card-dark": "#1a2233"
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="w-full border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-2 rounded-lg">
+<span class="material-symbols-outlined text-white">account_balance</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">PixBank</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Início</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Extrato</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Cartões</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Investimentos</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full"></span>
+</button>
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxdbVjOynSeMLcs6vNFjp0gVQxVG9ZLA2KYiUUcWSdkridWtAJGsvstzOAEEF57212kbQ-kvXBoVjQ_xVBFS7Kz63eB63apK82hYlERtuoctXJHJ4VjXOzFV_qztks5mNCmY6FsAst6f3_vE-q6x4b0PScPhJkAl3udr5Aps-z_U4N1-NvFf9qOtjMfspk_sUVrzR8jMI2qYUBSzZXgtkD_RFU1-6L-p4yBT6-z7lmlrkqnCT8M6c2URROPNHgnwKWOpi61Lij2BQ"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center p-6 bg-gradient-to-b from-background-dark to-slate-900">
+<!-- Receipt Card Container -->
+<div class="w-full max-w-xl bg-card-dark rounded-xl shadow-2xl border border-slate-800 overflow-hidden">
+<!-- Success Header -->
+<div class="pt-12 pb-8 flex flex-col items-center text-center px-8">
+<div class="mb-6 inline-flex items-center justify-center w-24 h-24 rounded-full bg-accent/10 border-4 border-accent/20">
+<span class="material-symbols-outlined text-accent text-6xl">check_circle</span>
+</div>
+<h1 class="text-accent text-lg font-medium mb-1 tracking-wide uppercase">Transferência Realizada</h1>
+<p class="text-5xl font-bold text-white mb-8 tracking-tighter">R$ 150,00</p>
+<div class="w-full h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent mb-8"></div>
+<!-- Transfer Details -->
+<div class="w-full space-y-6">
+<div class="flex justify-between items-center group">
+<span class="text-slate-400 text-sm">Destinatário</span>
+<span class="text-white font-semibold text-lg">Erick S.</span>
+</div>
+<div class="flex justify-between items-center group">
+<span class="text-slate-400 text-sm">Data e Hora</span>
+<div class="text-right">
+<span class="text-white text-sm block">24 de Maio, 2024</span>
+<span class="text-slate-500 text-xs">14:30:45</span>
+</div>
+</div>
+<div class="flex justify-between items-center group">
+<span class="text-slate-400 text-sm">Instituição</span>
+<span class="text-white text-sm">Banco Neon</span>
+</div>
+<div class="flex justify-between items-center group">
+<span class="text-slate-400 text-sm">ID da Transação</span>
+<span class="text-slate-300 text-xs font-mono">PIX9823749823BCN9283</span>
+</div>
+</div>
+</div>
+<!-- Action Buttons Grid -->
+<div class="grid grid-cols-3 border-t border-slate-800 bg-slate-900/50">
+<button class="flex flex-col items-center gap-2 py-6 hover:bg-primary/10 transition-colors border-r border-slate-800 group">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">share</span>
+<span class="text-xs font-medium text-slate-400 group-hover:text-primary">Compartilhar</span>
+</button>
+<button class="flex flex-col items-center gap-2 py-6 hover:bg-primary/10 transition-colors border-r border-slate-800 group">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">file_download</span>
+<span class="text-xs font-medium text-slate-400 group-hover:text-primary">Baixar PDF</span>
+</button>
+<button class="flex flex-col items-center gap-2 py-6 hover:bg-primary/10 transition-colors group">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">print</span>
+<span class="text-xs font-medium text-slate-400 group-hover:text-primary">Imprimir</span>
+</button>
+</div>
+<!-- Main Footer Button -->
+<div class="p-8 bg-slate-900/80">
+<button class="w-full bg-accent hover:bg-accent/90 text-background-dark font-bold text-lg py-4 rounded-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-accent/20 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">home</span>
+                    Voltar ao Início
+                </button>
+<button class="w-full mt-4 text-slate-500 hover:text-white text-sm font-medium transition-colors">
+                    Fazer nova transferência
+                </button>
+</div>
+</div>
+</main>
+<!-- Map Decoration for Clean Look -->
+<div class="fixed bottom-0 left-0 w-full h-1/4 opacity-10 pointer-events-none -z-10">
+<div class="w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent"></div>
+</div>
+<!-- Background Pattern -->
+<div class="fixed inset-0 -z-20 opacity-[0.03] pointer-events-none overflow-hidden">
+<svg height="100%" width="100%">
+<pattern height="40" id="grid" patternunits="userSpaceOnUse" width="40">
+<path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"></path>
+</pattern>
+<rect fill="url(#grid)" height="100%" width="100%"></rect>
+</svg>
+</div>
+</body></html>

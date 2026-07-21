@@ -1,0 +1,7 @@
+A nova marca do nosso produto financeiro Pix-App deve transmitir confiança e modernidade. 
+A cor principal é um azul noturno profundo (#0A192F), e a cor de destaque para ações principais é um verde neon vibrante (#64FFDA). 
+Para erros, usaremos um vermelho clássico (#FF6B6B). 
+O fundo no modo claro deve ser um cinza quase branco (#F8F9FA) e no modo escuro um chumbo escuro (#112240).
+A fonte primária para títulos será 'Montserrat' e para textos corridos 'Inter'. 
+As cores das letras devem ser branco (#FFF) para o modo escuro e cinza (#112240) para o modo claro.
+Precisamos de espaçamentos baseados em múltiplos de 4px (Pequeno: 8px, Médio: 16px, Grande: 24px, Extra-Grande: 32px).

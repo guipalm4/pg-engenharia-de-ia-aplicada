@@ -1,0 +1,67 @@
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: var(--color-primary);
+    opacity: 0.8;
+    z-index: 1000;
+}
+
+.modal-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-body);
+
+    padding: var(--spacing-large);
+    border-left: var(--spacing-small) solid var(--color-error);
+    border-radius: var(--spacing-small);
+    box-shadow: 0 0 var(--spacing-medium) var(--color-primary);
+
+    width: 100%;
+    max-width: 400px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-medium);
+}
+
+.modal-title {
+    font-family: var(--font-heading);
+    color: var(--color-error);
+    margin: 0;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: var(--color-text);
+    cursor: pointer;
+    padding: var(--spacing-small);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.close-button:hover,
+.close-button:focus-visible {
+    color: var(--color-error);
+    background-color: var(--color-primary);
+    border-radius: var(--spacing-small);
+    outline: none;
+}
+
+.modal-message {
+    color: var(--color-text);
+    font-family: var(--font-body);
+    margin: 0;
+}

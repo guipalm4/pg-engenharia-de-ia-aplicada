@@ -1,0 +1,87 @@
+.pix-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0 var(--spacing-lg);
+}
+
+.transaction-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-medium) var(--spacing-large);
+    /* Derived token fallback using modern CSS color-mix to avoid absolute hex entirely */
+    border-bottom: 1px solid color-mix(in srgb, var(--color-text) 15%, transparent);
+}
+
+.transaction-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-received {
+    color: var(--color-action); /* Derived equivalent to green */
+}
+
+.icon-sent {
+    color: var(--color-error); /* Derived equivalent to red */
+}
+
+.transaction-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.transaction-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--color-text);
+}
+
+.transaction-date {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 12px;
+    /* Greyish text token fallback using modern CSS color-mix to avoid absolute hex entirely */
+    color: color-mix(in srgb, var(--color-text) 60%, transparent);
+}
+
+.transaction-amount {
+    font-family: var(--font-heading);
+    font-size: 16px;
+}
+
+.amount-received {
+    font-weight: 700;
+    color: var(--color-action);
+}
+
+.amount-sent {
+    font-weight: 700;
+    color: var(--color-error);
+}
+
+@media (max-width: 600px) {
+    .transaction-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .transaction-amount {
+        align-self: flex-start;
+        margin-left: 36px;
+    }
+}

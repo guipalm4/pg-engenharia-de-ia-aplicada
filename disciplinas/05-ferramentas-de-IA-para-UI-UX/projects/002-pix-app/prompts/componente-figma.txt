@@ -1,0 +1,1 @@
+Atuando com base no arquivo @prompts/figma-to-angular.md, analise a imagem em anexo e leia as regras estruturais do @figma-specs.txt. Crie o novo componente Angular completo, garantindo a renderização visual idêntica ao Figma, mas consumindo EXCLUSIVAMENTE os nossos tokens do @src/styles.css.
