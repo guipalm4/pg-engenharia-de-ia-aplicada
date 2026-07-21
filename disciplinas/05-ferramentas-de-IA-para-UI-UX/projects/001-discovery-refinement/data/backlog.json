@@ -1,0 +1,26 @@
+[
+{
+"ticket_id": "TKT-101",
+"original_ref": "tkt_01",
+"category": "BUG_CRITICO",
+"severity": "ALTA",
+"user_pain": "O usuário enfrenta uma tela branca (blank screen) ao tentar realizar uma transação Pix.",
+"proposed_action": "Investigar exceções não tratadas no fluxo de confirmação do Pix e implementar um Error Boundary para evitar estados de tela vazia."
+},
+{
+"ticket_id": "TKT-102",
+"original_ref": "tkt_05",
+"category": "BUG_CRITICO",
+"severity": "ALTA",
+"user_pain": "O aplicativo encerra inesperadamente (crash) ao validar datas inexistentes em meses de 30 dias.",
+"proposed_action": "Corrigir a lógica de manipulação de objetos Date no agendamento e adicionar validação de 'max days' por mês no seletor de data."
+},
+{
+"ticket_id": "TKT-103",
+"original_ref": "tkt_06",
+"category": "UX_UI_IMPROVEMENT",
+"severity": "MEDIA",
+"user_pain": "Dificuldade de usabilidade para encontrar comprovantes, exigindo excesso de cliques do usuário.",
+"proposed_action": "Otimizar a arquitetura de informação da tela de extrato e adicionar atalho direto para 'Últimos Comprovantes' na home."
+}
+]

@@ -82,7 +82,7 @@ datasets/*.tar.gz
 secrets/
 config/local/
 
-**/docs/**
+disciplinas/*/docs/**
 **/.tool-versions
 
 # Docker / Observabilidade

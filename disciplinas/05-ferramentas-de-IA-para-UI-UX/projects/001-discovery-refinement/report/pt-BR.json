@@ -1,0 +1,72 @@
+{
+  "SCHEDULE_PIX_INITIAL_LOAD_ERROR": {
+    "title": "Não foi possível carregar",
+    "message": "Não encontramos seus contatos. Tente novamente mais tarde.",
+    "action_label": "Tentar novamente"
+  },
+  "SCHEDULE_PIX_INVALID_DATE": {
+    "title": "Data inválida",
+    "message": "Selecione uma data futura para o agendamento. Hoje não é permitido.",
+    "action_label": "Selecionar data"
+  },
+  "SCHEDULE_PIX_VALUE_TOO_HIGH": {
+    "title": "Valor excede limite",
+    "message": "O valor agendado não pode ser superior a R$ 5.000,00.",
+    "action_label": "Ajustar valor"
+  },
+  "SCHEDULE_PIX_FUTURE_DATE_LIMIT_EXCEEDED": {
+    "title": "Limite da data esgotado",
+    "message": "O limite para agendamentos nesta data já foi atingido.",
+    "action_label": "Escolher outra data"
+  },
+  "SCHEDULE_PIX_INSUFFICIENT_FUNDS": {
+    "title": "Saldo indisponível",
+    "message": "Não há saldo suficiente para realizar esta transferência na data agendada.",
+    "action_label": "Verificar saldo"
+  },
+  "SCHEDULE_PIX_DESTINATION_NOT_FOUND": {
+    "title": "Destinatário não encontrado",
+    "message": "Não foi possível encontrar o destinatário. Verifique a chave Pix.",
+    "action_label": "Verificar chave"
+  },
+  "SCHEDULE_PIX_CONNECTION_ERROR": {
+    "title": "Problema de conexão",
+    "message": "Não foi possível agendar. Verifique sua conexão e tente novamente.",
+    "action_label": "Tentar novamente"
+  },
+  "SCHEDULE_PIX_AUTHENTICATION_ERROR": {
+    "title": "Falha na autenticação",
+    "message": "Sua sessão expirou ou a senha está incorreta. Tente novamente.",
+    "action_label": "Tentar autenticar"
+  },
+  "SCHEDULE_PIX_UNEXPECTED_ERROR": {
+    "title": "Agendamento falhou",
+    "message": "Ocorreu um erro inesperado. Tente agendar mais tarde.",
+    "action_label": "Tentar novamente"
+  },
+  "SCHEDULE_PIX_CANT_CANCEL_TODAY": {
+    "title": "Não é possível cancelar",
+    "message": "Este agendamento já está sendo processado e não pode ser cancelado.",
+    "action_label": "Ok"
+  },
+  "SCHEDULE_PIX_SUCCESS": {
+    "title": "Agendamento confirmado",
+    "message": "Seu Pix foi agendado com sucesso para a data selecionada.",
+    "action_label": "Ver comprovante"
+  },
+  "SCHEDULE_PIX_CANCEL_SUCCESS": {
+    "title": "Agendamento cancelado",
+    "message": "O agendamento Pix foi cancelado com sucesso.",
+    "action_label": "Ok"
+  },
+  "SCHEDULE_PIX_INSTANT_TRANSFER_PROMPT": {
+    "title": "Transferência para hoje",
+    "message": "Deseja realizar esta transferência agora ou agendá-la para uma data futura?",
+    "action_label": "Realizar agora"
+  },
+    "SCHEDULE_PIX_INSTANT_TRANSFER_DECLINED": {
+    "title": "Agendamento concluído",
+    "message": "Seu Pix foi agendado para a data futura selecionada.",
+    "action_label": "Ver comprovante"
+  }
+}
