@@ -15,6 +15,7 @@
 | 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 7 projetos |
 | 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 6 projetos |
 | 04 | [Criação de Agentes](#04--criação-de-agentes) | 7 projetos |
+| 05 | [Ferramentas de IA para UX & UI](#05--ferramentas-de-ia-para-ux--ui) | 1 projeto |
 
 ---
 
@@ -142,6 +143,18 @@ Explora a construção de agentes autônomos do zero: o ciclo perceber→planeja
 | 005 | [Arquiteturas Cognitivas: ReAct Plugável sobre o Mesmo Runtime](disciplinas/04-criacao-de-agentes/projects/005-arquiteturas-cognitivas/README.md) | Generaliza o `formato_saida` do planejador para ser lido do contrato (em vez de fixo no código) e introduz a arquitetura ReAct via flag `--arquitetura`, que sobrescreve `planner.md`/`executor.md` do agente em `architectures/react/` sem alterar o runtime — campo `raciocinio` obrigatório força a LLM a explicitar o que sabe, o que falta e por que escolheu a próxima ação, visível como `[raciocinio]` no console e persistido no `trace.json` |
 | 006 | [Evals e Frameworks de Mercado: Comparando Arquiteturas Cognitivas](disciplinas/04-criacao-de-agentes/projects/006-evals-e-frameworks-mercado/README.md) | Adiciona as arquiteturas Plan-and-Execute (plano gerado 1x, executado sem nova chamada à LLM) e Reflection (autocrítica com limiar de aprovação e teto de reflexões), e um eval harness (`benchmark`/`comparar`) que roda um dataset de 5 incidentes contra as 4 arquiteturas (padrão, ReAct, Plan-and-Execute, Reflection), medindo taxa de conclusão, tokens, cobertura de ferramentas e tempo — mais `equivalencias/`, mapeando linha a linha os mesmos contratos para `AgentExecutor`/`create_react_agent` (LangChain) e `StateGraph` (LangGraph) |
 | 007 | [De Mock para Real: Padrão Adapter e Tools REST](disciplinas/04-criacao-de-agentes/projects/007-de-mock-para-real/README.md) | Introduz o padrão Adapter no runtime: skills do `monitor-agent` declaram `tipo_implementacao: rest` + blocos `conexao`/`limites` no contrato, `_resolver_adapter` (`ferramentas.py`) despacha dinamicamente para `adapters/rest_adapter.py` (HTTP com retries, timeout e auth `X-API-Key` lida do `.env`) contra uma API FastAPI local (`api_local/server.py`, 3 endpoints com dados consistentes) — mock continua sendo o default (backward compatible, fallback em `ImportError`), mock e real convivem no mesmo agente, e cada resultado REST carrega marcas de proveniência (`_adapter`, `_latencia_ms`) no `trace.json` |
+
+---
+
+## 05 · Ferramentas de IA para UX & UI
+
+Explora a IA como camada de Engenharia de Software aplicada ao ciclo de produto digital: discovery e refinamento de requisitos, prototipação, agentes de CLI, automação/MCP e integração de IA em aplicações reais.
+
+### Discovery e Refinamento de Requisitos
+
+| # | Projeto | O que demonstra |
+|---|---------|----------------|
+| 001 | [Discovery & Refinement: Requisitos, Dados e UX Writing com IA](disciplinas/05-ferramentas-de-IA-para-UI-UX/projects/001-discovery-refinement/README.md) | Pipeline de três estágios via System Instructions do Google AI Studio: refina um requisito ambíguo de Pix Agendado em análise de risco e fluxo Mermaid, sanitiza/prioriza feedbacks brutos de usuários em backlog, e gera mensagens de UX writing padronizadas em JSON |
 
 ---
 
