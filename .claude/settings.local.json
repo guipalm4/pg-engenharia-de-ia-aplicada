@@ -6,7 +6,8 @@
       "mcp__context7__resolve-library-id",
       "mcp__context7__query-docs",
       "Bash(git -C /Users/guipalm4/Dev/Projects/Personal/unipds-engenharia-de-ia-aplicada status -- \"disciplinas/01-fundamentos-IA-LLM/projects/exemplo-006-playwright-testes/\")",
-      "Bash(git restore *)"
+      "Bash(git restore *)",
+      "Bash(xargs -r git add)"
     ]
   }
 }

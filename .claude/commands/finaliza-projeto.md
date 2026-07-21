@@ -28,9 +28,18 @@ find "$PROJECT" -type f \
   | sort | while read f; do printf "\n=== %s ===\n" "$f"; cat "$f"; done
 ```
 
-### 3. Escreve `README.md` no diretório do projeto
+### 3. Preserva o README existente (mecânico, sem julgamento) e escreve o novo
 
-Baseie-se exclusivamente no output do passo 2. Não inventar.
+```bash
+if [ -f "$PROJECT/README.md" ] && [ ! -f "$PROJECT/README.original.md" ]; then
+  cp "$PROJECT/README.md" "$PROJECT/README.original.md"
+  echo "Original preservado em $PROJECT/README.original.md"
+fi
+```
+
+Sempre rode isso antes de escrever, sem exceção — mesmo que o README pareça boilerplate de scaffold. Se `README.original.md` já existir, não mexer nele (é a cópia original; rodar o comando de novo não sobrescreve).
+
+Escreve o novo `README.md` baseando-se exclusivamente no output do passo 2. Não inventar.
 
 ```
 # Exemplo NNN — <Título descritivo>
@@ -64,6 +73,9 @@ Baseie-se exclusivamente no output do passo 2. Não inventar.
 ## Aprendizados
 - [x] <insight concreto>
 
+## Documento Original          ← só se existir README.original.md
+> Conteúdo original do README (scaffold ou material do professor) preservado em [`README.original.md`](./README.original.md).
+
 ## Referências
 - [nome](url)
 ```
@@ -73,6 +85,8 @@ Seções marcadas com `←` são opcionais; as demais são obrigatórias.
 ### 4. Atualiza o índice raiz
 
 Lê o `README.md` raiz, adiciona o projeto na seção e tema corretos, atualiza a contagem de projetos.
+
+- Se a disciplina ainda não tiver linha na tabela `## Disciplinas` nem seção própria, crie as duas (nova linha na tabela + `## NN · <Nome da disciplina>` com pelo menos um tema).
 
 ### 5. Commit 1 — documentação
 

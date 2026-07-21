@@ -28,8 +28,8 @@
    Do instead: sempre que adicionar arquivos relevantes, atualizar a seção "Estrutura do Projeto" para refletir a árvore real.
 
 ## Estrutura do Repositório
-1. **[2026-04-06] Projetos ficam em `disciplinas/<disciplina>/projects/<nome>/`**
-   Do instead: ao criar novo projeto, respeitar esse caminho. Disciplina atual ativa: `01-fundamentos-IA-LLM`.
+1. **[2026-07-21] Projetos ficam em `disciplinas/<disciplina>/projects/NNN-slug/`**
+   Do instead: ao criar novo projeto, respeitar esse caminho e a numeração sequencial (mesmo padrão em todas as disciplinas, incluindo a 05, migrada de `modulo-XX/<app>` pra `NNN-slug` em 2026-07-21). Disciplina atual ativa: `05-ferramentas-de-IA-para-UI-UX` (01–04 concluídas, permanecem no repo).
 
 2. **[2026-04-06] `disciplinas/*.md` são documentação humana / ponteiros — não fonte de verdade**
    Do instead: não editar como se fossem configuração; apontar para `.cursor/` quando relevante.
