@@ -15,7 +15,7 @@
 | 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 7 projetos |
 | 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 6 projetos |
 | 04 | [Criação de Agentes](#04--criação-de-agentes) | 7 projetos |
-| 05 | [Ferramentas de IA para UX & UI](#05--ferramentas-de-ia-para-ux--ui) | 2 projetos |
+| 05 | [Ferramentas de IA para UX & UI](#05--ferramentas-de-ia-para-ux--ui) | 3 projetos |
 
 ---
 
@@ -161,6 +161,12 @@ Explora a IA como camada de Engenharia de Software aplicada ao ciclo de produto 
 | # | Projeto | O que demonstra |
 |---|---------|----------------|
 | 002 | [PixApp: Figma/Stitch to Code com Design Tokens em Angular 21](disciplinas/05-ferramentas-de-IA-para-UI-UX/projects/002-pix-app/README.md) | App Angular 21 (Standalone Components) de transferência Pix onde cada tela nasce de um prompt que converte briefing de branding, spec do Figma Dev Mode ou HTML bruto do Google Stitch em componentes que consomem exclusivamente CSS Custom Properties como Design Tokens, com acessibilidade (WAI-ARIA) especificada via prompt dedicado |
+
+### Workflow Spec-Driven com Agentes de IA
+
+| # | Projeto | O que demonstra |
+|---|---------|----------------|
+| 003 | [CFP Platform: Nx Monorepo com NestJS + Angular 21](disciplinas/05-ferramentas-de-IA-para-UI-UX/projects/003-cfp-platform/README.md) | Plataforma de Call for Papers construída em monorepo Nx (API NestJS + frontend Angular 21 com Signals) seguindo workflow spec-driven via OpenSpec — cada feature nasce de proposal/design/spec versionados (`openspec/`) antes da implementação, com DTOs compartilhados entre backend e frontend |
 
 ---
 
