@@ -15,7 +15,7 @@
 | 02 | [APIs de IA Generativa e Prompt Engineering](#02--apis-de-ia-generativa-e-prompt-engineering) | 7 projetos |
 | 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 6 projetos |
 | 04 | [Criação de Agentes](#04--criação-de-agentes) | 7 projetos |
-| 05 | [Ferramentas de IA para UX & UI](#05--ferramentas-de-ia-para-ux--ui) | 4 projetos |
+| 05 | [Ferramentas de IA para UX & UI](#05--ferramentas-de-ia-para-ux--ui) | 5 projetos |
 
 ---
 
@@ -168,6 +168,12 @@ Explora a IA como camada de Engenharia de Software aplicada ao ciclo de produto 
 |---|---------|----------------|
 | 003 | [CFP Platform: Nx Monorepo com NestJS + Angular 21](disciplinas/05-ferramentas-de-IA-para-UI-UX/projects/003-cfp-platform/README.md) | Plataforma de Call for Papers construída em monorepo Nx (API NestJS + frontend Angular 21 com Signals) seguindo workflow spec-driven via OpenSpec — cada feature nasce de proposal/design/spec versionados (`openspec/`) antes da implementação, com DTOs compartilhados entre backend e frontend |
 | 004 | [CFP Platform v1: E2E com Cypress Tradicional e Cypress AI](disciplinas/05-ferramentas-de-IA-para-UI-UX/projects/004-cfp-platform-v1/README.md) | Evolução do CFP Platform com suíte de testes E2E em Cypress para o fluxo de cadastro de evento, comparando testes tradicionais por seletor com testes semânticos via `cy.prompt` (Cypress AI) — precedidos por reconhecimento da UI real via Playwright MCP, tudo formalizado como uma nova mudança OpenSpec (`create-event-tests`) |
+
+### IA Generativa Integrada em Aplicação Real
+
+| # | Projeto | O que demonstra |
+|---|---------|----------------|
+| 005 | [Brag-Bot: Gerador de Brag Documents com Genkit + Gemini](disciplinas/05-ferramentas-de-IA-para-UI-UX/projects/005-brag-bot/README.md) | App Angular 21 SSR (Express) que transforma um relato informal de conquista profissional em um Brag Document estruturado (contexto, impacto, métricas) via flow Genkit com output JSON forçado por schema Zod, rodando sobre o Gemini 2.5 Flash |
 
 ---
 
