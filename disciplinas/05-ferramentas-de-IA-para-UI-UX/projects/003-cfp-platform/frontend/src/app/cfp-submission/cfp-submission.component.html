@@ -1,0 +1,98 @@
+<div class="cfp-container">
+  <section class="glass-card">
+    <h1 id="cfp-title">Call for Papers</h1>
+    <p class="subtitle">Submit your proposal for our upcoming conference.</p>
+
+    <form (ngSubmit)="submit()" aria-labelledby="cfp-title" class="cfp-form">
+      <!-- Name Field -->
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input 
+          type="text" 
+          id="name" 
+          [(ngModel)]="name" 
+          name="name" 
+          required 
+          aria-required="true"
+          placeholder="Juan Pérez"
+          [disabled]="submissionStatus() === 'loading'"
+        />
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input 
+          type="email" 
+          id="email" 
+          [(ngModel)]="email" 
+          name="email" 
+          required 
+          aria-required="true"
+          placeholder="juan@example.com"
+          [disabled]="submissionStatus() === 'loading'"
+        />
+      </div>
+
+      <!-- Talk Title Field -->
+      <div class="form-group">
+        <label for="talkTitle">Talk Title</label>
+        <input 
+          type="text" 
+          id="talkTitle" 
+          [(ngModel)]="talkTitle" 
+          name="talkTitle" 
+          required 
+          aria-required="true"
+          placeholder="Angular Signals in Practice"
+          [disabled]="submissionStatus() === 'loading'"
+        />
+      </div>
+
+      <!-- GDE Checkbox -->
+      <div class="form-group checkbox-group">
+        <input 
+          type="checkbox" 
+          id="isGDE" 
+          [(ngModel)]="isGDE" 
+          name="isGDE"
+          [disabled]="submissionStatus() === 'loading'"
+        />
+        <label for="isGDE">Are you a Google Developer Expert (GDE)?</label>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="submit-btn" 
+          [disabled]="submissionStatus() === 'loading'"
+        >
+          @if (submissionStatus() !== "loading") {
+            <span>Submit Proposal</span>
+          } @else {
+            <span class="spinner">Submitting...</span>
+          }
+        </button>
+
+        <a routerLink="/dashboard" class="dashboard-link">
+          View Dashboard
+        </a>
+      </div>
+
+      <!-- Feedback Messages -->
+      <div role="alert" aria-live="polite" class="feedback">
+        @if (submissionStatus() === "success") {
+          <p class="success-msg">
+            ✓ Proposal submitted successfully!
+          </p>
+        }
+        @if (submissionStatus() === "error") {
+          <p class="error-msg">
+            ⚠ {{ errorMessage() }}
+          </p>
+        }
+      </div>
+    </form>
+  </section>
+</div>

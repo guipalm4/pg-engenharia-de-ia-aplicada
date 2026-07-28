@@ -1,0 +1,108 @@
+<div class="cfp-container">
+  <section class="glass-card">
+    <h1 id="event-title">Cadastro de Local do Evento</h1>
+    <p class="subtitle">Registre um novo local para a conferência.</p>
+
+    <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" aria-labelledby="event-title" class="cfp-form">
+      <!-- Nome Field -->
+      <div class="form-group">
+        <label for="nome">Nome do Local</label>
+        <input
+          type="text"
+          id="nome"
+          formControlName="nome"
+          required
+          aria-required="true"
+          placeholder="Ex: Centro de Convenções"
+          [disabled]="registrationStatus() === 'loading'"
+        />
+        @if (eventForm.get('nome')?.invalid && eventForm.get('nome')?.touched) {
+          <span class="error-text">O nome é obrigatório.</span>
+        }
+      </div>
+
+      <!-- Endereço Field -->
+      <div class="form-group">
+        <label for="endereco">Endereço</label>
+        <input
+          type="text"
+          id="endereco"
+          formControlName="endereco"
+          required
+          aria-required="true"
+          placeholder="Ex: Av. Principal, 123"
+          [disabled]="registrationStatus() === 'loading'"
+        />
+        @if (eventForm.get('endereco')?.invalid && eventForm.get('endereco')?.touched) {
+          <span class="error-text">O endereço é obrigatório.</span>
+        }
+      </div>
+
+      <!-- Capacidade Field -->
+      <div class="form-group">
+        <label for="capacidade">Capacidade</label>
+        <input
+          type="number"
+          id="capacidade"
+          formControlName="capacidade"
+          required
+          aria-required="true"
+          placeholder="Ex: 500"
+          [disabled]="registrationStatus() === 'loading'"
+        />
+        @if (eventForm.get('capacidade')?.invalid && eventForm.get('capacidade')?.touched) {
+          <span class="error-text">Informe uma capacidade válida (mínimo 1).</span>
+        }
+      </div>
+
+      <!-- Data Field -->
+      <div class="form-group">
+        <label for="data">Data do Evento</label>
+        <input
+          type="date"
+          id="data"
+          formControlName="data"
+          required
+          aria-required="true"
+          [disabled]="registrationStatus() === 'loading'"
+        />
+        @if (eventForm.get('data')?.invalid && eventForm.get('data')?.touched) {
+          <span class="error-text">A data é obrigatória.</span>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="submit-btn"
+          [disabled]="registrationStatus() === 'loading'"
+        >
+          @if (registrationStatus() !== "loading") {
+            <span>Cadastrar Evento</span>
+          } @else {
+            <span class="spinner">Cadastrando...</span>
+          }
+        </button>
+
+        <a routerLink="/dashboard" class="dashboard-link">
+          Ver Dashboard
+        </a>
+      </div>
+
+      <!-- Feedback Messages -->
+      <div role="alert" aria-live="polite" class="feedback">
+        @if (registrationStatus() === "success") {
+          <p class="success-msg">
+            ✓ Evento cadastrado com sucesso!
+          </p>
+        }
+        @if (registrationStatus() === "error") {
+          <p class="error-msg">
+            ⚠ {{ errorMessage() }}
+          </p>
+        }
+      </div>
+    </form>
+  </section>
+</div>

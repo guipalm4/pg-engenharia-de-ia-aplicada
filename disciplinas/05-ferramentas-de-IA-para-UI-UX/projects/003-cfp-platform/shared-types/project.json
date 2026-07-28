@@ -1,0 +1,21 @@
+{
+  "name": "shared-types",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "shared-types/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/shared-types",
+        "main": "shared-types/src/index.ts",
+        "tsConfig": "shared-types/tsconfig.lib.json",
+        "assets": ["shared-types/*.md"],
+        "format": ["cjs"],
+        "generatePackageJson": true
+      }
+    }
+  }
+}
