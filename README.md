@@ -16,6 +16,7 @@
 | 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 6 projetos |
 | 04 | [Criação de Agentes](#04--criação-de-agentes) | 7 projetos |
 | 05 | [Ferramentas de IA para UX & UI](#05--ferramentas-de-ia-para-ux--ui) | 5 projetos |
+| 06 | [AI-Ops e Engenharia Agêntica](#06--ai-ops-e-engenharia-agêntica) | 1 projeto |
 
 ---
 
@@ -174,6 +175,16 @@ Explora a IA como camada de Engenharia de Software aplicada ao ciclo de produto 
 | # | Projeto | O que demonstra |
 |---|---------|----------------|
 | 005 | [Brag-Bot: Gerador de Brag Documents com Genkit + Gemini](disciplinas/05-ferramentas-de-IA-para-UI-UX/projects/005-brag-bot/README.md) | App Angular 21 SSR (Express) que transforma um relato informal de conquista profissional em um Brag Document estruturado (contexto, impacto, métricas) via flow Genkit com output JSON forçado por schema Zod, rodando sobre o Gemini 2.5 Flash |
+
+---
+
+## 06 · AI-Ops e Engenharia Agêntica
+
+Trilha de laboratórios incrementais de AI-Ops e Engenharia de Plataforma: cada projeto `NNN` reaproveita o código do `NNN-1` anterior e evolui um recorte pontual, do conceito de IA consultiva até um ecossistema de agentes autônomos que operam infraestrutura real.
+
+| # | Projeto | O que demonstra |
+|---|---------|----------------|
+| 001 | [Da Automação à Inteligência Agêntica](disciplinas/06-aiops-engenharia-agentica/projects/001-da-automacao-a-inteligencia-agentica/README.md) | Primeiro agente CrewAI da trilha (Arquiteto de Cloud, rodando sobre Groq `llama-3.1-8b-instant`) que consulta uma tool de políticas de compliance antes de desenhar um bucket S3 — passagem de IA generativa solta para IA consultiva |
 
 ---
 
