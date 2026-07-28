@@ -17,16 +17,71 @@ git ls-files --others --exclude-standard -- "$PROJECT" | grep -vx "${PROJECT#./}
 
 ### 2. Dump dos arquivos-fonte (script único — leia só o output)
 
+Primeiro, detecta se existe um projeto anterior na mesma disciplina, pela convenção `NNN-slug`
+(ex: `disciplinas/04-criacao-de-agentes/projects/002-runtime` → anterior é `001-contratos`;
+`disciplinas/06-aiops-engenharia-agentica/projects/002-*` → anterior é `001-*`). Isso independe
+do nome da disciplina — funciona para qualquer trilha que reaproveite o projeto `NNN-1` como base
+do `NNN` (padrão já visto em `04-criacao-de-agentes` e `06-aiops-engenharia-agentica`).
+
+```bash
+DISC_DIR=$(dirname "$PROJECT")
+NUM=$(basename "$PROJECT" | grep -oE '^[0-9]+')
+PREV=""
+if [ -n "$NUM" ]; then
+  PREV_NUM=$(printf "%03d" $((10#$NUM - 1)))
+  PREV=$(find "$DISC_DIR" -maxdepth 1 -type d -name "${PREV_NUM}-*" | head -1)
+fi
+echo "PREV=$PREV"
+```
+
+**Se `PREV` vier vazio** (projeto standalone, sem predecessor), dump completo de sempre:
 ```bash
 find "$PROJECT" -type f \
-  ! -path "*/node_modules/*" \
+  ! -path "*/node_modules/*" ! -path "*/.venv/*" ! -path "*/__pycache__/*" \
   ! -name "package-lock.json" \
   ! -name "yarn.lock" \
   ! -name "*.lock" \
   ! -name ".DS_Store" \
   ! -name "README.md" \
+  ! -name ".env" ! -name ".env.*" \
   | sort | while read f; do printf "\n=== %s ===\n" "$f"; cat "$f"; done
 ```
+
+`.env`/`.env.*` ficam de fora do dump por padrão: são segredos (API keys, tokens) e imprimi-los no
+contexto é um risco mesmo quando o arquivo já está no `.gitignore` e nunca seria commitado — "não vai
+pro git" não é o mesmo que "seguro imprimir". Se o `.env` tiver alguma variável não-sensível que
+realmente precise aparecer no README (ex: nome de uma env var esperada, sem o valor), citar isso à mão
+depois de ler o arquivo separadamente — nunca via dump automático.
+
+**Se `PREV` existir** (projeto incremental): o conteúdo pedagógico da aula é o *delta* em relação
+ao anterior — o resto é runtime herdado que já foi documentado no README de `PREV`. Reler e recitar
+tudo de novo é ruído e é a causa mais comum de dump grande demais (>100KB, trunca na primeira leitura).
+Dump só do que mudou estruturalmente + conteúdo completo dos arquivos novos/alterados:
+```bash
+diff -rq "$PREV" "$PROJECT" -x ".venv" -x "__pycache__" -x ".DS_Store" -x "README.md" -x "README.original.md" -x "*.lock" -x ".env" -x ".env.*"
+
+echo "=== Conteúdo completo dos arquivos novos/alterados ==="
+{
+  diff -rq "$PREV" "$PROJECT" -x ".venv" -x "__pycache__" -x ".DS_Store" -x "README.md" -x "README.original.md" -x "*.lock" -x ".env" -x ".env.*" \
+    | grep "^Only in $PROJECT" | sed "s|^Only in ||;s|: |/|"
+  diff -rq "$PREV" "$PROJECT" -x ".venv" -x "__pycache__" -x ".DS_Store" -x "README.md" -x "README.original.md" -x "*.lock" -x ".env" -x ".env.*" \
+    | grep " differ\$" | awk '{print $4}'
+} | while read f; do
+  if [ -d "$f" ]; then
+    find "$f" -type f ! -path "*/.venv/*" ! -path "*/__pycache__/*" ! -name ".DS_Store" \
+      | while read sf; do printf "\n=== %s ===\n" "$sf"; cat "$sf"; done
+  else
+    printf "\n=== %s ===\n" "$f"; cat "$f"
+  fi
+done
+```
+
+Se essa segunda seção vier vazia mesmo com `PREV` existindo (ex: 002 reaproveitou 001 byte a byte, sem
+mudar código), o delta é conceitual, não de arquivo — ler o README de `PREV` e escrever a Descrição em
+cima do que a aula explorou de diferente sobre o mesmo runtime, sem inventar um "o que mudou" que não existe.
+
+Se mesmo assim o dump vier grande e a primeira leitura vier truncada (`[Truncated: PARTIAL view...]`),
+usar `Read` com `offset`/`limit` paginado até cobrir tudo — não escrever o README com base numa página parcial.
 
 ### 3. Preserva o README existente (mecânico, sem julgamento) e escreve o novo
 
@@ -50,6 +105,8 @@ Escreve o novo `README.md` baseando-se exclusivamente no output do passo 2. Não
 
 ## Descrição
 <2–4 parágrafos: o que faz, qual problema resolve, relação com a disciplina>
+<se `PREV` existir (passo 2): abrir explicando o que mudou em relação ao projeto anterior — o delta
+é o conteúdo pedagógico da aula. Não redocumentar comportamento herdado que já está no README de `PREV`>
 
 ## Tecnologias e Ferramentas
 - [x] <tecnologia>
