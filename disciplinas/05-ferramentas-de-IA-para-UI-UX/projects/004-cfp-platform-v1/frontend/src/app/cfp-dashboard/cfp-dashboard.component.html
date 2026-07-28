@@ -1,0 +1,57 @@
+<div class="cfp-container">
+  <div class="glass-card">
+    <header class="header">
+      <h1 class="title">CFP Dashboard</h1>
+      <p class="subtitle">Review all submitted talks and speaker details.</p>
+    </header>
+
+    @if (isLoading()) {
+      <div class="status-box" role="status" aria-busy="true">
+        <p>Loading submissions...</p>
+      </div>
+    } @else if (error()) {
+      <div class="status-box error" role="alert">
+        <p>{{ error() }}</p>
+        <button class="btn btn-secondary" (click)="fetchSpeakers()">Retry</button>
+      </div>
+    } @else if (submissions().length === 0) {
+      <div class="status-box">
+        <p>No submissions found. Be the first to submit a talk!</p>
+        <a routerLink="/talks/new" class="btn btn-primary">Submit a Talk</a>
+      </div>
+    } @else {
+      <div class="table-container" role="region" aria-label="Submitted talks">
+          <table class="glass-table">
+            <thead>
+              <tr>
+                <th scope="col">Speaker Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Talk Title</th>
+                <th scope="col">GDE Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (speaker of submissions(); track speaker.id) {
+                <tr>
+                  <td>{{ speaker.name }}</td>
+                  <td>{{ speaker.email }}</td>
+                  <td>{{ speaker.talkTitle }}</td>
+                  <td>
+                    @if (speaker.isGDE) {
+                      <span class="badge badge-gde">GDE</span>
+                    } @else {
+                      <span class="badge">Speaker</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+      </div>
+      
+      <div class="actions">
+        <a routerLink="/talks/new" class="btn btn-secondary">Back to Submission</a>
+      </div>
+    }
+  </div>
+</div>
