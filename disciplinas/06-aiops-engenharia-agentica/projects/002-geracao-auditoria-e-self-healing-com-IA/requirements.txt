@@ -1,0 +1,7 @@
+# Framework Base de Agentes
+crewai
+crewai[tools]
+litellm
+
+# Ferramentas de Infra e Segurança
+checkov==3.3.8
