@@ -16,7 +16,7 @@
 | 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 6 projetos |
 | 04 | [Criação de Agentes](#04--criação-de-agentes) | 7 projetos |
 | 05 | [Ferramentas de IA para UX & UI](#05--ferramentas-de-ia-para-ux--ui) | 5 projetos |
-| 06 | [AI-Ops e Engenharia Agêntica](#06--ai-ops-e-engenharia-agêntica) | 1 projeto |
+| 06 | [AI-Ops e Engenharia Agêntica](#06--ai-ops-e-engenharia-agêntica) | 2 projetos |
 
 ---
 
@@ -185,6 +185,7 @@ Trilha de laboratórios incrementais de AI-Ops e Engenharia de Plataforma: cada 
 | # | Projeto | O que demonstra |
 |---|---------|----------------|
 | 001 | [Da Automação à Inteligência Agêntica](disciplinas/06-aiops-engenharia-agentica/projects/001-da-automacao-a-inteligencia-agentica/README.md) | Primeiro agente CrewAI da trilha (Arquiteto de Cloud, rodando sobre Groq `llama-3.1-8b-instant`) que consulta uma tool de políticas de compliance antes de desenhar um bucket S3 — passagem de IA generativa solta para IA consultiva |
+| 002 | [Geração, Auditoria e Self-Healing com IA](disciplinas/06-aiops-engenharia-agentica/projects/002-geracao-auditoria-e-self-healing-com-IA/README.md) | Pipeline sequencial de dois agentes: o arquiteto grava um `main.tf` real em disco e um Engenheiro de DevSecOps o audita em duas camadas — Checkov (CLI real, via `subprocess`) para segurança genérica e OPA simulado para governança corporativa — realimentando as falhas ao gerador |
 
 ---
 
