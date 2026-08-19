@@ -7,6 +7,7 @@ members = [
     "aula-001-da-automacao-a-inteligencia-agentica",
     "aula-002-geracao-auditoria-e-self-healing-com-ia",
     "aula-003-orquestracao-sre-assistida-por-ia",
+    "aula-004-reduzindo-mttr-com-inteligencia-agentica",
 ]
 
 [[package]]
@@ -212,6 +213,30 @@ requires-dist = [
 name = "aula-003-orquestracao-sre-assistida-por-ia"
 version = "0"
 source = { virtual = "003-orquestracao-sre-assistida-por-ia" }
+dependencies = [
+    { name = "crewai", extra = ["tools"] },
+    { name = "litellm" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "crewai" },
+    { name = "crewai", extras = ["tools"] },
+    { name = "litellm" },
+]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=8,<9" }]
+
+[[package]]
+name = "aula-004-reduzindo-mttr-com-inteligencia-agentica"
+version = "0"
+source = { virtual = "004-reduzindo-mttr-com-inteligencia-agentica" }
 dependencies = [
     { name = "crewai", extra = ["tools"] },
     { name = "litellm" },
