@@ -14,16 +14,19 @@ from tools.k8s_ops import (
     generate_k8s_manifest,
 )
 
+# Troque para "error_rate: 8%, latency: 80ms" para exercitar o caminho de ROLLBACK.
+CANARY_METRICS = "error_rate: 1%, latency: 80ms"
+
 # 1. Configurar Agentes
 # O Arquiteto gera o YAML e o SRE "aplica" e analisa o sucesso
 architect = get_architect(tools=[generate_k8s_manifest])
 sre = get_sre_agent(tools=[apply_k8s_manifest, analyze_canary_metrics])
 
 # 2. Definir Tarefas do Fluxo GitOps
+# A imagem do container e a forma do readinessProbe NÃO são pedidas aqui: elas são
+# garantidas pelo template em tools/k8s_ops.py, onde o LLM não tem como violá-las.
 task_design = Task(
-    description="""Desenhe o manifesto K8s para o app 'nexus-api-unipds' com 2 réplicas na porta 80.
-    ATENÇÃO: Como estamos em um ambiente de laboratório, utilize obrigatoriamente a imagem publica 'nginx:latest' para todos os containers.
-    ATENÇÃO 2: Na API do k8s, se for sugerir tempo de espera no probe, utilize obrigatoriamente `initialDelaySeconds` (e nunca apenas `initialDelay`).""",
+    description="Desenhe o manifesto K8s para o app 'nexus-api-unipds' com 2 réplicas na porta 80.",
     expected_output="Arquivo YAML criado no disco com sintaxe Kubernetes V1 estrita.",
     agent=architect
 )
@@ -35,7 +38,11 @@ task_sync = Task(
 )
 
 task_monitor = Task(
-    description="Após o deploy, analise estas métricas: 'error_rate: 1%, latency: 80ms'. Decida o sucesso do rollout.",
+    description=(
+        f"Após o deploy, analise estas métricas com a ferramenta analyze_canary_metrics, "
+        f"repassando a string EXATAMENTE como está: '{CANARY_METRICS}'. "
+        f"Decida o sucesso do rollout com base na resposta da ferramenta."
+    ),
     expected_output="Decisão final sobre o estado do deploy (Healthy/Unhealthy).",
     agent=sre,
     tools=[analyze_canary_metrics]
