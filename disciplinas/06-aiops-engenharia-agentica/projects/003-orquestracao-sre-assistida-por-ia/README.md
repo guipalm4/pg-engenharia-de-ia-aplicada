@@ -27,7 +27,7 @@ O `nexus-api-unipds-k8s.yaml` versionado aqui é **saída do agente**, não cód
 - [x] **Python 3.12** — runtime dos agentes
 - [x] **CrewAI** (`crewai`, `crewai[tools]`) — orquestração `Agent`/`Task`/`Crew` em processo sequencial
 - [x] **LiteLLM** — camada de abstração de LLM usada pelo CrewAI
-- [x] **Groq** (`llama-3.1-8b-instant`) — motor de inferência dos agentes
+- [x] **Groq** (`openai/gpt-oss-20b`) — motor de inferência dos agentes (free tier; substitui o `llama-3.1-8b-instant` do material original, retirado do catálogo da Groq)
 - [x] **Kubernetes / `kubectl`** — alvo das operações; `kubectl apply` invocado via `subprocess`
 - [x] **YAML (Kubernetes API v1 / apps/v1)** — formato do artefato gerado (`Deployment` + `Service`)
 - [x] **pytest** — testes dos helpers de decisão (dependency group `dev`)

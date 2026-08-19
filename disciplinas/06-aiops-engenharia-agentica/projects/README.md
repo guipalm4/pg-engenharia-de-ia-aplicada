@@ -78,6 +78,19 @@ Para rodar um CLI instalado como dependência (ex.: o Checkov da aula 002):
 uv run checkov -f main.tf --quiet --compact
 ```
 
+### ⚠️ Modelo e limites do free tier
+
+O material original usava `groq/llama-3.1-8b-instant`, que **foi retirado do catálogo da Groq** — a API responde `model_not_found` e nenhuma das três aulas roda. As aulas usam agora `groq/openai/gpt-oss-20b`, o menor modelo de uso geral disponível com tool calling.
+
+Duas armadilhas do free tier, ambas já resolvidas em `core/llm_config.py`:
+
+| Sintoma | Causa | O que o código faz |
+|---|---|---|
+| `tool_use_failed: Failed to parse tool call arguments as JSON` | O `gpt-oss` é modelo de raciocínio: no esforço padrão gasta o orçamento de saída pensando e trunca o JSON do tool call no meio | `reasoning_effort="low"` — derruba o raciocínio para ~10 tokens |
+| `rate_limit_exceeded` | O free tier permite **8.000 tokens/minuto**; pedir `max_tokens` acima disso é recusado de saída | `max_tokens=4096`, folgado para os artefatos das aulas (~900 tokens) |
+
+Rodar as três aulas em sequência pode esbarrar no limite por minuto — se acontecer, espere um minuto e repita.
+
 ### Pré-requisitos externos por aula
 
 | Aula | Precisa além do `uv sync` |

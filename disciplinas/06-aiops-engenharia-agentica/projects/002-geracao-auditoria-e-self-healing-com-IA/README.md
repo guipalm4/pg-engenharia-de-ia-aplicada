@@ -23,7 +23,7 @@ O `main.tf` versionado aqui é **saída do agente**, não código escrito à mã
 - [x] **Python 3** — runtime dos agentes
 - [x] **CrewAI** (`crewai`, `crewai[tools]`) — orquestração `Agent`/`Task`/`Crew` em processo sequencial
 - [x] **LiteLLM** — camada de abstração de LLM usada pelo CrewAI
-- [x] **Groq** (`llama-3.1-8b-instant`) — motor de inferência dos dois agentes
+- [x] **Groq** (`openai/gpt-oss-20b`) — motor de inferência dos dois agentes (free tier; substitui o `llama-3.1-8b-instant` do material original, retirado do catálogo da Groq)
 - [x] **Checkov 3.3.8** — scanner estático de segurança de IaC (invocado via CLI)
 - [x] **Terraform / HCL** — linguagem do artefato gerado (não é executado, apenas gerado e auditado)
 - [x] **python-dotenv** — carga da `GROQ_API_KEY` a partir de `.env`

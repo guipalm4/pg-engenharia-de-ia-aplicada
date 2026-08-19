@@ -11,13 +11,13 @@ Este projeto é o ponto de partida da trilha: um único agente CrewAI (`Arquitet
 
 A ideia central da aula é a passagem de **IA generativa solta** para **IA consultiva**: o agente não inventa a política de nomenclatura/segurança, ele é obrigado a buscá-la numa fonte de verdade (aqui, um stub de RAG) antes de produzir o plano de infraestrutura. É a base sobre a qual os módulos seguintes da trilha (IaC declarativo, Kubernetes, troubleshooting, FinOps etc.) vão se apoiar.
 
-A inteligência do projeto roda em cima da Groq (`llama-3.1-8b-instant` via LiteLLM), com um workaround explícito no `llm_config.py` para um bug conhecido do CrewAI (`crewai/issues/5886`): o CrewAI marca toda mensagem com um `cache_breakpoint` pensado para prompt caching da Anthropic, e a Groq/LiteLLM rejeita esse campo desconhecido — o projeto neutraliza o marcador antes da chamada.
+A inteligência do projeto roda em cima da Groq (`openai/gpt-oss-20b` via LiteLLM), com um workaround explícito no `llm_config.py` para um bug conhecido do CrewAI (`crewai/issues/5886`): o CrewAI marca toda mensagem com um `cache_breakpoint` pensado para prompt caching da Anthropic, e a Groq/LiteLLM rejeita esse campo desconhecido — o projeto neutraliza o marcador antes da chamada. O `llm_config.py` também fixa `reasoning_effort="low"`: o `gpt-oss` é um modelo de raciocínio e, no esforço padrão, gasta o orçamento de saída pensando e trunca o JSON do tool call no meio — a Groq então rejeita a chamada com `tool_use_failed`.
 
 ## Tecnologias e Ferramentas
 - [x] **Python 3** — runtime do agente
 - [x] **CrewAI** (`crewai`, `crewai[tools]`) — framework de agentes e orquestração de `Agent`/`Task`/`Crew`
 - [x] **LiteLLM** — camada de abstração de LLM usada pelo CrewAI
-- [x] **Groq** (`llama-3.1-8b-instant`) — motor de inferência do agente
+- [x] **Groq** (`openai/gpt-oss-20b`) — motor de inferência do agente (free tier; substitui o `llama-3.1-8b-instant` do material original, retirado do catálogo da Groq)
 - [x] **python-dotenv** — carga da `GROQ_API_KEY` a partir de `.env`
 
 ## Pré-requisitos
