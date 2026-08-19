@@ -1,0 +1,9 @@
+# Raiz do workspace uv da disciplina 06 — AI-Ops e Engenharia Agêntica.
+#
+# Não é um pacote: existe só para agrupar os projetos das aulas em um único
+# ambiente virtual (.venv na raiz) com um lockfile compartilhado (uv.lock).
+# Cada 00X-* é um "membro virtual": declara suas dependências, mas não é
+# buildado (não tem [build-system]).
+
+[tool.uv.workspace]
+members = ["0*-*"]

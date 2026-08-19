@@ -1,0 +1,13 @@
+[project]
+name = "aula-001-da-automacao-a-inteligencia-agentica"
+version = "0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    # Framework Base de Agentes
+    "crewai",
+    "crewai[tools]",
+    "litellm",
+]
+
+# Sem [build-system]: membro virtual do workspace. O uv instala as dependências
+# no .venv compartilhado da raiz, mas não tenta buildar este diretório.

@@ -21,21 +21,23 @@ A inteligência do projeto roda em cima da Groq (`llama-3.1-8b-instant` via Lite
 - [x] **python-dotenv** — carga da `GROQ_API_KEY` a partir de `.env`
 
 ## Pré-requisitos
-- **Python 3.10–3.13** (evitar 3.14 experimental, por compatibilidade com CrewAI/Pydantic)
-- Uma **chave de API da Groq** em `.env` (`GROQ_API_KEY=...`)
+- **[uv](https://docs.astral.sh/uv/getting-started/installation/)** — gerencia o Python e as dependências; não é preciso instalar Python à parte
+- **Python 3.12.11** — baixado automaticamente pelo uv (pin em `projects/.python-version`; a mesma versão do material da professora, e evita o 3.13/3.14 por compatibilidade com CrewAI/Pydantic)
+- Uma **chave de API da Groq** em `projects/.env` (`GROQ_API_KEY=...`) — um único `.env` na raiz de `projects/` serve todas as aulas
 
 ## Como executar
+Os projetos da disciplina compartilham um único ambiente (workspace uv). O setup é feito uma vez na raiz de `projects/` — detalhes no [README da disciplina](../README.md).
+
 ```bash
-cd disciplinas/06-aiops-engenharia-agentica/projects/001-da-automacao-a-inteligencia-agentica
+cd disciplinas/06-aiops-engenharia-agentica/projects
 
-# 1. dependências
-pip install -r requirements.txt
+# 1. setup (uma vez para todas as aulas)
+cp .env.example .env && $EDITOR .env   # cole a GROQ_API_KEY
+uv sync --all-packages
 
-# 2. configurar a chave da Groq
-echo "GROQ_API_KEY=sua-chave-aqui" > .env
-
-# 3. rodar o agente
-python foundation.py
+# 2. rodar o agente
+cd 001-da-automacao-a-inteligencia-agentica
+uv run foundation.py
 ```
 
 ## Estrutura do Projeto
@@ -47,7 +49,7 @@ python foundation.py
 │   └── llm_config.py        # configura o LLM da Groq + workaround do cache_breakpoint
 ├── tools/
 │   └── policy_rag.py        # tool check_compliance_rules — consulta de políticas (RAG stub)
-└── requirements.txt
+└── pyproject.toml           # dependências desta aula (membro do workspace uv)
 ```
 
 ## Como funciona

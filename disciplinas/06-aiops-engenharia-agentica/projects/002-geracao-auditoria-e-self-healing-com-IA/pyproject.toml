@@ -1,0 +1,15 @@
+[project]
+name = "aula-002-geracao-auditoria-e-self-healing-com-ia"
+version = "0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    # Framework Base de Agentes
+    "crewai",
+    "crewai[tools]",
+    "litellm",
+    # Ferramentas de Infra e Segurança
+    "checkov==3.3.8",
+]
+
+# Sem [build-system]: membro virtual do workspace. O uv instala as dependências
+# no .venv compartilhado da raiz, mas não tenta buildar este diretório.

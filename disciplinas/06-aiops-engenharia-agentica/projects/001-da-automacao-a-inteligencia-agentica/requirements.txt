@@ -1,4 +1,0 @@
-# Framework Base de Agentes
-crewai
-crewai[tools]
-litellm

@@ -30,23 +30,31 @@ O `main.tf` versionado aqui é **saída do agente**, não código escrito à mã
 
 ## Pré-requisitos
 
-- **Python 3.10–3.13** (evitar 3.14 experimental, por compatibilidade com CrewAI/Pydantic)
-- Uma **chave de API da Groq** em `.env` (`GROQ_API_KEY=...`)
-- O binário do **Checkov** disponível no `PATH` — instalado junto pelo `requirements.txt`
+- **[uv](https://docs.astral.sh/uv/getting-started/installation/)** — gerencia o Python e as dependências; não é preciso instalar Python à parte
+- **Python 3.12.11** — baixado automaticamente pelo uv (pin em `projects/.python-version`; a mesma versão do material da professora, e evita o 3.13/3.14 por compatibilidade com CrewAI/Pydantic)
+- Uma **chave de API da Groq** em `projects/.env` (`GROQ_API_KEY=...`) — um único `.env` na raiz de `projects/` serve todas as aulas
+- O binário do **Checkov** — vem como dependência declarada no `pyproject.toml`, disponível no `PATH` sob `uv run`
 
 ## Como executar
 
+Os projetos da disciplina compartilham um único ambiente (workspace uv). O setup é feito uma vez na raiz de `projects/` — detalhes no [README da disciplina](../README.md).
+
 ```bash
-cd disciplinas/06-aiops-engenharia-agentica/projects/002-geracao-auditoria-e-self-healing-com-IA
+cd disciplinas/06-aiops-engenharia-agentica/projects
 
-# 1. dependências (inclui o CLI do checkov)
-pip install -r requirements.txt
+# 1. setup (uma vez para todas as aulas)
+cp .env.example .env && $EDITOR .env   # cole a GROQ_API_KEY
+uv sync --all-packages
 
-# 2. configurar a chave da Groq
-echo "GROQ_API_KEY=sua-chave-aqui" > .env
+# 2. rodar o pipeline (gera e audita o main.tf)
+cd 002-geracao-auditoria-e-self-healing-com-IA
+uv run iac_copilot.py
+```
 
-# 3. rodar o pipeline (gera e audita o main.tf)
-python iac_copilot.py
+Para invocar o scanner manualmente, fora do pipeline:
+
+```bash
+uv run checkov -f main.tf --quiet --compact
 ```
 
 > O `main.tf` do repositório é sobrescrito a cada execução — ele é a saída do agente arquiteto.
@@ -64,7 +72,7 @@ python iac_copilot.py
 │   ├── file_writer.py       # write_file — grava o HCL em disco, limpando cercas ```hcl
 │   ├── security_scan.py     # run_checkov_scan (CLI real) + validate_opa_policies (simulado)
 │   └── policy_rag.py        # check_compliance_rules — RAG de políticas (herdado do 001)
-└── requirements.txt
+└── pyproject.toml           # dependências desta aula (membro do workspace uv)
 ```
 
 ## Como funciona
