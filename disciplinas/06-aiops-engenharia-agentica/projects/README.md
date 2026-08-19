@@ -25,10 +25,14 @@ projects/
 ├── 002-geracao-auditoria-e-self-healing-com-IA/  # + auditor, Checkov, OPA, self-healing
 │   ├── pyproject.toml
 │   └── iac_copilot.py  # entrypoint
-└── 003-orquestracao-sre-assistida-por-ia/     # + agente SRE, manifestos K8s, GitOps
+├── 003-orquestracao-sre-assistida-por-ia/     # + agente SRE, manifestos K8s, GitOps
+│   ├── pyproject.toml
+│   ├── tests/          # helpers de decisão (uv run pytest)
+│   └── k8s_ops.py      # entrypoint
+└── 004-reduzindo-mttr-com-inteligencia-agentica/  # + SRE on-call, ReAct, observabilidade
     ├── pyproject.toml
-    ├── tests/          # helpers de decisão (uv run pytest)
-    └── k8s_ops.py      # entrypoint
+    ├── tests/
+    └── troubleshooting.py  # entrypoint
 ```
 
 ---
@@ -62,13 +66,17 @@ Entre na pasta da aula e use `uv run`. **Não** existe `activate`, `source` nem 
 cd 001-da-automacao-a-inteligencia-agentica && uv run foundation.py
 cd 002-geracao-auditoria-e-self-healing-com-IA && uv run iac_copilot.py
 cd 003-orquestracao-sre-assistida-por-ia      && uv run k8s_ops.py
+cd 004-reduzindo-mttr-com-inteligencia-agentica && uv run troubleshooting.py
 ```
 
-A aula 003 tem testes dos helpers de decisão (não precisam de cluster nem de API key):
+As aulas 003 e 004 têm testes (não precisam de cluster nem de API key):
 
 ```bash
 cd 003-orquestracao-sre-assistida-por-ia && uv run pytest
+cd 004-reduzindo-mttr-com-inteligencia-agentica && uv run pytest
 ```
+
+> ⚠️ **Aula 004:** é a mais cara da trilha até aqui — ~8.900 tokens por execução, com pico no teto de 8.000/minuto do free tier, por causa do `allow_delegation=True` do SRE de plantão. O `RateLimitAwareLLM` segura o pipeline pausando: um run leva ~70s em vez de ~3s.
 
 O `uv run` descobre o workspace, garante que o `.venv` está sincronizado com o lock e executa. O CWD fica na pasta da aula — é assim que `import core.agents` e `import tools.policy_rag` resolvem para a versão *daquela* aula.
 
@@ -101,6 +109,7 @@ Na prática: o terceiro run seguido pausa ~36s e **conclui**, em vez de morrer. 
 | 001 | `GROQ_API_KEY` |
 | 002 | `GROQ_API_KEY` — o Checkov vem como dependência Python, não precisa instalar à parte |
 | 003 | `GROQ_API_KEY` + `kubectl` apontando para um cluster descartável (opcional: `K8S_ALLOWED_CONTEXTS`) |
+| 004 | `GROQ_API_KEY`; `kubectl` só para reproduzir o incidente (`checkout-broken.yaml`) — o pipeline roda sem cluster |
 
 > ⚠️ **Aula 003:** a tool `apply_k8s_manifest` executa `kubectl apply` de verdade, então ela só aceita contextos que casem com uma **allowlist** de clusters descartáveis — `kind-*`, `k3d-*`, `minikube`, `docker-desktop`, `rancher-desktop`, `orbstack`, `colima`. Um kind local funciona sem configurar nada; qualquer outro contexto é bloqueado antes de qualquer chamada ao cluster. Para autorizar outro, passe `K8S_ALLOWED_CONTEXTS="kind-*,meu-cluster"`. Sem `kubectl` no PATH, ou com o cluster fora do ar, ela cai em simulação e não toca em nada.
 
