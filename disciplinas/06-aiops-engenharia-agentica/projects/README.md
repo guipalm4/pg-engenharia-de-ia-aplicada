@@ -87,9 +87,12 @@ Duas armadilhas do free tier, ambas já resolvidas em `core/llm_config.py`:
 | Sintoma | Causa | O que o código faz |
 |---|---|---|
 | `tool_use_failed: Failed to parse tool call arguments as JSON` | O `gpt-oss` é modelo de raciocínio: no esforço padrão gasta o orçamento de saída pensando e trunca o JSON do tool call no meio | `reasoning_effort="low"` — derruba o raciocínio para ~10 tokens |
-| `rate_limit_exceeded` | O free tier permite **8.000 tokens/minuto**; pedir `max_tokens` acima disso é recusado de saída | `max_tokens=4096`, folgado para os artefatos das aulas (~900 tokens) |
+| `rate_limit_exceeded` já na primeira chamada | O free tier permite **8.000 tokens/minuto**, e pedir `max_tokens` acima do limite inteiro é recusado de saída | `max_tokens=4096`, folgado para os artefatos das aulas (~900 tokens) |
+| `RateLimitError` no meio do pipeline | Um run consome ~4.000 tokens em poucos segundos — **metade do orçamento do minuto**. Rodar duas vezes seguidas estoura | `RateLimitAwareLLM` espera e repete (ver abaixo) |
 
-Rodar as três aulas em sequência pode esbarrar no limite por minuto — se acontecer, espere um minuto e repita.
+**Por que existe uma subclasse de `LLM`.** O limite é por *uso real acumulado* (`Limit 8000, Used 6801, Requested 6299`), então rodar a mesma aula duas vezes dentro de um minuto derruba o pipeline no meio de uma task. O caminho óbvio — `num_retries` do litellm — **não funciona**: ele não faz retry de `RateLimitError` em `completion()`, desiste em 0,4s sem esperar. Por isso `core/llm_config.py` traz `RateLimitAwareLLM`, que lê o tempo da própria mensagem da Groq (`Please try again in 38.25s`) e repete até 3 vezes.
+
+Na prática: o terceiro run seguido pausa ~36s e **conclui**, em vez de morrer. Se você vir `⏳ Limite de tokens/minuto da Groq atingido`, é isso funcionando — não é erro.
 
 ### Pré-requisitos externos por aula
 
