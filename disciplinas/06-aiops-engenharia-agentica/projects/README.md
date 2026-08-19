@@ -117,16 +117,28 @@ Na prática: o terceiro run seguido pausa ~36s e **conclui**, em vez de morrer. 
 
 ## ➕ Adicionando uma aula nova
 
+Cada aula `NNN` sai do lab `moduloN_*.py` do repositório gabarito e herda o estado **final** da aula `NNN-1`. Use a skill, que faz todo o mecânico e mede o custo:
+
+```
+/nova-aula 005-slug-descritivo
+```
+
+Ela copia a aula anterior, traz o lab como entrypoint (o nome é sempre o sufixo do lab), soma só os agentes e tools que o lab importa, ajusta o `name` do `pyproject`, roda o pipeline e mede o consumo de tokens. Depois, `/finaliza-projeto` escreve o README e commita.
+
+> **Rode uma aula por vez, ao começar cada uma.** Preparar várias de antemão congela todas no estado atual: uma correção feita durante a aula 005 não chegaria às seguintes — e correções nascidas no meio da aula já aconteceram três vezes nesta trilha (o `write_file` que corrompia YAML, o `RateLimitAwareLLM`, a troca do modelo retirado da Groq).
+
+No braço, se precisar:
+
 ```bash
-cp -r 003-orquestracao-sre-assistida-por-ia 004-nome-da-aula
-# ajuste o campo `name` no 004-nome-da-aula/pyproject.toml
+cp -r 004-reduzindo-mttr-com-inteligencia-agentica 005-nome-da-aula
+# ajuste o campo `name` no 005-nome-da-aula/pyproject.toml — nome duplicado quebra o workspace
 uv sync --all-packages     # o membro é descoberto pelo glob "0*-*" da raiz
 ```
 
 Precisou de uma biblioteca nova? Rode dentro da pasta da aula — ela entra só no `pyproject.toml` daquele membro e no lock compartilhado:
 
 ```bash
-cd 004-nome-da-aula && uv add kubernetes
+cd 005-nome-da-aula && uv add kubernetes
 ```
 
 ---
