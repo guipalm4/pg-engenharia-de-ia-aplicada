@@ -1,16 +1,16 @@
 import os
 import sys
 
+from core.agents import get_architect, get_oncall_sre
+from crewai import Crew, Process, Task
+from tools.file_writer import write_file
+from tools.k8s_diag import inspect_pod_failure, suggest_fix
+from tools.obs_tools import query_jaeger_traces, query_prometheus_metrics
+
 # Ensure project root is in the Python path
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
-
-from crewai import Task, Crew, Process
-from core.agents import get_oncall_sre, get_architect
-from tools.k8s_diag import inspect_pod_failure, suggest_fix
-from tools.file_writer import write_file
-from tools.obs_tools import query_prometheus_metrics, query_jaeger_traces
 
 # 1. Instanciando agentes
 # Entregamos as ferramentas de K8s E de Observabilidade para o SRE de Plantão
