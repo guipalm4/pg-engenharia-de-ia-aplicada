@@ -22,12 +22,14 @@ Quando o contexto é autorizado, a tool ainda **verifica se o cluster responde**
 
 O `nexus-api-unipds-k8s.yaml` versionado aqui é **saída do agente**, não código escrito à mão: é o arquivo que `generate_k8s_manifest` gravou em disco durante a execução do pipeline.
 
+> ℹ️ **Runtime atualizado na aula 005.** O modelo agora vem de `GROQ_MODEL` no `.env` (default `qwen/qwen3.6-27b`, no lugar do `openai/gpt-oss-20b`) e `max_tokens` caiu de 4096 para 2560 — a Groq reserva esse teto do orçamento em vez de cobrar o consumo real, e era a causa dos rate limits da trilha. Detalhes em [005 · Aprendizados](../005-observabilidade-preditiva/README.md#aprendizados).
+
 ## Tecnologias e Ferramentas
 
 - [x] **Python 3.12** — runtime dos agentes
 - [x] **CrewAI** (`crewai`, `crewai[tools]`) — orquestração `Agent`/`Task`/`Crew` em processo sequencial
 - [x] **LiteLLM** — camada de abstração de LLM usada pelo CrewAI
-- [x] **Groq** (`openai/gpt-oss-20b`) — motor de inferência dos agentes (free tier; substitui o `llama-3.1-8b-instant` do material original, retirado do catálogo da Groq)
+- [x] **Groq** (`qwen/qwen3.6-27b`, trocável por `GROQ_MODEL` no `.env`) — motor de inferência dos agentes (free tier)
 - [x] **Kubernetes / `kubectl`** — alvo das operações; `kubectl apply` invocado via `subprocess`
 - [x] **YAML (Kubernetes API v1 / apps/v1)** — formato do artefato gerado (`Deployment` + `Service`)
 - [x] **pytest** — testes dos helpers de decisão (dependency group `dev`)

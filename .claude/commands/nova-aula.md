@@ -111,6 +111,23 @@ FALTAM
 
 Traga também os arquivos de cenário/dados listados no passo 1 (ex.: `checkout-broken.yaml`), procurando na raiz do gabarito e em `$GAB/data/`.
 
+> ⛔ **Nunca copie `core/llm_config.py` do gabarito, e nunca copie `core/` inteiro.**
+> O do gabarito é `LLM(model="groq/llama-3.1-8b-instant")` puro: o modelo foi retirado
+> do catálogo da Groq (a API responde `model_not_found`), e não há `RateLimitAwareLLM`,
+> nem leitura de `GROQ_MODEL`, nem o teto de `max_tokens` calibrado. Trazê-lo quebra a
+> aula e reintroduz problemas já resolvidos. O `llm_config.py` correto vem do `cp -R`
+> da aula anterior, no passo 2 — só `core/agents.py` (fábricas avulsas) e `tools/*.py`
+> saem do gabarito. Mesma regra para qualquer lab que faça `from core.llm_config import
+> nexus_llm` (é o caso do `modulo11_guardrails.py`): ele **importa**, não redefine.
+
+Confirme que o runtime herdado sobreviveu antes de seguir:
+
+```bash
+grep -q 'GROQ_MODEL' core/llm_config.py && grep -q 'RateLimitAwareLLM' core/llm_config.py \
+  && echo "OK: llm_config e o da trilha" \
+  || echo "ERRO: llm_config foi sobrescrito pelo gabarito -- restaure do projeto anterior"
+```
+
 ### 4. Renomear o pacote
 
 O `name` vem copiado da aula anterior. Dois membros com o mesmo nome **quebram o workspace uv** — este passo não é cosmético.
@@ -129,7 +146,17 @@ uv run pytest -q          # os testes herdados devem continuar passando
 uv run "$ENTRYPOINT"      # pipeline end-to-end
 ```
 
-Depois, meça o custo. O free tier da Groq dá **8.000 tokens/minuto** e algumas aulas chegam perto do teto sozinhas (a 004 gasta ~8.900 por execução por causa do `allow_delegation=True`). O `RateLimitAwareLLM` em `core/llm_config.py` segura o pipeline pausando, mas o número precisa entrar no README.
+Depois, meça o custo. O free tier da Groq impõe **dois** limites, e o segundo não aparece nos headers da API — só no corpo do erro 429:
+
+| Limite | Valor | Observação |
+|---|---|---|
+| TPM — tokens por minuto | 8.000 | exposto em `x-ratelimit-limit-tokens` |
+| **TPD — tokens por dia** | **200.000** | **invisível nos headers**, por modelo |
+| RPM — requisições por minuto | 1.000 | raramente é o gargalo |
+
+E o detalhe que mais importa: **a Groq RESERVA `max_tokens` no momento da chamada — ela não cobra o consumo real.** A mensagem de erro entrega isso literalmente (`Requested 2059` para um prompt de 11 tokens com `max_tokens=2048`). Vale para o TPM *e* para o TPD. Por isso `core/llm_config.py` usa `max_tokens=2560`, e não o 4096 original: com 4096 o orçamento diário comportava só ~48 chamadas de LLM, e a janela de minuto, uma. **Se uma aula bater em rate limit, suspeite de `max_tokens` antes de suspeitar do modelo.**
+
+O modelo padrão é `groq/qwen/qwen3.6-27b`, que mantém todas as aulas abaixo do teto. Se ele sair do catálogo (é "Preview"), troque via `GROQ_MODEL` no `.env` — não edite os cinco `llm_config.py`. O `RateLimitAwareLLM` segura o pipeline pausando quando o limite bate, mas o número medido precisa entrar no README.
 
 ```bash
 cat > /tmp/medir.py <<'PY'
@@ -143,7 +170,11 @@ except Exception as err:
     print(f"!! abortou: {type(err).__name__}: {str(err)[:160]}")
 if C:
     pior = max(sum(t for ts, t in C if i <= ts < i + 60) for i, _ in C)
-    print(f"\nchamadas={len(C)} total={sum(t for _, t in C)} pior_janela_60s={pior} (limite 8000)")
+    print(f"\nchamadas={len(C)} total_real={sum(t for _, t in C)} pior_janela_60s={pior} (teto TPM 8000)")
+    # O que a Groq debita nao e o consumo real, e prompt + max_tokens reservado:
+    import os as _os
+    reservado = len(C) * int(_os.getenv("GROQ_MAX_TOKENS", "2560"))
+    print(f"reservado_no_orcamento~={reservado} (teto TPD 200000 -> ~{200000 // max(reservado // max(len(C), 1), 1)} chamadas/dia)")
 PY
 uv run python /tmp/medir.py "$ENTRYPOINT"
 ```
@@ -160,7 +191,7 @@ Reporte, sem embelezar:
 
 - o que foi somado (agentes, tools, arquivos de cenário)
 - resultado dos testes e do pipeline
-- **consumo de tokens medido** e se estourou o teto de 8.000/min
+- **consumo de tokens medido** (real e reservado), se estourou o teto de 8.000/min e quantas execuções cabem nos 200.000/dia
 - se o artefato gerado validou
 - **qualquer defeito que apareceu ao rodar** — é o material mais valioso do README, e some se não for anotado agora
 

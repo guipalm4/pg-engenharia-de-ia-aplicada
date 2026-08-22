@@ -20,13 +20,15 @@ A diferença de mecânica em relação ao 003 está em **quem escreve o YAML**. 
 
 O `checkout-k8s-fix.yaml` versionado aqui é **saída do agente**, não código escrito à mão.
 
+> ℹ️ **Runtime atualizado na aula 005.** O modelo agora vem de `GROQ_MODEL` no `.env` (default `qwen/qwen3.6-27b`, no lugar do `openai/gpt-oss-20b`) e `max_tokens` caiu de 4096 para 2560 — a Groq reserva esse teto do orçamento em vez de cobrar o consumo real, e era a causa dos rate limits da trilha. Detalhes em [005 · Aprendizados](../005-observabilidade-preditiva/README.md#aprendizados).
+
 ## Tecnologias e Ferramentas
 
 - [x] **Python 3.12** — runtime dos agentes
 - [x] **CrewAI** (`crewai`, `crewai[tools]`) — orquestração `Agent`/`Task`/`Crew` em processo sequencial, com delegação habilitada
 - [x] **ReAct** — o padrão de raciocínio pedido ao SRE: observar, pensar, agir, repetir
 - [x] **LiteLLM** — camada de abstração de LLM usada pelo CrewAI
-- [x] **Groq** (`openai/gpt-oss-20b`) — motor de inferência dos agentes (free tier)
+- [x] **Groq** (`qwen/qwen3.6-27b`, trocável por `GROQ_MODEL` no `.env`) — motor de inferência dos agentes (free tier)
 - [x] **Kubernetes / `kubectl`** — onde o incidente é reproduzido e o hotfix validado
 - [x] **Prometheus e Jaeger** — fontes de observabilidade, aqui **simuladas** por tools que devolvem resposta roteirizada
 - [x] **pytest** — testes dos helpers de decisão e da limpeza de cercas
@@ -38,7 +40,7 @@ O `checkout-k8s-fix.yaml` versionado aqui é **saída do agente**, não código 
 - Uma **chave de API da Groq** em `projects/.env` (`GROQ_API_KEY=...`)
 - **`kubectl` (opcional)** apontando para um **cluster descartável** (kind/minikube) — necessário só para reproduzir o incidente e validar o hotfix; o pipeline em si roda sem cluster
 
-> ⚠️ Esta aula consome mais tokens que as anteriores: **~8.900 por execução**, com pico de ~8.000 num intervalo de 60s. É o teto exato do free tier da Groq. O `RateLimitAwareLLM` (`core/llm_config.py`) segura o pipeline pausando quando necessário — um run leva ~70s e imprime `⏳ Limite de tokens/minuto da Groq atingido`. Isso é a proteção funcionando, não erro.
+> ⚠️ Esta é a aula mais cara da trilha, por causa do `allow_delegation=True`. Com o modelo padrão atual (`qwen/qwen3.6-27b`) são **~4.900 tokens por execução**, dentro do teto de 8.000/minuto do free tier. Com o antigo `openai/gpt-oss-20b` eram ~8.900, e o run estourava o limite sozinho. Se mesmo assim bater em rate limit, o `RateLimitAwareLLM` (`core/llm_config.py`) segura o pipeline pausando e imprime `⏳ Limite de tokens/minuto da Groq atingido` — é a proteção funcionando, não erro.
 
 ## Como executar
 
@@ -149,7 +151,7 @@ troubleshooting.py
 - [x] **O `write_file` corrompia YAML, e só esta aula revelou isso.** A tool nasceu na 002 limpando cercas com `.replace("```hcl","").replace("```","")` — o que funciona para HCL e falha para qualquer outra linguagem: com ```yaml, a palavra `yaml` sobrava como primeira linha e o manifesto ficava inválido. A 004 é a primeira aula a gravar YAML por essa tool. *Correção:* limpeza agnóstica de linguagem por regex, com teste de regressão. Um detalhe apareceu ao testar: exigir que a cerca de fechamento esteja em linha própria, senão um conteúdo terminado em crases inline perde texto.
 - [x] **O guardrail do prompt aqui é legítimo — e isso não contradiz a aula 003, completa.** No 003 removi avisos em caixa alta porque o template f-string tornava impossível violá-los: pedir ao LLM o que o código já garante é ruído. Aqui não há template, o LLM redige o manifesto inteiro, e as cinco regras (`kind: Deployment`, `nginx:latest`, porta 80, `path: /`, `initialDelaySeconds`) são a única coisa entre o agente e um YAML quebrado. A regra não é "guardrail em prompt é ruim"; é **guardrail em prompt é o que sobra quando não dá para codificar a restrição**.
 - [x] **O diagnóstico é roteirizado, e contradiz o incidente real.** `inspect_pod_failure` decide a resposta por *substring do nome do pod*: qualquer nome contendo `api` recebe "Cannot connect to database... Back-off restarting". Mas o `checkout-broken.yaml` que a aula manda aplicar produz **`ErrImagePull`**, por tag de imagem inexistente — problema completamente diferente. O agente "diagnostica" uma falha de banco num pod que na verdade não consegue baixar a imagem, e o hotfix funciona por acidente: o prompt obriga `nginx:latest`, que por tabela conserta a imagem quebrada. É a mesma fragilidade do OPA por substring da 002 e do canário por regex da 003, agora com uma consequência mais visível — o cenário no cluster e a resposta da ferramenta contam histórias diferentes.
-- [x] **`allow_delegation=True` custa caro e quase inviabiliza a aula no free tier.** Medido: 7 chamadas ao LLM, **8.870 tokens por execução**, com pior janela de 60 segundos em **8.041** — acima do teto de 8.000 tokens/minuto da Groq. Um único run estoura o limite sozinho; ele só termina porque o `RateLimitAwareLLM` herdado pausa e repete, levando ~70s em vez de ~3s. A delegação não é gratuita: ela adiciona ferramentas de coordenação ao prompt de cada agente e multiplica as idas ao modelo.
+- [x] **`allow_delegation=True` custa caro e quase inviabilizou a aula no free tier.** Medido com o `openai/gpt-oss-20b` que era o padrão na época: 7 chamadas ao LLM, **8.870 tokens por execução**, com pior janela de 60 segundos em **8.041** — acima do teto de 8.000 tokens/minuto da Groq. Um único run estourava o limite sozinho e só terminava porque o `RateLimitAwareLLM` pausava e repetia, levando ~70s em vez de ~3s. A delegação não é gratuita: ela adiciona ferramentas de coordenação ao prompt de cada agente e multiplica as idas ao modelo. *Atualização (aula 005):* trocar o padrão para `qwen/qwen3.6-27b` derrubou o mesmo pipeline para **4.924 tokens** — a delegação continua cara, mas cabe no orçamento. O gargalo era metade delegação, metade escolha de modelo.
 - [x] **Observabilidade simulada ensina a correlação, não a instrumentação.** As tools de Prometheus e Jaeger devolvem string fixa, então a aula treina o raciocínio de cruzar três sinais — que é transferível — mas não expõe o trabalho real de escrever PromQL correto, lidar com cardinalidade ou amostragem de traces. Vale saber onde a simulação termina.
 
 ## Referências

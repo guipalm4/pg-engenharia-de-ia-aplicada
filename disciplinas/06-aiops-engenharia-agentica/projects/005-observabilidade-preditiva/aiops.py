@@ -21,16 +21,10 @@ aiops_agent = get_aiops_agent(
 
 # Tarefa única que passa por todas as ferramentas da aula
 task_aiops_workflow = Task(
-    description="""Temos um relato de lentidão no banco de dados e suspeita de disco enchendo. Execute o fluxo de AIOps.
-
-    REGRA OBRIGATÓRIA: cada passo abaixo DEVE ser executado chamando a ferramenta indicada.
-    Nunca produza o resultado de um passo de cabeça — a saída válida é a que a ferramenta retornar.
-
-    1. Chame `nl_to_promql` com "qual a porcentagem de disco livre?".
-    2. Chame `predictive_disk_alert` com 'Uso atual 85%. Crescimento de 2GB por hora contínuo'.
-    3. Chame `generate_grafana_dashboard` com 'Disk Saturation' para persistir o painel em disco.
-
-    Só depois de as três ferramentas terem retornado, escreva a resposta final.""",
+    description="""Temos um relato de lentidão no banco de dados e suspeita de disco enchendo. Execute o fluxo de AIOps:
+    1. Traduza o pedido "qual a porcentagem de disco livre?" para PromQL.
+    2. Avalie o histórico de métricas: 'Uso atual 85%. Crescimento de 2GB por hora contínuo'. Gere uma previsão de quebra.
+    3. Crie um Dashboard dinâmico do Grafana para a equipe acompanhar o incidente de 'Disk Saturation'.""",
     expected_output="O PromQL gerado, o alerta preditivo detalhado e o JSON do dashboard.",
     agent=aiops_agent,
 )

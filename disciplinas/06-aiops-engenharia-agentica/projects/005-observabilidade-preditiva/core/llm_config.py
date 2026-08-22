@@ -49,25 +49,45 @@ class RateLimitAwareLLM(LLM):
 
 
 # Centraliza a inteligência do projeto.
-# O material original usava groq/llama-3.1-8b-instant, retirado do catálogo da
-# Groq (a API responde model_not_found). O gpt-oss-20b é o substituto free-tier
-# mais próximo: o menor modelo de uso geral da casa, com suporte a tool calling —
-# do que todo o pipeline depende.
+#
+# O modelo vem de env var porque a Groq já retirou dois modelos usados por este
+# material (`llama-3.1-8b-instant`, do enunciado original, e `qwen/qwen3-32b`).
+# Com `GROQ_MODEL` no .env, uma remoção futura é uma linha trocada, não cinco
+# arquivos editados. Escolhas medidas nas cinco aulas (free tier, 2026-08-22):
+#
+#   qwen/qwen3.6-27b   PADRÃO. Único que mantém TODAS as aulas abaixo do teto de
+#                      8.000 tokens/minuto (pico medido: 4.924, na aula 004).
+#                      ~2x mais econômico e ~4x mais rápido que o gpt-oss-20b.
+#                      Ressalva: catálogo "Preview" — pode sair sem aviso longo.
+#   openai/gpt-oss-120b  Alternativa "Production" (estável), sem falhas de parse,
+#                      mas estoura o teto nas aulas 002 (10.025) e 004 (11.007),
+#                      então essas duas pausam no rate limit.
+#   openai/gpt-oss-20b   O antigo padrão. Production e barato, mas com
+#                      `reasoning_effort="low"` a Groq recusa o 3º tool call
+#                      encadeado da aula 005 em ~80% das tentativas
+#                      (`output_parse_failed`). Se voltar a ele, use
+#                      GROQ_REASONING_EFFORT=medium.
+_MODELO_PADRAO = "groq/qwen/qwen3.6-27b"
+
+# `reasoning_effort` só existe nos modelos de raciocínio (família gpt-oss); o qwen
+# ignora. Vazio = não envia o parâmetro.
+_esforco = os.getenv("GROQ_REASONING_EFFORT", "").strip()
+_opcoes_de_raciocinio = {"reasoning_effort": _esforco} if _esforco else {}
+
 nexus_llm = RateLimitAwareLLM(
-    model="groq/openai/gpt-oss-20b",
+    model=os.getenv("GROQ_MODEL", _MODELO_PADRAO),
     api_key=os.getenv("GROQ_API_KEY"),
     temperature=0.2,
-    # O gpt-oss é um modelo de raciocínio. As aulas 001-004 usam `reasoning_effort="low"`
-    # para evitar `tool_use_failed` (JSON do tool call truncado no esforço padrão).
-    # Nesta aula esse ajuste vira o problema: no 3º tool call do fluxo, o esforço baixo
-    # faz a Groq devolver `output_parse_failed` com `failed_generation` vazio — o parser
-    # harmony não fecha o bloco que o modelo emite. Medido, repetindo a MESMA request:
-    # low  -> 8/10 falhas (temp 0.2), 6/6 falhas (temp 0.0)
-    # medium -> 0/6 falhas
-    # Daí o esforço médio aqui. O `tool_use_failed` não reapareceu: quem garante o tool
-    # call agora é o prompt do `aiops.py`, que nomeia as ferramentas explicitamente.
-    reasoning_effort="medium",
-    # Teto de saída folgado para os artefatos das aulas (~900 tokens), mas dentro
-    # do limite de 8.000 tokens/minuto do free tier da Groq.
-    max_tokens=4096
+    # ATENÇÃO: a Groq RESERVA `max_tokens` do orçamento no momento da chamada — não
+    # cobra o consumo real. A própria mensagem de erro entrega isso: para um prompt
+    # de 11 tokens com max_tokens=2048, ela responde `Requested 2059`. Vale para os
+    # dois limites do free tier: 8.000 tokens/minuto e 200.000 tokens/dia.
+    # Consequência: com o antigo max_tokens=4096, o orçamento DIÁRIO comportava só
+    # ~48 chamadas de LLM, e o de minuto, uma. Era a causa real dos rate limits que
+    # apareciam em todas as aulas — não o modelo escolhido.
+    # 2560 dá ~44% de folga sobre a maior resposta já observada (1.782 tokens, do
+    # gpt-oss-120b) e reserva 37% menos que antes. Os artefatos em si são pequenos:
+    # main.tf ~343 tokens, manifesto YAML ~218, JSON do dashboard ~145.
+    max_tokens=int(os.getenv("GROQ_MAX_TOKENS", "2560")),
+    **_opcoes_de_raciocinio,
 )

@@ -18,12 +18,14 @@ A auditoria acontece em duas camadas complementares. **Checkov** (`run_checkov_s
 
 O `main.tf` versionado aqui é **saída do agente**, não código escrito à mão: é o artefato que `write_file` gravou em disco durante a execução do pipeline.
 
+> ℹ️ **Runtime atualizado na aula 005.** O modelo agora vem de `GROQ_MODEL` no `.env` (default `qwen/qwen3.6-27b`, no lugar do `openai/gpt-oss-20b`) e `max_tokens` caiu de 4096 para 2560 — a Groq reserva esse teto do orçamento em vez de cobrar o consumo real, e era a causa dos rate limits da trilha. Detalhes em [005 · Aprendizados](../005-observabilidade-preditiva/README.md#aprendizados).
+
 ## Tecnologias e Ferramentas
 
 - [x] **Python 3** — runtime dos agentes
 - [x] **CrewAI** (`crewai`, `crewai[tools]`) — orquestração `Agent`/`Task`/`Crew` em processo sequencial
 - [x] **LiteLLM** — camada de abstração de LLM usada pelo CrewAI
-- [x] **Groq** (`openai/gpt-oss-20b`) — motor de inferência dos dois agentes (free tier; substitui o `llama-3.1-8b-instant` do material original, retirado do catálogo da Groq)
+- [x] **Groq** (`qwen/qwen3.6-27b`, trocável por `GROQ_MODEL` no `.env`) — motor de inferência dos agentes (free tier)
 - [x] **Checkov 3.3.8** — scanner estático de segurança de IaC (invocado via CLI)
 - [x] **Terraform / HCL** — linguagem do artefato gerado (não é executado, apenas gerado e auditado)
 - [x] **python-dotenv** — carga da `GROQ_API_KEY` a partir de `.env`
