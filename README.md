@@ -16,7 +16,7 @@
 | 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 6 projetos |
 | 04 | [Criação de Agentes](#04--criação-de-agentes) | 7 projetos |
 | 05 | [Ferramentas de IA para UX & UI](#05--ferramentas-de-ia-para-ux--ui) | 5 projetos |
-| 06 | [AI-Ops e Engenharia Agêntica](#06--ai-ops-e-engenharia-agêntica) | 4 projetos |
+| 06 | [AI-Ops e Engenharia Agêntica](#06--ai-ops-e-engenharia-agêntica) | 5 projetos |
 
 ---
 
@@ -188,6 +188,7 @@ Trilha de laboratórios incrementais de AI-Ops e Engenharia de Plataforma: cada 
 | 002 | [Geração, Auditoria e Self-Healing com IA](disciplinas/06-aiops-engenharia-agentica/projects/002-geracao-auditoria-e-self-healing-com-IA/README.md) | Pipeline sequencial de dois agentes: o arquiteto grava um `main.tf` real em disco e um Engenheiro de DevSecOps o audita em duas camadas — Checkov (CLI real, via `subprocess`) para segurança genérica e OPA simulado para governança corporativa — realimentando as falhas ao gerador |
 | 003 | [Orquestração SRE Assistida por IA](disciplinas/06-aiops-engenharia-agentica/projects/003-orquestracao-sre-assistida-por-ia/README.md) | Entra o terceiro papel, o Engenheiro de SRE: uma Crew de três tasks desenha o manifesto Kubernetes (`Deployment` + `Service`) por template, faz o *sync* GitOps chamando `kubectl apply` de verdade — restrito por allowlist de contextos descartáveis, com validação server-side antes de mutar e degradação graciosa quando não há cluster — e decide o destino do rollout analisando métricas de canário contra limiares determinísticos, falhando fechado |
 | 004 | [Reduzindo o MTTR com Inteligência Agêntica](disciplinas/06-aiops-engenharia-agentica/projects/004-reduzindo-mttr-com-inteligencia-agentica/README.md) | Inverte o sentido do pipeline: em vez de construir, investiga o que quebrou. Um SRE de plantão com `allow_delegation` correlaciona métrica (Prometheus), trace (Jaeger) e evento de pod pelo framework ReAct até a causa raiz, e o Arquiteto grava o hotfix em YAML — fechando o loop de self-healing que a aula 002 só insinuou |
+| 005 | [Observabilidade Preditiva](disciplinas/06-aiops-engenharia-agentica/projects/005-observabilidade-preditiva/README.md) | Desloca o pipeline no tempo: em vez de diagnosticar o incidente já em curso, antecipa-o. Um único agente de AIOps encadeia as três camadas de uma plataforma de observabilidade — traduz linguagem natural para PromQL, projeta a tendência da série temporal para prever a saturação do volume em 4 horas (janela de ação, não aviso tardio) e materializa o dashboard do incidente em JSON pronto para o Grafana |
 
 ---
 
