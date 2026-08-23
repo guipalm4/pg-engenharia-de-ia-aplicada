@@ -114,7 +114,7 @@ Traga também os arquivos de cenário/dados listados no passo 1 (ex.: `checkout-
 > ⛔ **Nunca copie `core/llm_config.py` do gabarito, e nunca copie `core/` inteiro.**
 > O do gabarito é `LLM(model="groq/llama-3.1-8b-instant")` puro: o modelo foi retirado
 > do catálogo da Groq (a API responde `model_not_found`), e não há `RateLimitAwareLLM`,
-> nem leitura de `GROQ_MODEL`, nem o teto de `max_tokens` calibrado. Trazê-lo quebra a
+> nem leitura de `GROQ_MODEL`. Trazê-lo quebra a
 > aula e reintroduz problemas já resolvidos. O `llm_config.py` correto vem do `cp -R`
 > da aula anterior, no passo 2 — só `core/agents.py` (fábricas avulsas) e `tools/*.py`
 > saem do gabarito. Mesma regra para qualquer lab que faça `from core.llm_config import
@@ -154,9 +154,25 @@ Depois, meça o custo. O free tier da Groq impõe **dois** limites, e o segundo 
 | **TPD — tokens por dia** | **200.000** | **invisível nos headers**, por modelo |
 | RPM — requisições por minuto | 1.000 | raramente é o gargalo |
 
-E um detalhe contraintuitivo: **não cape `max_tokens`.** O que consome orçamento é o consumo real, não o teto pedido — medido na API: `max_tokens=60000` passa num modelo com teto de 8.000 tokens/minuto (debitando os 113 tokens gerados), e 12 chamadas com `max_tokens=20000` passam contra o teto de 200.000/dia. O `Requested = prompt + max_tokens` que aparece no erro 429 é só a **checagem de admissão** contra o saldo restante, não o valor debitado. Capar, portanto, não economiza nada: só faz a chamada ser recusada mais cedo quando o saldo diário está no fim, e arrisca truncar a resposta. Por isso `core/llm_config.py` deixa `max_tokens` aberto, com `GROQ_MAX_TOKENS` só como válvula.
+E um detalhe contraintuitivo: **não cape `max_tokens`.** O que consome orçamento é o consumo real, não o teto pedido — medido na API: `max_tokens=60000` passa num modelo com teto de 8.000 tokens/minuto (debitando os 113 tokens gerados), e 12 chamadas com `max_tokens=20000` passam contra o teto de 200.000/dia. O `Requested = prompt + max_tokens` que aparece no erro 429 é só a **checagem de admissão** contra o saldo restante, não o valor debitado. Capar, portanto, não economiza nada: só faz a chamada ser recusada mais cedo quando o saldo diário está no fim, e arrisca truncar a resposta. Por isso `core/llm_config.py` não passa `max_tokens`.
 
 O modelo padrão é `groq/qwen/qwen3.6-27b`, que mantém todas as aulas abaixo do teto. Se ele sair do catálogo (é "Preview"), troque via `GROQ_MODEL` no `.env` — não edite os cinco `llm_config.py`. O `RateLimitAwareLLM` segura o pipeline pausando quando o limite bate, mas o número medido precisa entrar no README.
+
+> ⚠️ **Medir custo queima a cota diária — planeje isso.** Cada execução do pipeline gasta milhares de tokens, e o teto é de 200.000 por dia. Meia dúzia de execuções repetidas para estabilizar um número esgota o orçamento do modelo e **trava a validação da aula pelo resto do dia**. Duas defesas, nesta ordem:
+>
+> 1. **Meça no modelo padrão, itere em outro.** A cota é contada **por modelo**: `GROQ_MODEL=groq/openai/gpt-oss-120b` dá um orçamento zerado e independente. Guarde a cota do padrão para o run final, que é o que vai para o README.
+> 2. **Cheque o saldo antes de uma bateria de runs.** Um 429 revela o quanto já foi usado:
+>
+> ```bash
+> curl -s https://api.groq.com/openai/v1/chat/completions \
+>   -H "Authorization: Bearer $GROQ_API_KEY" -H "Content-Type: application/json" \
+>   -d '{"model":"qwen/qwen3.6-27b","messages":[{"role":"user","content":"oi"}]}' \
+>   | grep -o '"message":"[^"]*"' | head -1     # sem saída = cota disponível
+> ```
+>
+> Se o pipeline parar dizendo que a Groq pediu **minutos** de espera, é cota diária: esperar não resolve, troque o modelo.
+
+> ⚠️ **Ao comparar duas configurações, nunca rode os blocos em sequência.** TPM e TPD são recursos que se esgotam, então quem roda depois sempre parece pior — e a conclusão sai invertida. Foi assim que a aula 005 quase adotou um `max_tokens` capado com base num teste que não media nada. Rode cada bloco com o orçamento no mesmo estado (cooldown antes de cada um) e **repita com a ordem invertida**: se o resultado acompanhar a ordem em vez da configuração, o teste está medindo depleção, não a variável.
 
 ```bash
 cat > /tmp/medir.py <<'PY'
