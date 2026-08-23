@@ -29,10 +29,19 @@ projects/
 │   ├── pyproject.toml
 │   ├── tests/          # helpers de decisão (uv run pytest)
 │   └── k8s_ops.py      # entrypoint
-└── 004-reduzindo-mttr-com-inteligencia-agentica/  # + SRE on-call, ReAct, observabilidade
+├── 004-reduzindo-mttr-com-inteligencia-agentica/  # + SRE on-call, ReAct, observabilidade
+│   ├── pyproject.toml
+│   ├── tests/
+│   └── troubleshooting.py  # entrypoint
+├── 005-observabilidade-preditiva/             # + AIOps: NL→PromQL, predição, dashboard
+│   ├── pyproject.toml
+│   ├── tests/
+│   ├── aiops.py                    # entrypoint
+│   └── incident_dashboard.json     # artefato GERADO pelo agente
+└── 006-chatops-e-human-in-the-loop/           # + ChatOps, aprovação humana, UI Streamlit
     ├── pyproject.toml
     ├── tests/
-    └── troubleshooting.py  # entrypoint
+    └── chatops.py         # entrypoint STREAMLIT — não roda com `uv run chatops.py`
 ```
 
 ---
@@ -67,16 +76,40 @@ cd 001-da-automacao-a-inteligencia-agentica && uv run foundation.py
 cd 002-geracao-auditoria-e-self-healing-com-IA && uv run iac_copilot.py
 cd 003-orquestracao-sre-assistida-por-ia      && uv run k8s_ops.py
 cd 004-reduzindo-mttr-com-inteligencia-agentica && uv run troubleshooting.py
+cd 005-observabilidade-preditiva                && uv run aiops.py
 ```
 
-As aulas 003 e 004 têm testes (não precisam de cluster nem de API key):
+**A aula 006 é a exceção:** o entrypoint é um app [Streamlit](https://streamlit.io/), não um script.
 
 ```bash
-cd 003-orquestracao-sre-assistida-por-ia && uv run pytest
-cd 004-reduzindo-mttr-com-inteligencia-agentica && uv run pytest
+cd 006-chatops-e-human-in-the-loop && uv run streamlit run chatops.py   # http://localhost:8501
 ```
 
-> ⚠️ **Aula 004:** é a mais cara da trilha até aqui — ~8.900 tokens por execução, com pico no teto de 8.000/minuto do free tier, por causa do `allow_delegation=True` do SRE de plantão. O `RateLimitAwareLLM` segura o pipeline pausando: um run leva ~70s em vez de ~3s.
+`uv run chatops.py` não levanta nada útil — fora do runtime do Streamlit, `st.chat_input()` devolve
+`None` e o script termina em silêncio. E rodar de fora do workspace dá `error: Failed to spawn:
+streamlit`, que parece dependência faltando mas é diretório errado (sem `pyproject.toml` para
+resolver, o uv usa um ambiente efêmero). Na primeira execução o Streamlit pede um e-mail: **Enter**
+com o campo vazio segue adiante.
+
+As aulas 003 a 006 têm testes (não precisam de cluster nem de API key):
+
+```bash
+cd 003-orquestracao-sre-assistida-por-ia        && uv run pytest
+cd 004-reduzindo-mttr-com-inteligencia-agentica && uv run pytest
+cd 005-observabilidade-preditiva                && uv run pytest
+cd 006-chatops-e-human-in-the-loop              && uv run pytest
+```
+
+Consumo medido por execução:
+
+| Aula | Tokens | Modelo da medição | Observação |
+|---|---|---|---|
+| 004 | ~8.900 | `gpt-oss-20b` (padrão à época) | a mais cara da trilha — bate no teto de 8.000/minuto por causa do `allow_delegation=True` do SRE de plantão; o `RateLimitAwareLLM` pausa e o run leva ~70s em vez de ~3s |
+| 005 | 1.900 – 3.500 | `qwen/qwen3.6-27b` (padrão atual) | 4 chamadas ao LLM, ~7s |
+| 006 | ~1.150 **por mensagem** | `qwen/qwen3.6-27b` (padrão atual) | cada mensagem no chat é uma execução independente; ~170 mensagens cabem no teto diário |
+
+As aulas 001 a 003 não têm medição registrada. A 004 não foi remedida depois da troca de modelo — o
+número serve para situá-la como a mais pesada, não para comparar com as duas seguintes.
 
 O `uv run` descobre o workspace, garante que o `.venv` está sincronizado com o lock e executa. O CWD fica na pasta da aula — é assim que `import core.agents` e `import tools.policy_rag` resolvem para a versão *daquela* aula.
 
@@ -88,19 +121,48 @@ uv run checkov -f main.tf --quiet --compact
 
 ### ⚠️ Modelo e limites do free tier
 
-O material original usava `groq/llama-3.1-8b-instant`, que **foi retirado do catálogo da Groq** — a API responde `model_not_found` e nenhuma das três aulas roda. As aulas usam agora `groq/openai/gpt-oss-20b`, o menor modelo de uso geral disponível com tool calling.
+**O modelo não está fixo no código.** O material original usava `groq/llama-3.1-8b-instant`, que a Groq
+**retirou do catálogo** — a API responde `model_not_found` e nenhuma aula roda. A Groq também
+descontinuou `qwen/qwen3-32b` e `qwen-qwq-32b` desde então. Por isso o modelo vem de `GROQ_MODEL` no
+`.env`, com default `groq/qwen/qwen3.6-27b`: quando o próximo sair do catálogo, é **uma linha trocada**
+em vez de seis `llm_config.py` editados.
 
-Duas armadilhas do free tier, ambas já resolvidas em `core/llm_config.py`:
+O default é catálogo *Preview* (pode ser descontinuado sem aviso) e a escolha foi consciente: é o único
+que mantém **todas** as aulas abaixo do teto por minuto — o `gpt-oss-120b` estoura na 002 e na 004.
+
+**São dois limites, e o segundo não aparece nos headers da API:**
+
+| Limite | Valor | Onde aparece |
+|---|---|---|
+| TPM — tokens por minuto | 8.000 | `x-ratelimit-limit-tokens` |
+| **TPD — tokens por dia** | **200.000** | **invisível nos headers** — só no corpo do erro 429, e contado **por modelo** |
+
+As três armadilhas, todas resolvidas em `core/llm_config.py`:
 
 | Sintoma | Causa | O que o código faz |
 |---|---|---|
-| `tool_use_failed: Failed to parse tool call arguments as JSON` | O `gpt-oss` é modelo de raciocínio: no esforço padrão gasta o orçamento de saída pensando e trunca o JSON do tool call no meio | `reasoning_effort="low"` — derruba o raciocínio para ~10 tokens |
-| `rate_limit_exceeded` já na primeira chamada | O free tier permite **8.000 tokens/minuto**, e pedir `max_tokens` acima do limite inteiro é recusado de saída | `max_tokens=4096`, folgado para os artefatos das aulas (~900 tokens) |
-| `RateLimitError` no meio do pipeline | Um run consome ~4.000 tokens em poucos segundos — **metade do orçamento do minuto**. Rodar duas vezes seguidas estoura | `RateLimitAwareLLM` espera e repete (ver abaixo) |
+| `model_not_found` | a Groq retirou o modelo do catálogo | modelo lido de `GROQ_MODEL`; troque no `.env` |
+| `RateLimitError` pedindo **segundos** | teto de 8.000 tokens/minuto | `RateLimitAwareLLM` lê o tempo pedido e repete, até 6 tentativas |
+| `RateLimitError` pedindo **minutos** | teto diário esgotado **naquele modelo** | acima de 180s ele desiste na hora e instrui a trocar `GROQ_MODEL` — esperar não resolve |
 
-**Por que existe uma subclasse de `LLM`.** O limite é por *uso real acumulado* (`Limit 8000, Used 6801, Requested 6299`), então rodar a mesma aula duas vezes dentro de um minuto derruba o pipeline no meio de uma task. O caminho óbvio — `num_retries` do litellm — **não funciona**: ele não faz retry de `RateLimitError` em `completion()`, desiste em 0,4s sem esperar. Por isso `core/llm_config.py` traz `RateLimitAwareLLM`, que lê o tempo da própria mensagem da Groq (`Please try again in 38.25s`) e repete até 3 vezes.
+**Por que existe uma subclasse de `LLM`.** O limite é por *uso real acumulado* (`Limit 8000, Used 6801,
+Requested 6299`), então rodar a mesma aula duas vezes dentro de um minuto derruba o pipeline no meio de
+uma task. O caminho óbvio — `num_retries` do litellm — **não funciona**: ele não faz retry de
+`RateLimitError` em `completion()`, desiste em 0,4s sem esperar. `RateLimitAwareLLM` lê o tempo da
+própria mensagem da Groq e espera. O parser entende duração composta (`38.25s`, `3m9.648s`, `547ms`) —
+uma versão anterior só entendia segundos puros e caía num chute de 35s quando a Groq pedia 7 minutos,
+matando o pipeline depois de esperar em vão.
 
-Na prática: o terceiro run seguido pausa ~36s e **conclui**, em vez de morrer. Se você vir `⏳ Limite de tokens/minuto da Groq atingido`, é isso funcionando — não é erro.
+Se você vir `⏳ Limite de tokens da Groq atingido`, é a proteção funcionando — não é erro.
+
+> **`max_tokens` fica aberto de propósito.** Uma versão anterior capava em 4.096 para "economizar
+> orçamento". Medido na API, o que é debitado é o **consumo real**, não o teto pedido: `max_tokens=60000`
+> passa num modelo com teto de 8.000/minuto, debitando os 113 tokens gerados. O `Requested = prompt +
+> max_tokens` do erro 429 é a checagem de **admissão** contra o saldo, não o valor cobrado. Capar não
+> economizava nada e só arriscava truncar a resposta.
+
+> **A cota diária é por modelo — e essa é a saída de emergência.** Com o padrão esgotado,
+> `GROQ_MODEL=groq/openai/gpt-oss-120b` no `.env` destrava o laboratório na hora, com orçamento zerado.
 
 ### Pré-requisitos externos por aula
 
@@ -110,6 +172,8 @@ Na prática: o terceiro run seguido pausa ~36s e **conclui**, em vez de morrer. 
 | 002 | `GROQ_API_KEY` — o Checkov vem como dependência Python, não precisa instalar à parte |
 | 003 | `GROQ_API_KEY` + `kubectl` apontando para um cluster descartável (opcional: `K8S_ALLOWED_CONTEXTS`) |
 | 004 | `GROQ_API_KEY`; `kubectl` só para reproduzir o incidente (`checkout-broken.yaml`) — o pipeline roda sem cluster |
+| 005 | `GROQ_API_KEY` |
+| 006 | `GROQ_API_KEY` — a UI é local (`streamlit`), sem Slack nem serviço externo |
 
 > ⚠️ **Aula 003:** a tool `apply_k8s_manifest` executa `kubectl apply` de verdade, então ela só aceita contextos que casem com uma **allowlist** de clusters descartáveis — `kind-*`, `k3d-*`, `minikube`, `docker-desktop`, `rancher-desktop`, `orbstack`, `colima`. Um kind local funciona sem configurar nada; qualquer outro contexto é bloqueado antes de qualquer chamada ao cluster. Para autorizar outro, passe `K8S_ALLOWED_CONTEXTS="kind-*,meu-cluster"`. Sem `kubectl` no PATH, ou com o cluster fora do ar, ela cai em simulação e não toca em nada.
 
@@ -120,25 +184,25 @@ Na prática: o terceiro run seguido pausa ~36s e **conclui**, em vez de morrer. 
 Cada aula `NNN` sai do lab `moduloN_*.py` do repositório gabarito e herda o estado **final** da aula `NNN-1`. Use a skill, que faz todo o mecânico e mede o custo:
 
 ```
-/nova-aula 005-slug-descritivo
+/nova-aula 007-slug-descritivo
 ```
 
 Ela copia a aula anterior, traz o lab como entrypoint (o nome é sempre o sufixo do lab), soma só os agentes e tools que o lab importa, ajusta o `name` do `pyproject`, roda o pipeline e mede o consumo de tokens. Depois, `/finaliza-projeto` escreve o README e commita.
 
-> **Rode uma aula por vez, ao começar cada uma.** Preparar várias de antemão congela todas no estado atual: uma correção feita durante a aula 005 não chegaria às seguintes — e correções nascidas no meio da aula já aconteceram três vezes nesta trilha (o `write_file` que corrompia YAML, o `RateLimitAwareLLM`, a troca do modelo retirado da Groq).
+> **Rode uma aula por vez, ao começar cada uma.** Preparar várias de antemão congela todas no estado atual: uma correção feita durante a aula 005 não chegaria às seguintes — e correções nascidas no meio da aula já são rotina nesta trilha (o `write_file` que corrompia YAML, o `RateLimitAwareLLM`, a troca do modelo retirado da Groq, o parser de duração composta, o `max_tokens` destravado).
 
 No braço, se precisar:
 
 ```bash
-cp -r 004-reduzindo-mttr-com-inteligencia-agentica 005-nome-da-aula
-# ajuste o campo `name` no 005-nome-da-aula/pyproject.toml — nome duplicado quebra o workspace
+cp -r 006-chatops-e-human-in-the-loop 007-nome-da-aula
+# ajuste o campo `name` no 007-nome-da-aula/pyproject.toml — nome duplicado quebra o workspace
 uv sync --all-packages     # o membro é descoberto pelo glob "0*-*" da raiz
 ```
 
 Precisou de uma biblioteca nova? Rode dentro da pasta da aula — ela entra só no `pyproject.toml` daquele membro e no lock compartilhado:
 
 ```bash
-cd 005-nome-da-aula && uv add kubernetes
+cd 007-nome-da-aula && uv add kubernetes
 ```
 
 ---
