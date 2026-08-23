@@ -20,31 +20,61 @@ _crewai_cache.mark_cache_breakpoint = lambda msg: msg
 # e mata o pipeline no meio de uma task. O `num_retries` do litellm NÃO resolve:
 # ele não faz retry de RateLimitError em `completion()` (verificado — desiste em
 # 0,4s, sem esperar). Daí o retry explícito abaixo.
-_MAX_TENTATIVAS = 4
+_MAX_TENTATIVAS = 6
 _ESPERA_PADRAO_S = 35.0
+# Acima disso não é limite por minuto, é a cota DIÁRIA: esperar não resolve
+# dentro de uma aula, então falha rápido com instrução em vez de queimar
+# tentativas de 35s até morrer com erro críptico.
+_ESPERA_MAXIMA_S = 180.0
+
+_TRECHO_DE_ESPERA = re.compile(r"try again in\s+([0-9hms.]+)", re.IGNORECASE)
+_UNIDADES = re.compile(r"([\d.]+)(ms|h|m|s)")   # "ms" antes de "m": ordem importa
+_EM_SEGUNDOS = {"h": 3600.0, "m": 60.0, "s": 1.0, "ms": 0.001}
 
 
 def _segundos_ate_liberar(erro: Exception) -> float:
-    """Lê o tempo de espera da mensagem da Groq ('Please try again in 38.25s')."""
-    encontrado = re.search(r"try again in ([\d.]+)s", str(erro), re.IGNORECASE)
-    if encontrado:
-        return float(encontrado.group(1)) + 1  # margem para o balde reencher
-    return _ESPERA_PADRAO_S
+    """Converte o tempo pedido pela Groq em segundos.
+
+    A Groq usa formato composto e o material antigo só lia segundos puros:
+    '38.25s' funcionava, mas '3m9.648s', '1h46m33.599s' e '547ms' caíam no
+    fallback de 35s. Como a cota diária pede minutos de espera, o retry
+    esperava 35s quatro vezes e desistia — era assim que o pipeline morria.
+    """
+    trecho = _TRECHO_DE_ESPERA.search(str(erro))
+    if not trecho:
+        return _ESPERA_PADRAO_S
+    partes = _UNIDADES.findall(trecho.group(1))
+    if not partes:
+        return _ESPERA_PADRAO_S
+    total = sum(float(valor) * _EM_SEGUNDOS[unidade] for valor, unidade in partes)
+    return total + 1  # margem para o balde reencher
 
 
 class RateLimitAwareLLM(LLM):
-    """LLM que espera e repete quando a Groq recusa por tokens/minuto."""
+    """LLM que espera e repete quando a Groq recusa por limite de tokens."""
 
     def call(self, *args, **kwargs):
-        for tentativa in range(_MAX_TENTATIVAS):
+        for tentativa in range(1, _MAX_TENTATIVAS + 1):
             try:
                 return super().call(*args, **kwargs)
             except RateLimitError as erro:
-                if tentativa == _MAX_TENTATIVAS - 1:
-                    raise
                 espera = _segundos_ate_liberar(erro)
-                print(f"⏳ Limite de tokens/minuto da Groq atingido. "
-                      f"Aguardando {espera:.0f}s (tentativa {tentativa + 1}/{_MAX_TENTATIVAS - 1})...")
+                if espera > _ESPERA_MAXIMA_S:
+                    print(
+                        f"\n🛑 A Groq pediu {espera / 60:.0f} min de espera. Isso é a cota "
+                        f"DIÁRIA (200.000 tokens/dia, contada POR MODELO), não o limite por "
+                        f"minuto — esperar não resolve agora.\n"
+                        f"   Saídas: trocar GROQ_MODEL no .env (cada modelo tem cota própria, "
+                        f"ex.: groq/openai/gpt-oss-120b) ou retomar mais tarde.\n"
+                        f"   Dica: a Groq RESERVA max_tokens do orçamento, então baixar "
+                        f"GROQ_MAX_TOKENS faz a cota diária render mais.\n"
+                    )
+                    raise
+                if tentativa == _MAX_TENTATIVAS:
+                    print(f"\n🛑 {_MAX_TENTATIVAS} tentativas e a Groq ainda recusa. Desistindo.\n")
+                    raise
+                print(f"⏳ Limite de tokens da Groq atingido. Aguardando {espera:.0f}s "
+                      f"(tentativa {tentativa}/{_MAX_TENTATIVAS - 1})...")
                 time.sleep(espera)
 
 
