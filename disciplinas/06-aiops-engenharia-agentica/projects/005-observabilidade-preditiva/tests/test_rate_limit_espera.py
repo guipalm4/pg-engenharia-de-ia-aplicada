@@ -6,7 +6,7 @@ caía num fallback de 35s, curto demais, e o pipeline morria após 4 tentativas.
 """
 import pytest
 
-from core.llm_config import _ESPERA_MAXIMA_S, _segundos_ate_liberar
+from core.llm_config import ESPERA_MAXIMA_S, segundos_ate_liberar
 
 
 @pytest.mark.parametrize(
@@ -21,15 +21,15 @@ from core.llm_config import _ESPERA_MAXIMA_S, _segundos_ate_liberar
     ],
 )
 def test_le_todos_os_formatos_da_groq(mensagem, esperado):
-    assert _segundos_ate_liberar(Exception(mensagem)) == pytest.approx(esperado, abs=0.01)
+    assert segundos_ate_liberar(Exception(mensagem)) == pytest.approx(esperado, abs=0.01)
 
 
 def test_sem_tempo_na_mensagem_usa_o_padrao():
-    assert _segundos_ate_liberar(Exception("Rate limit reached")) == 35.0
+    assert segundos_ate_liberar(Exception("Rate limit reached")) == 35.0
 
 
 def test_espera_de_cota_diaria_passa_do_teto_que_dispara_a_desistencia():
     # É o que faz o pipeline avisar e desistir em vez de esperar em vão.
-    assert _segundos_ate_liberar(Exception("try again in 7m5.52s")) > _ESPERA_MAXIMA_S
+    assert segundos_ate_liberar(Exception("try again in 7m5.52s")) > ESPERA_MAXIMA_S
     # Já um limite por minuto tem de caber dentro do teto, para ser retentado.
-    assert _segundos_ate_liberar(Exception("try again in 38.25s")) < _ESPERA_MAXIMA_S
+    assert segundos_ate_liberar(Exception("try again in 38.25s")) < ESPERA_MAXIMA_S
