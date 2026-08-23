@@ -154,7 +154,7 @@ Depois, meça o custo. O free tier da Groq impõe **dois** limites, e o segundo 
 | **TPD — tokens por dia** | **200.000** | **invisível nos headers**, por modelo |
 | RPM — requisições por minuto | 1.000 | raramente é o gargalo |
 
-E o detalhe que mais importa: **a Groq RESERVA `max_tokens` no momento da chamada — ela não cobra o consumo real.** A mensagem de erro entrega isso literalmente (`Requested 2059` para um prompt de 11 tokens com `max_tokens=2048`). Vale para o TPM *e* para o TPD. Por isso `core/llm_config.py` usa `max_tokens=2560`, e não o 4096 original: com 4096 o orçamento diário comportava só ~48 chamadas de LLM, e a janela de minuto, uma. **Se uma aula bater em rate limit, suspeite de `max_tokens` antes de suspeitar do modelo.**
+E um detalhe contraintuitivo: **não cape `max_tokens`.** O que consome orçamento é o consumo real, não o teto pedido — medido na API: `max_tokens=60000` passa num modelo com teto de 8.000 tokens/minuto (debitando os 113 tokens gerados), e 12 chamadas com `max_tokens=20000` passam contra o teto de 200.000/dia. O `Requested = prompt + max_tokens` que aparece no erro 429 é só a **checagem de admissão** contra o saldo restante, não o valor debitado. Capar, portanto, não economiza nada: só faz a chamada ser recusada mais cedo quando o saldo diário está no fim, e arrisca truncar a resposta. Por isso `core/llm_config.py` deixa `max_tokens` aberto, com `GROQ_MAX_TOKENS` só como válvula.
 
 O modelo padrão é `groq/qwen/qwen3.6-27b`, que mantém todas as aulas abaixo do teto. Se ele sair do catálogo (é "Preview"), troque via `GROQ_MODEL` no `.env` — não edite os cinco `llm_config.py`. O `RateLimitAwareLLM` segura o pipeline pausando quando o limite bate, mas o número medido precisa entrar no README.
 
@@ -171,10 +171,9 @@ except Exception as err:
 if C:
     pior = max(sum(t for ts, t in C if i <= ts < i + 60) for i, _ in C)
     print(f"\nchamadas={len(C)} total_real={sum(t for _, t in C)} pior_janela_60s={pior} (teto TPM 8000)")
-    # O que a Groq debita nao e o consumo real, e prompt + max_tokens reservado:
-    import os as _os
-    reservado = len(C) * int(_os.getenv("GROQ_MAX_TOKENS", "2560"))
-    print(f"reservado_no_orcamento~={reservado} (teto TPD 200000 -> ~{200000 // max(reservado // max(len(C), 1), 1)} chamadas/dia)")
+    # O TPD (200.000/dia, por modelo) e debitado pelo consumo REAL:
+    total = sum(t for _, t in C)
+    print(f"execucoes que cabem no teto diario de 200000: ~{200000 // max(total, 1)}")
 PY
 uv run python /tmp/medir.py "$ENTRYPOINT"
 ```

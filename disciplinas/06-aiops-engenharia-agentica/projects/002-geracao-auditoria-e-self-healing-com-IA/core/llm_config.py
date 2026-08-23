@@ -104,20 +104,25 @@ _MODELO_PADRAO = "groq/qwen/qwen3.6-27b"
 _esforco = os.getenv("GROQ_REASONING_EFFORT", "").strip()
 _opcoes_de_raciocinio = {"reasoning_effort": _esforco} if _esforco else {}
 
+_teto_de_saida = os.getenv("GROQ_MAX_TOKENS", "").strip()
+if _teto_de_saida:
+    _opcoes_de_raciocinio["max_tokens"] = int(_teto_de_saida)
+
 nexus_llm = RateLimitAwareLLM(
     model=os.getenv("GROQ_MODEL", _MODELO_PADRAO),
     api_key=os.getenv("GROQ_API_KEY"),
     temperature=0.2,
-    # ATENÇÃO: a Groq RESERVA `max_tokens` do orçamento no momento da chamada — não
-    # cobra o consumo real. A própria mensagem de erro entrega isso: para um prompt
-    # de 11 tokens com max_tokens=2048, ela responde `Requested 2059`. Vale para os
-    # dois limites do free tier: 8.000 tokens/minuto e 200.000 tokens/dia.
-    # Consequência: com o antigo max_tokens=4096, o orçamento DIÁRIO comportava só
-    # ~48 chamadas de LLM, e o de minuto, uma. Era a causa real dos rate limits que
-    # apareciam em todas as aulas — não o modelo escolhido.
-    # 2560 dá ~44% de folga sobre a maior resposta já observada (1.782 tokens, do
-    # gpt-oss-120b) e reserva 37% menos que antes. Os artefatos em si são pequenos:
-    # main.tf ~343 tokens, manifesto YAML ~218, JSON do dashboard ~145.
-    max_tokens=int(os.getenv("GROQ_MAX_TOKENS", "2560")),
+    # `max_tokens` fica ABERTO de propósito. Medido na API da Groq:
+    #   - max_tokens=60000 num modelo com teto de 8.000 tokens/minuto: PASSA,
+    #     debitando os 113 tokens realmente gerados;
+    #   - 12 chamadas com max_tokens=20000 (240.000 "reservados") contra o teto
+    #     de 200.000 tokens/dia: todas passam, ~120 tokens reais cada.
+    # Ou seja, o que consome orçamento é o consumo real — capar não economiza nada.
+    # O `Requested = prompt + max_tokens` que aparece nas mensagens de erro 429 é
+    # só a checagem de admissão contra o SALDO restante, não o valor debitado.
+    # Capar, portanto, só faz mal: recusa chamadas mais cedo quando o saldo diário
+    # está no fim, e arrisca truncar a resposta (um teto de 2048 cortaria a maior
+    # resposta já observada nestas aulas, de 2.051 tokens).
+    # GROQ_MAX_TOKENS existe como válvula, mas o normal é deixar em branco.
     **_opcoes_de_raciocinio,
 )

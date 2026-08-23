@@ -18,7 +18,7 @@ A auditoria acontece em duas camadas complementares. **Checkov** (`run_checkov_s
 
 O `main.tf` versionado aqui é **saída do agente**, não código escrito à mão: é o artefato que `write_file` gravou em disco durante a execução do pipeline.
 
-> ℹ️ **Runtime atualizado na aula 005.** O modelo agora vem de `GROQ_MODEL` no `.env` (default `qwen/qwen3.6-27b`, no lugar do `openai/gpt-oss-20b`) e `max_tokens` caiu de 4096 para 2560 — a Groq reserva esse teto do orçamento em vez de cobrar o consumo real, e era a causa dos rate limits da trilha. Detalhes em [005 · Aprendizados](../005-observabilidade-preditiva/README.md#aprendizados).
+> ℹ️ **Runtime atualizado na aula 005.** O modelo agora vem de `GROQ_MODEL` no `.env` (default `qwen/qwen3.6-27b`, no lugar do `openai/gpt-oss-20b`), `max_tokens` deixou de ser capado (a Groq debita o consumo real, não o teto pedido — capar não economizava cota e arriscava truncar) e o retry de rate limit passou a ler os formatos de tempo compostos da Groq (`3m9.648s`), que antes caíam num fallback curto demais e matavam o pipeline. Detalhes em [005 · Aprendizados](../005-observabilidade-preditiva/README.md#aprendizados).
 
 ## Tecnologias e Ferramentas
 
