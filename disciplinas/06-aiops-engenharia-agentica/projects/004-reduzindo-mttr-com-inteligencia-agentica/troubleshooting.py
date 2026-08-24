@@ -7,8 +7,8 @@ from tools.file_writer import write_file
 from tools.k8s_diag import inspect_pod_failure, suggest_fix
 from tools.obs_tools import query_jaeger_traces, query_prometheus_metrics
 
-# Ensure project root is in the Python path
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+# Raiz do projeto: nesta trilha o entrypoint fica na raiz da aula, não em labs/
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
