@@ -58,8 +58,37 @@ for n in ast.walk(ast.parse(open(sys.argv[1]).read())):
         elif n.module.startswith("tools."):
             print("  tool:  ", n.module.split(".", 1)[1])
 IMPORTS
-echo "=== arquivos que o lab referencia por nome ==="
-grep -oE "'[a-zA-Z0-9_.-]+\.(yaml|yml|json|md|tf)'" "$LAB" | tr -d "'" | sort -u
+echo "=== arquivos que o lab referencia (literais e os.path.join) ==="
+python3 - "$LAB" <<'ARQUIVOS'
+import ast, re, sys
+fonte = open(sys.argv[1]).read()
+arvore = ast.parse(fonte)
+EXT = r"(?:ya?ml|json|md|tf|txt|csv)"
+
+def texto(n):
+    """Literal do no, com {campo} onde ha interpolacao de f-string."""
+    if isinstance(n, ast.Constant) and isinstance(n.value, str):
+        return n.value
+    if isinstance(n, ast.JoinedStr):
+        return "".join(texto(x) if isinstance(x, ast.Constant)
+                       else "{" + ast.unparse(x.value) + "}" for x in n.values)
+    return None
+
+montados = set()
+for n in ast.walk(arvore):
+    if isinstance(n, ast.Call) and ast.unparse(n.func).endswith("path.join"):
+        cs = [t for a in n.args if (t := texto(a)) is not None]
+        if cs and re.search(rf"\.{EXT}$", cs[-1]):
+            montados.add("/".join(cs))
+
+citados = set(re.findall(rf"\w[\w.-]*\.{EXT}\b", fonte))
+citados -= {c.rsplit("/", 1)[-1] for c in montados}
+
+print("  -- caminho montado no codigo (ENTRADA do pipeline, traga o arquivo):")
+for a in sorted(montados) or ["(nenhum)"]: print("      ", a)
+print("  -- nome citado na prosa dos prompts (costuma ser SAIDA do agente):")
+for a in sorted(citados) or ["(nenhum)"]: print("      ", a)
+ARQUIVOS
 ```
 
 Se `PREV` vier vazio, pare: esta skill só serve para aula incremental. Se `LAB` vier vazio, confira o número.
@@ -74,6 +103,27 @@ cd "$BASE/$ARGUMENTS"
 rm -rf .venv __pycache__ .pytest_cache */__pycache__ .DS_Store README.md README.original.md
 rm -f "$ENTRYPOINT_ANTERIOR"          # cada pasta tem UM entrypoint
 cp "$LAB" "$ENTRYPOINT"
+
+# Todo lab traz `PROJECT_ROOT = dirname(__file__)/".."`, que só vale no layout
+# `labs/` do gabarito. Aqui o entrypoint fica na raiz da aula, então isso aponta
+# para `projects/` -- e vai para a POSIÇÃO 0 do sys.path, à frente do diretório
+# certo. Ficou latente até a 007 usar a variável para montar caminho de arquivo.
+python3 - "$ENTRYPOINT" <<'RAIZ'
+import pathlib, sys
+p = pathlib.Path(sys.argv[1]); s = p.read_text()
+ANTIGO = """# Ensure project root is in the Python path
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))"""
+NOVO = """# Raiz do projeto: nesta trilha o entrypoint fica na raiz da aula, não em labs/
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))"""
+if ANTIGO in s:
+    p.write_text(s.replace(ANTIGO, NOVO)); print("PROJECT_ROOT corrigido")
+elif "os.path.dirname(os.path.abspath(__file__))" in s:
+    print("PROJECT_ROOT ja estava certo")
+elif "PROJECT_ROOT" in s:
+    sys.exit("PARE: o lab define PROJECT_ROOT de um jeito novo -- confira a mao")
+else:
+    print("este lab nao usa PROJECT_ROOT")
+RAIZ
 ```
 
 Depois liste os artefatos de saída herdados e **remova só os que são output da aula anterior** (`main.tf`, `*-k8s.yaml`, `*-fix.yaml`…). Tools herdadas ficam; artefato gerado por um pipeline que não existe mais nesta pasta, não.
