@@ -96,6 +96,8 @@ Sempre rode isso antes de escrever, sem exceção — mesmo que o README pareça
 
 Escreve o novo `README.md` baseando-se exclusivamente no output do passo 2. Não inventar.
 
+**A estrutura canônica é [`shared/templates/README_TEMPLATE.md`](../../shared/templates/README_TEMPLATE.md) — leia o arquivo.** Ele carrega o porquê de cada seção; o esqueleto abaixo é só o lembrete de ordem e obrigatoriedade.
+
 ```
 # Exemplo NNN — <Título descritivo>
 > <Uma frase: o que demonstra + tecnologia principal>
@@ -104,9 +106,12 @@ Escreve o novo `README.md` baseando-se exclusivamente no output do passo 2. Não
 - Disciplina / Período / Autor: guipalm4
 
 ## Descrição
-<2–4 parágrafos: o que faz, qual problema resolve, relação com a disciplina>
-<se `PREV` existir (passo 2): abrir explicando o que mudou em relação ao projeto anterior — o delta
-é o conteúdo pedagógico da aula. Não redocumentar comportamento herdado que já está no README de `PREV`>
+<2–4 parágrafos, escritos para quem abriu ESTA pasta sem ter lido as outras:
+ o que faz, qual problema resolve, relação com a disciplina>
+
+## Herança                 ← só se `PREV` existir (passo 2)
+- **Esta aula acrescenta:** <agente/tool/arquivo novo>
+- **Vem de `NNN-1` sem alteração:** <o resto, incluindo o que existe e não é usado aqui>
 
 ## Tecnologias e Ferramentas
 - [x] <tecnologia>
@@ -118,6 +123,12 @@ Escreve o novo `README.md` baseando-se exclusivamente no output do passo 2. Não
 <comandos>
 \`\`\`
 
+## Saída esperada
+<o que aparece quando funciona + o que NÃO é determinístico>
+
+## Real vs. simulado       ← obrigatório se houver qualquer simulação, stub ou fixture
+<tabela: componente | real ou simulado | o que implica para quem reusar>
+
 ## Estrutura do Projeto    ← só se houver mais de 2–3 arquivos
 <árvore comentada>
 
@@ -128,7 +139,13 @@ Escreve o novo `README.md` baseando-se exclusivamente no output do passo 2. Não
 - [x] **<conceito>** — <como aparece no código>
 
 ## Aprendizados
-- [x] <insight concreto>
+- [x] <o achado, e o que ele revela — sem o número que o produziu>
+
+## O que faria diferente   ← recomendado
+
+## Medição                 ← obrigatório se houver custo de execução
+**Medido em DD/MM/AAAA** · <versões> · <modelo>
+<tabela de métricas>
 
 ## Documento Original          ← só se existir README.original.md
 > Conteúdo original do README (scaffold ou material do professor) preservado em [`README.original.md`](./README.original.md).
@@ -137,7 +154,23 @@ Escreve o novo `README.md` baseando-se exclusivamente no output do passo 2. Não
 - [nome](url)
 ```
 
-Seções marcadas com `←` são opcionais; as demais são obrigatórias.
+Seções marcadas com `←` são condicionais; as demais são obrigatórias.
+
+> ⚠️ **O delta do passo 2 é estratégia de LEITURA, não de escrita.** Ele existe para você não reler
+> os 15 arquivos herdados que já foram documentados em `PREV` — e é isso que evita um dump de 100KB.
+> Ele **não** é instrução de conteúdo: o README não abre comparando com a aula anterior, e não narra
+> a evolução da trilha. Essa narrativa mora no índice da disciplina, onde é contada uma vez em vez
+> de uma por aula. O que o leitor da pasta precisa é da seção `Herança` — duas linhas classificando
+> o que é a aula e o que é bagagem.
+>
+> Esta confusão é histórica: as duas instruções nasceram na mesma frase (commit `a002155`, 28/07/2026)
+> e produziram seis READMEs abrindo com "o delta da aula é…", com os marcadores de herança crescendo
+> de 6 para 19 por arquivo. Corrigido em 24/08/2026.
+
+> ⚠️ **Separe o achado do número.** Modelo, versão de biblioteca e contagem de tokens são perecíveis —
+> este repositório já perdeu três modelos do catálogo da Groq. O achado vai no texto dos `Aprendizados`,
+> escrito para sobreviver à troca; o número vai em `Medição`, datado e versionado. Um número sem data
+> envelhece sem que ninguém perceba.
 
 ### 4. Atualiza o índice raiz
 
