@@ -16,7 +16,7 @@
 | 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 6 projetos |
 | 04 | [Criação de Agentes](#04--criação-de-agentes) | 7 projetos |
 | 05 | [Ferramentas de IA para UX & UI](#05--ferramentas-de-ia-para-ux--ui) | 5 projetos |
-| 06 | [AI-Ops e Engenharia Agêntica](#06--ai-ops-e-engenharia-agêntica) | 6 projetos |
+| 06 | [AI-Ops e Engenharia Agêntica](#06--ai-ops-e-engenharia-agêntica) | 7 projetos |
 
 ---
 
@@ -190,6 +190,7 @@ Trilha de laboratórios incrementais de AI-Ops e Engenharia de Plataforma: cada 
 | 004 | [Reduzindo o MTTR com Inteligência Agêntica](disciplinas/06-aiops-engenharia-agentica/projects/004-reduzindo-mttr-com-inteligencia-agentica/README.md) | Inverte o sentido do pipeline: em vez de construir, investiga o que quebrou. Um SRE de plantão com `allow_delegation` correlaciona métrica (Prometheus), trace (Jaeger) e evento de pod pelo framework ReAct até a causa raiz, e o Arquiteto grava o hotfix em YAML — fechando o loop de self-healing que a aula 002 só insinuou |
 | 005 | [Observabilidade Preditiva](disciplinas/06-aiops-engenharia-agentica/projects/005-observabilidade-preditiva/README.md) | Desloca o pipeline no tempo: em vez de diagnosticar o incidente já em curso, antecipa-o. Um único agente de AIOps encadeia as três camadas de uma plataforma de observabilidade — traduz linguagem natural para PromQL, projeta a tendência da série temporal para prever a saturação do volume em 4 horas (janela de ação, não aviso tardio) e materializa o dashboard do incidente em JSON pronto para o Grafana |
 | 006 | [ChatOps e Human-in-the-Loop](disciplinas/06-aiops-engenharia-agentica/projects/006-chatops-e-human-in-the-loop/README.md) | Primeira aula com interface: um simulador de Slack em Streamlit onde o agente recebe pedidos de infraestrutura em linguagem natural e deveria exigir aprovação humana antes de executar o que é destrutivo. Rodado nos dois modelos do free tier, o portão determinístico da tool quase nunca é o que decide — o LLM avalia o risco antes de chamá-la, vaza a senha de aprovação no texto da resposta e classifica o mesmo pedido de formas diferentes conforme o modelo, tornando a aula um estudo do padrão pela ausência dele |
+| 007 | [DevSecOps com Agentes de IA](disciplinas/06-aiops-engenharia-agentica/projects/007-devsecops-com-agentes-de-IA/README.md) | Primeira aula em que o agente **consome** um artefato de outra ferramenta em vez de gerar o seu: um Analista de DevSecOps lê um relatório de scan de container, separa o backdoor de supply chain da `xz` (CVE-2024-3094) do ruído e escreve o parecer executivo. O produto é um julgamento — não há schema que o valide —, e a medição mostra por quê isso importa: o fixture não traz CVSS nem vetor de ataque, então o modelo preenche a lacuna com conhecimento próprio, rebaixa uma CVE `HIGH` inventando uma premissa sobre o ambiente de deploy, e monta plano de ação para um identificador CVE sintaticamente impossível |
 
 ---
 

@@ -38,10 +38,15 @@ projects/
 │   ├── tests/
 │   ├── aiops.py                    # entrypoint
 │   └── incident_dashboard.json     # artefato GERADO pelo agente
-└── 006-chatops-e-human-in-the-loop/           # + ChatOps, aprovação humana, UI Streamlit
+├── 006-chatops-e-human-in-the-loop/           # + ChatOps, aprovação humana, UI Streamlit
+│   ├── pyproject.toml
+│   ├── tests/
+│   └── chatops.py         # entrypoint STREAMLIT — não roda com `uv run chatops.py`
+└── 007-devsecops-com-agentes-de-IA/           # + DevSecOps: triagem de scan de vulnerabilidade
     ├── pyproject.toml
     ├── tests/
-    └── chatops.py         # entrypoint STREAMLIT — não roda com `uv run chatops.py`
+    ├── data/trivy.json    # ENTRADA do pipeline (fixture) — 1ª aula que consome artefato
+    └── devsecops.py       # entrypoint; a tool desta aula é declarada aqui dentro
 ```
 
 ---
@@ -77,6 +82,7 @@ cd 002-geracao-auditoria-e-self-healing-com-IA && uv run iac_copilot.py
 cd 003-orquestracao-sre-assistida-por-ia      && uv run k8s_ops.py
 cd 004-reduzindo-mttr-com-inteligencia-agentica && uv run troubleshooting.py
 cd 005-observabilidade-preditiva                && uv run aiops.py
+cd 007-devsecops-com-agentes-de-IA              && uv run devsecops.py
 ```
 
 **A aula 006 é a exceção:** o entrypoint é um app [Streamlit](https://streamlit.io/), não um script.
@@ -91,13 +97,14 @@ streamlit`, que parece dependência faltando mas é diretório errado (sem `pypr
 resolver, o uv usa um ambiente efêmero). Na primeira execução o Streamlit pede um e-mail: **Enter**
 com o campo vazio segue adiante.
 
-As aulas 003 a 006 têm testes (não precisam de cluster nem de API key):
+As aulas 003 a 007 têm testes (não precisam de cluster nem de API key):
 
 ```bash
 cd 003-orquestracao-sre-assistida-por-ia        && uv run pytest
 cd 004-reduzindo-mttr-com-inteligencia-agentica && uv run pytest
 cd 005-observabilidade-preditiva                && uv run pytest
 cd 006-chatops-e-human-in-the-loop              && uv run pytest
+cd 007-devsecops-com-agentes-de-IA              && uv run pytest
 ```
 
 Consumo medido por execução:
@@ -107,6 +114,7 @@ Consumo medido por execução:
 | 004 | ~8.900 | `gpt-oss-20b` (padrão à época) | a mais cara da trilha — bate no teto de 8.000/minuto por causa do `allow_delegation=True` do SRE de plantão; o `RateLimitAwareLLM` pausa e o run leva ~70s em vez de ~3s |
 | 005 | 1.900 – 3.500 | `qwen/qwen3.6-27b` (padrão atual) | 4 chamadas ao LLM, ~7s |
 | 006 | ~1.150 **por mensagem** | `qwen/qwen3.6-27b` (padrão atual) | cada mensagem no chat é uma execução independente; ~170 mensagens cabem no teto diário |
+| 007 | 3.158 | `qwen/qwen3.6-27b` (padrão atual) | a mais barata por execução completa — 2 chamadas, sem delegação nem ciclo ReAct; ~63 execuções no teto diário |
 
 As aulas 001 a 003 não têm medição registrada. A 004 não foi remedida depois da troca de modelo — o
 número serve para situá-la como a mais pesada, não para comparar com as duas seguintes.
@@ -174,6 +182,7 @@ Se você vir `⏳ Limite de tokens da Groq atingido`, é a proteção funcionand
 | 004 | `GROQ_API_KEY`; `kubectl` só para reproduzir o incidente (`checkout-broken.yaml`) — o pipeline roda sem cluster |
 | 005 | `GROQ_API_KEY` |
 | 006 | `GROQ_API_KEY` — a UI é local (`streamlit`), sem Slack nem serviço externo |
+| 007 | `GROQ_API_KEY` — o Trivy **não** é executado; `data/trivy.json` é um fixture estático |
 
 > ⚠️ **Aula 003:** a tool `apply_k8s_manifest` executa `kubectl apply` de verdade, então ela só aceita contextos que casem com uma **allowlist** de clusters descartáveis — `kind-*`, `k3d-*`, `minikube`, `docker-desktop`, `rancher-desktop`, `orbstack`, `colima`. Um kind local funciona sem configurar nada; qualquer outro contexto é bloqueado antes de qualquer chamada ao cluster. Para autorizar outro, passe `K8S_ALLOWED_CONTEXTS="kind-*,meu-cluster"`. Sem `kubectl` no PATH, ou com o cluster fora do ar, ela cai em simulação e não toca em nada.
 
@@ -184,7 +193,7 @@ Se você vir `⏳ Limite de tokens da Groq atingido`, é a proteção funcionand
 Cada aula `NNN` sai do lab `moduloN_*.py` do repositório gabarito e herda o estado **final** da aula `NNN-1`. Use a skill, que faz todo o mecânico e mede o custo:
 
 ```
-/nova-aula 007-slug-descritivo
+/nova-aula 008-slug-descritivo
 ```
 
 Ela copia a aula anterior, traz o lab como entrypoint (o nome é sempre o sufixo do lab), soma só os agentes e tools que o lab importa, ajusta o `name` do `pyproject`, roda o pipeline e mede o consumo de tokens. Depois, `/finaliza-projeto` escreve o README e commita.
@@ -194,8 +203,8 @@ Ela copia a aula anterior, traz o lab como entrypoint (o nome é sempre o sufixo
 No braço, se precisar:
 
 ```bash
-cp -r 006-chatops-e-human-in-the-loop 007-nome-da-aula
-# ajuste o campo `name` no 007-nome-da-aula/pyproject.toml — nome duplicado quebra o workspace
+cp -r 007-devsecops-com-agentes-de-IA 008-nome-da-aula
+# ajuste o campo `name` no 008-nome-da-aula/pyproject.toml — nome duplicado quebra o workspace
 uv sync --all-packages     # o membro é descoberto pelo glob "0*-*" da raiz
 ```
 
