@@ -96,81 +96,14 @@ Sempre rode isso antes de escrever, sem exceção — mesmo que o README pareça
 
 Escreve o novo `README.md` baseando-se exclusivamente no output do passo 2. Não inventar.
 
-**A estrutura canônica é [`shared/templates/README_TEMPLATE.md`](../../shared/templates/README_TEMPLATE.md) — leia o arquivo.** Ele carrega o porquê de cada seção; o esqueleto abaixo é só o lembrete de ordem e obrigatoriedade.
+**A estrutura canônica é [`shared/templates/README_TEMPLATE.md`](../../shared/templates/README_TEMPLATE.md) — leia o arquivo.**
 
-```
-# Exemplo NNN — <Título descritivo>
-> <Uma frase: o que demonstra + tecnologia principal>
+Três notas que o template não cobre:
 
-## Contexto
-- Disciplina / Período / Autor: guipalm4
-
-## Descrição
-<2–4 parágrafos, escritos para quem abriu ESTA pasta sem ter lido as outras:
- o que faz, qual problema resolve, relação com a disciplina>
-
-## Herança                 ← só se `PREV` existir (passo 2)
-- **Esta aula acrescenta:** <agente/tool/arquivo novo>
-- **Vem de `NNN-1` sem alteração:** <o resto, incluindo o que existe e não é usado aqui>
-
-## Tecnologias e Ferramentas
-- [x] <tecnologia>
-
-## Pré-requisitos          ← só se houver setup especial (API keys, flags de browser, etc.)
-
-## Como executar
-\`\`\`bash
-<comandos>
-\`\`\`
-
-## Saída esperada
-<o que aparece quando funciona + o que NÃO é determinístico>
-
-## Real vs. simulado       ← obrigatório se houver qualquer simulação, stub ou fixture
-<tabela: componente | real ou simulado | o que implica para quem reusar>
-
-## Estrutura do Projeto    ← só se houver mais de 2–3 arquivos
-<árvore comentada>
-
-## Como funciona           ← obrigatório se a lógica não for óbvia
-<pseudocódigo ou diagrama textual>
-
-## Conceitos trabalhados
-- [x] **<conceito>** — <como aparece no código>
-
-## Aprendizados
-- [x] <o achado, e o que ele revela — sem o número que o produziu>
-
-## O que faria diferente   ← recomendado
-
-## Medição                 ← obrigatório se houver custo de execução
-**Medido em DD/MM/AAAA** · <versões> · <modelo>
-<tabela de métricas>
-
-## Documento Original          ← só se existir README.original.md
-> Conteúdo original do README (scaffold ou material do professor) preservado em [`README.original.md`](./README.original.md).
-
-## Referências
-- [nome](url)
-```
-
-Seções marcadas com `←` são condicionais; as demais são obrigatórias.
-
-> ⚠️ **O delta do passo 2 é estratégia de LEITURA, não de escrita.** Ele existe para você não reler
-> os 15 arquivos herdados que já foram documentados em `PREV` — e é isso que evita um dump de 100KB.
-> Ele **não** é instrução de conteúdo: o README não abre comparando com a aula anterior, e não narra
-> a evolução da trilha. Essa narrativa mora no índice da disciplina, onde é contada uma vez em vez
-> de uma por aula. O que o leitor da pasta precisa é da seção `Herança` — duas linhas classificando
-> o que é a aula e o que é bagagem.
->
-> Esta confusão é histórica: as duas instruções nasceram na mesma frase (commit `a002155`, 28/07/2026)
-> e produziram seis READMEs abrindo com "o delta da aula é…", com os marcadores de herança crescendo
-> de 6 para 19 por arquivo. Corrigido em 24/08/2026.
-
-> ⚠️ **Separe o achado do número.** Modelo, versão de biblioteca e contagem de tokens são perecíveis —
-> este repositório já perdeu três modelos do catálogo da Groq. O achado vai no texto dos `Aprendizados`,
-> escrito para sobreviver à troca; o número vai em `Medição`, datado e versionado. Um número sem data
-> envelhece sem que ninguém perceba.
+- **O delta do passo 2 é estratégia de leitura, não de escrita.** Ele existe para você não reler os arquivos herdados que já foram documentados em `PREV`. O README **não** abre comparando com a aula anterior: uma linha dizendo o que a aula acrescenta basta, e a narrativa da evolução mora no índice da disciplina.
+- **Só `Contexto`, `Descrição`, `Tecnologias`, `Como executar`, `Conceitos` e `Aprendizados` são obrigatórios.** As demais entram quando têm o que dizer.
+- **Se existir `README.original.md`**, acrescente ao final:
+  `> Conteúdo original do README preservado em [`README.original.md`](./README.original.md).`
 
 ### 4. Atualiza o índice raiz
 
