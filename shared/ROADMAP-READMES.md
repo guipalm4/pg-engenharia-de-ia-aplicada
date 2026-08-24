@@ -55,9 +55,9 @@ verdade** (`kubectl apply`), e o README tem **zero** menções a simulação —
 canário e as métricas que decidem o rollout são sintéticos. Quem copiar aquele
 código pode achar que a decisão de rollout é real.
 
-- [ ] **Faixa A** — `Real vs. simulado`: `kubectl apply` **real** (com allowlist de contextos) · métricas de canário **simuladas** · limiares determinísticos **reais** · manifesto por template, não gerado por LLM
-- [ ] **Faixa A** — `Herança` + reescrever abertura da `Descrição` (hoje: *"Este projeto evolui o [002]…"*)
-- [ ] **Faixa A** — `O que faria diferente`
+- [x] **Faixa A** — `Real vs. simulado`: `kubectl apply` **real** (com allowlist de contextos) · métricas de canário **simuladas** · limiares determinísticos **reais** · manifesto por template, não gerado por LLM
+- [x] **Faixa A** — `Herança` + reescrever abertura da `Descrição`
+- [x] **Faixa A** — `O que faria diferente`
 - [ ] **Faixa B** — `Saída esperada`: **dois** cenários, com e sem cluster (a degradação graciosa é comportamento documentado e ninguém diz como ela se parece)
 - [ ] **Faixa B** — `Medição` (não existe nenhuma hoje)
 

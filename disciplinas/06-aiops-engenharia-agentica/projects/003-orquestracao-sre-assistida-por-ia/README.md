@@ -10,19 +10,22 @@
 
 ## Descrição
 
-Este projeto evolui o [002 — Geração, Auditoria e Self-Healing com IA](../002-geracao-auditoria-e-self-healing-com-IA), onde dois agentes geravam e auditavam um `main.tf`. O delta da aula é a mudança de **alvo** e de **postura**: sai o Terraform (IaC declarativa que ninguém aplica), entra o Kubernetes; e o pipeline deixa de parar no artefato — ele **aplica** o manifesto no cluster e **decide** se o rollout continua ou volta atrás.
+Uma `Crew` de dois papéis percorre o ciclo GitOps completo em três tasks sequenciais: o **Arquiteto** desenha o manifesto Kubernetes de um app a partir de uma especificação em linguagem natural, o **Engenheiro de SRE** faz a reconciliação chamando `kubectl apply`, e o mesmo SRE decide se o rollout segue ou é revertido, analisando métricas de canário contra limiares. O artefato (`Deployment` + `Service`) é gravado em disco e o veredito final é `Healthy` ou `Unhealthy`.
 
-Três coisas são novas. Um terceiro papel em `core/agents.py`, o `get_sre_agent()` — Engenheiro de SRE especialista em K8s, cuja *backstory* menciona explicitamente GitOps e análise de métricas de tráfego. Um novo módulo de tools, `tools/k8s_ops.py`, com as três operações do ciclo (gerar manifesto, aplicar, analisar canário). E um novo entrypoint, `k8s_ops.py`, que monta uma `Crew` sequencial de **três** tasks em vez de duas.
-
-O runtime herdado continua idêntico e não é redocumentado aqui: `core/llm_config.py` (Groq via LiteLLM), a fábrica `get_*(tools=...)` por injeção, e as tools das aulas anteriores (`file_writer.py`, `policy_rag.py`, `security_scan.py`) seguem no diretório — vivas, mas fora deste pipeline, que não as carrega.
-
-A diferença conceitual em relação ao 002 é o **raio de ação**. `write_file` escrevia num arquivo local; `apply_k8s_manifest` roda `kubectl apply` num cluster real. Por isso a tool tem grade de proteção: ela só aplica em contextos que casem com uma **allowlist** de clusters descartáveis (`kind-*`, `minikube`, `docker-desktop`…), configurável por `K8S_ALLOWED_CONTEXTS`. Contexto fora da lista é bloqueado antes de qualquer chamada ao cluster.
+O que distingue esta aula é o **raio de ação**. As ferramentas até aqui produziam arquivos; `apply_k8s_manifest` executa `kubectl apply` num cluster de verdade — é a primeira tool do repositório com efeito fora do diretório do projeto. Por isso ela tem grade de proteção: só aplica em contextos que casem com uma **allowlist** de clusters descartáveis (`kind-*`, `minikube`, `docker-desktop`…), configurável por `K8S_ALLOWED_CONTEXTS`, avaliada antes de qualquer chamada ao cluster.
 
 Quando o contexto é autorizado, a tool ainda **verifica se o cluster responde** (`kubectl api-versions`) e **valida o manifesto contra o API server** (`--dry-run=server --validate=strict`) antes de mutar qualquer coisa. Sem cluster ela degrada para simulação e **declara explicitamente que o manifesto não foi validado** — porque não foi: validar um manifesto K8s exige um API server, e nenhuma checagem local substitui isso.
+
+O terceiro estágio é o que dá nome à aula e o que mais merece leitura crítica: a decisão de rollout é determinística e vive em Python (limiares de 5% de erro e 300ms de latência, falhando fechado), mas a **métrica que ela avalia é um literal fixado no entrypoint**, sem relação com o deploy que acabou de ser aplicado. A seção *Real vs. simulado* traça essa fronteira inteira.
 
 O `nexus-api-unipds-k8s.yaml` versionado aqui é **saída do agente**, não código escrito à mão: é o arquivo que `generate_k8s_manifest` gravou em disco durante a execução do pipeline.
 
 > ℹ️ **Runtime atualizado na aula 005.** O modelo agora vem de `GROQ_MODEL` no `.env` (default `qwen/qwen3.6-27b`, no lugar do `openai/gpt-oss-20b`), `max_tokens` deixou de ser capado (a Groq debita o consumo real, não o teto pedido — capar não economizava cota e arriscava truncar) e o retry de rate limit passou a ler os formatos de tempo compostos da Groq (`3m9.648s`), que antes caíam num fallback curto demais e matavam o pipeline. Detalhes em [005 · Aprendizados](../005-observabilidade-preditiva/README.md#aprendizados).
+
+## Herança
+
+- **Esta aula acrescenta:** `get_sre_agent` (3º papel da trilha) · `tools/k8s_ops.py`, com as três operações do ciclo (`generate_k8s_manifest`, `apply_k8s_manifest`, `analyze_canary_metrics`) · o entrypoint `k8s_ops.py`, que monta uma `Crew` sequencial de três tasks · `tests/test_k8s_ops.py`, os primeiros testes da trilha.
+- **Vem da 002 sem alteração:** `core/llm_config.py`, a fábrica `get_*(tools=...)` por injeção, e as tools `file_writer.py`, `security_scan.py` e `policy_rag.py` — presentes no diretório e **não usadas neste pipeline**. A dependência `checkov`, que só a 002 exercitava, foi removida do `pyproject.toml`.
 
 ## Tecnologias e Ferramentas
 
@@ -74,6 +77,32 @@ uv run pytest -v
 ```
 
 > O `nexus-api-unipds-k8s.yaml` do repositório é sobrescrito a cada execução — ele é a saída do agente arquiteto.
+
+## Real vs. simulado
+
+Esta é a aula de maior consequência da trilha — a única que muta um cluster de verdade. A fronteira
+entre o que é real e o que é encenação **não é intuitiva**, e o passo que mais parece produção é o
+que menos é:
+
+| Componente | Real ou simulado | O que isso implica para quem reusar |
+|---|---|---|
+| Agente e inferência | **Real** — chamada à API da Groq | é a única parte que custa e que varia entre execuções |
+| `generate_k8s_manifest` | **Real**, mas o YAML sai de um template f-string | o LLM escolhe só `app_name`/`replicas`/`port`; a sintaxe é garantida pelo código, não pelo modelo |
+| `nexus-api-unipds-k8s.yaml` | **Real e válido** — passa em `--dry-run=server --validate=strict` | pode ser usado como manifesto de referência |
+| Imagem do container | **`nginx:latest`** — o "nexus-api-unipds" **não** é a aplicação da Nexus | o workload que sobe é um nginx padrão; ele não expõe as métricas que a Task 3 finge medir |
+| `kubectl apply` | **Real** — muta o cluster apontado por `current-context` | primeira tool do repositório com efeito fora do diretório do projeto; leia a allowlist antes de reusar |
+| Allowlist de contexto + sonda + `--dry-run=server` | **Reais** | as três grades funcionam e são o que há de mais aproveitável aqui |
+| Degradação sem cluster | **Simulação declarada** — a tool diz que o manifesto **não** foi validado | comportamento correto e raro; é o modelo a copiar |
+| **Métricas de canário** | **Simuladas** — `CANARY_METRICS = "error_rate: 1%, latency: 80ms"`, literal fixo no topo de `k8s_ops.py` | ⚠️ **o maior risco de leitura errada desta aula** |
+| Limiares e decisão (5% / 300ms) | **Reais e determinísticos**, falhando fechado | a lógica é sólida e testada (`tests/test_k8s_ops.py`); só o dado de entrada é inventado |
+| Rollback | **Não executado** — a decisão é uma string | nada chama `kubectl rollout undo`; um `ROLLBACK` não reverte coisa alguma |
+
+Vale explicitar a consequência da linha destacada: **a Task 3 não mede o deploy que a Task 2 acabou de
+fazer.** A métrica é fixada antes de o pipeline começar, o mesmo valor sai qualquer que tenha sido o
+resultado do `apply`, e o app implantado é um `nginx:latest` que não produziria essas métricas de
+nenhum jeito. O que a aula demonstra é a *forma* de uma análise de canário — quem decide, com que
+limiar, falhando para que lado — e não a análise em si.
+
 
 ## Estrutura do Projeto
 
@@ -185,6 +214,31 @@ Estes cinco pontos nasceram como crítica ao código da aula e foram corrigidos 
 
 - [x] **Herança preguiçosa acumula peso morto — e o remédio depende do que a duplicação está pagando.**
   `tools/file_writer.py`, `security_scan.py` e `policy_rag.py` vieram na cópia da pasta anterior e não participam deste pipeline. **Ficaram de propósito:** o [README da disciplina](../README.md) vende essa duplicação como o mecanismo que permite abrir 001, 002 e 003 lado a lado e ver o delta — removê-los custaria mais do que economizaria. Já a dependência `checkov` no `pyproject.toml` não pagava nada: era declaração falsa, e saiu. Peso morto nomeado é decisão; peso morto silencioso é dívida.
+
+## O que faria diferente
+
+1. **Ligar o canário ao deploy.** É a lacuna que sustenta todas as outras: trocar o literal
+   `CANARY_METRICS` por uma consulta real — `kubectl get --raw /apis/metrics.k8s.io/...`, ou um
+   Prometheus no cluster de teste. Sem isso, a Task 3 é uma demonstração de formato.
+2. **Subir algo que emita métrica.** Mesmo com a consulta real, `nginx:latest` não produz
+   `error_rate`. Uma imagem que exponha `/metrics` (ou um gerador de carga sintética) é pré-requisito
+   para o item 1 fazer sentido.
+3. **Esperar o rollout antes de medir.** A Task 3 roda imediatamente após o `apply`. Um canário de
+   verdade aguarda `kubectl rollout status` e observa por uma janela de tempo — medir antes dos pods
+   ficarem prontos mede o estado anterior.
+4. **Tirar a métrica do caminho do LLM.** `CANARY_METRICS` é uma constante Python que a task pede ao
+   modelo para "repassar EXATAMENTE como está" até voltar ao código como argumento da tool. Todo o
+   mecanismo de falhar fechado existe para se defender de uma paráfrase nessa transcrição — passar o
+   valor direto elimina a necessidade da defesa. É o mesmo padrão estrutural do caminho de arquivo na
+   [007](../007-devsecops-com-agentes-de-IA/README.md): um valor determinístico desviado por uma etapa
+   probabilística sem necessidade.
+5. **Executar o rollback.** `ROLLBACK` hoje é texto. Uma tool `rollback_deployment` chamando
+   `kubectl rollout undo`, sob a mesma allowlist, fecharia o ciclo que a aula descreve — e obrigaria a
+   enfrentar a pergunta de quem autoriza a reversão, que é o assunto da 006.
+6. **Cobrir o caminho de bloqueio nos testes.** `tests/test_k8s_ops.py` testa bem os helpers de
+   decisão. A guarda de contexto — a parte que impede um `apply` em produção — não tem teste, e é a
+   que teria consequência real se regredisse.
+
 
 ## Referências
 
