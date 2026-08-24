@@ -126,11 +126,25 @@ else:
 RAIZ
 ```
 
-Depois liste os artefatos de saída herdados e **remova só os que são output da aula anterior** (`main.tf`, `*-k8s.yaml`, `*-fix.yaml`…). Tools herdadas ficam; artefato gerado por um pipeline que não existe mais nesta pasta, não.
+Depois limpe os arquivos de dados herdados. O teste **não** é entrada vs. saída — é **alguma coisa nesta pasta lê este arquivo?** O entrypoint da aula anterior acabou de ser apagado, então o fixture que só ele consumia ficou órfão, exatamente como o artefato que só ele gerava. `tools/`, `core/` e `tests/` são o acervo da trilha e ficam por definição; `data/` e os artefatos da raiz, não.
 
 ```bash
-ls *.tf *.yaml *.yml *.json 2>/dev/null
+{ find . -maxdepth 1 -type f \( -name '*.tf' -o -name '*.yaml' -o -name '*.yml' -o -name '*.json' \)
+  find data -type f 2>/dev/null; } | while read -r f; do      # find, nao glob: no zsh, `ls *.tf` sem match aborta
+  n=$(basename "$f")
+  if grep -q "$n" "$ENTRYPOINT"; then
+    echo "  USA    $f"
+  else
+    outros=$(grep -rl --include='*.py' "$n" . | grep -vx "./$ENTRYPOINT" | tr '\n' ' ')
+    echo "  ORFAO  $f   <- $ENTRYPOINT nao cita; ${outros:-nenhum outro .py tampouco}"
+  fi
+done
 ```
+
+Apague os `ORFAO`. Duas armadilhas que essa checagem já pegou:
+
+- o `ls` da raiz sozinho não enxergava `data/` — foi assim que o `data/trivy.json` da 007 sobreviveu à preparação da 008;
+- procurar o nome em **todos** os `.py` dá falso negativo: `tools/file_writer.py` e `tools/security_scan.py` trazem `main.tf` como **valor default de argumento**, então o acervo herdado sempre cita os artefatos das aulas velhas. Por isso a busca é no entrypoint, e os outros `.py` que citam o arquivo saem na linha só como informação.
 
 ### 3. Somar os agentes e tools que o lab importa
 
