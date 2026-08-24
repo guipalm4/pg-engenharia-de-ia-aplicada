@@ -42,11 +42,16 @@ projects/
 │   ├── pyproject.toml
 │   ├── tests/
 │   └── chatops.py         # entrypoint STREAMLIT — não roda com `uv run chatops.py`
-└── 007-devsecops-com-agentes-de-IA/           # + DevSecOps: triagem de scan de vulnerabilidade
+├── 007-devsecops-com-agentes-de-IA/           # + DevSecOps: triagem de scan de vulnerabilidade
+│   ├── pyproject.toml
+│   ├── tests/
+│   ├── data/trivy.json    # ENTRADA do pipeline (fixture) — 1ª aula que consome artefato
+│   └── devsecops.py       # entrypoint; a tool desta aula é declarada aqui dentro
+└── 008-otimizacao-inteligente-de-cicd/        # + CI/CD: cache de dependências em GitHub Actions
     ├── pyproject.toml
     ├── tests/
-    ├── data/trivy.json    # ENTRADA do pipeline (fixture) — 1ª aula que consome artefato
-    └── devsecops.py       # entrypoint; a tool desta aula é declarada aqui dentro
+    ├── data/workflow_lento.yaml  # ENTRADA do pipeline (workflow sem cache)
+    └── cicd.py            # entrypoint; a tool desta aula é declarada aqui dentro
 ```
 
 ---

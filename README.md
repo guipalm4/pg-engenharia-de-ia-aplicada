@@ -16,7 +16,7 @@
 | 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 6 projetos |
 | 04 | [Criação de Agentes](#04--criação-de-agentes) | 7 projetos |
 | 05 | [Ferramentas de IA para UX & UI](#05--ferramentas-de-ia-para-ux--ui) | 5 projetos |
-| 06 | [AI-Ops e Engenharia Agêntica](#06--ai-ops-e-engenharia-agêntica) | 7 projetos |
+| 06 | [AI-Ops e Engenharia Agêntica](#06--ai-ops-e-engenharia-agêntica) | 8 projetos |
 
 ---
 
@@ -55,6 +55,7 @@ Série sobre agentes que controlam um browser real via **Playwright MCP** — na
 |---|---------|----------------|
 | 006 | [Playwright MCP — Geração de Testes](disciplinas/01-fundamentos-IA-LLM/projects/exemplo-006-playwright-testes/README.md) | Agente observa uma aplicação real e gera testes Playwright TypeScript que passam no CI |
 | 007 | [Playwright MCP — Navegação Agentiva](disciplinas/01-fundamentos-IA-LLM/projects/exemplo-007-playwright-navegacao/README.md) | Agente navega em múltiplas páginas, extrai dados de um perfil público e preenche um formulário real |
+| 008 | [Otimização Inteligente de CI/CD](disciplinas/06-aiops-engenharia-agentica/projects/008-otimizacao-inteligente-de-cicd/README.md) | Um Engenheiro de Platform lê um workflow de GitHub Actions que roda `npm install` do zero a cada push, reescreve o YAML com cache e estima a economia. É a primeira aula cujo produto tem um padrão externo contra o qual comparar — e a medição vira um estudo do **enunciado**: a task entrega o diagnóstico de presente (`dica: falta de cache`), e removê-la não muda o diagnóstico, muda a solução. Com a dica, o agente escreve sempre o `actions/cache` manual (o mesmo do gabarito); sem ela, sempre o `setup-node` com cache embutido, e às vezes um bloco `concurrency` que nenhuma execução com dica produziu |
 
 ### MCP como Ferramenta de Desenvolvimento
 
