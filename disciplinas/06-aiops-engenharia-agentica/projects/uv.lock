@@ -15,6 +15,7 @@ members = [
     "aula-004-reduzindo-mttr-com-inteligencia-agentica",
     "aula-005-observabilidade-preditiva",
     "aula-006-chatops-e-human-in-the-loop",
+    "aula-007-devsecops-com-agentes-de-ia",
 ]
 
 [[package]]
@@ -325,6 +326,30 @@ requires-dist = [
     { name = "crewai", extras = ["tools"] },
     { name = "litellm" },
     { name = "streamlit" },
+]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=8,<9" }]
+
+[[package]]
+name = "aula-007-devsecops-com-agentes-de-ia"
+version = "0"
+source = { virtual = "007-devsecops-com-agentes-de-IA" }
+dependencies = [
+    { name = "crewai", extra = ["tools"] },
+    { name = "litellm" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "crewai" },
+    { name = "crewai", extras = ["tools"] },
+    { name = "litellm" },
 ]
 
 [package.metadata.requires-dev]
