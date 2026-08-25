@@ -1,0 +1,32 @@
+{
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Config para quando a RAIZ DO REPO é a pasta aberta — inclusive via
+  // unipds.code-workspace, que é o caso normal. Os .vscode/settings.json que
+  // existem em disciplinas/06-.../ e em .../projects/ só valem quando ESSAS
+  // pastas são abertas diretamente; o VS Code lê apenas o .vscode da raiz de
+  // cada workspace folder, nunca os de subpastas.
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // O único .venv do repo hoje: workspace uv da disciplina 06, compartilhado
+  // por todas as aulas dela. É fallback — uma seleção manual feita em
+  // "Python: Select Interpreter" tem precedência sobre esta linha.
+  "python.defaultInterpreterPath": "${workspaceFolder}/disciplinas/06-aiops-engenharia-agentica/projects/.venv/bin/python",
+  "python.terminal.activateEnvironment": true,
+
+  // NÃO habilitar: o .env é carregado pelo próprio código, via load_dotenv() em
+  // core/llm_config.py. Injetar no terminal só espalharia a GROQ_API_KEY para
+  // todo processo aberto ali, sem nenhum ganho.
+  "python.terminal.useEnvFile": false,
+
+  // NÃO adicionar "python.analysis.extraPaths" com as pastas das aulas: cada
+  // 00X-* tem seu PRÓPRIO pacote `core` e `tools`, de mesmo nome. Colocá-las
+  // todas no search path faz o Pylance resolver `core.agents` para a primeira
+  // da lista (001) e acusar símbolo desconhecido nas outras. Sem extraPaths ele
+  // resolve pelo diretório do arquivo aberto — que é o `core` certo de cada
+  // aula, e é também como o runtime resolve (CWD na pasta da aula).
+
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.DS_Store": true
+  }
+}

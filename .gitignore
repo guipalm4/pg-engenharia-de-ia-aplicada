@@ -11,6 +11,8 @@ __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
+.venv/
+venv/
 
 # Ambientes e Configurações Locais
 .env
@@ -31,10 +33,17 @@ build/
 out/
 
 # IDEs e Editores
-.vscode/settings.json
-.vscode/tasks.json
-.vscode/launch.json
-.vscode/extensions.json
+# Os padrões precisam do prefixo **/ para valer nas subpastas: um padrão com
+# barra no meio (`.vscode/tasks.json`) é ancorado na raiz do repo e não pega os
+# .vscode/ dos projetos das aulas. settings.json já é coberto por
+# `**/settings.json` mais abaixo (com exceção para o da raiz, no fim do arquivo).
+**/.vscode/tasks.json
+**/.vscode/launch.json
+**/.vscode/extensions.json
+# Exceção: tasks.json escrito à mão, sobe a app da aula — não é boilerplate.
+!disciplinas/01-fundamentos-IA-LLM/projects/exemplo-001/.vscode/tasks.json
+# .vscode/mcp.json NÃO é ignorado: registra os servidores MCP das aulas — é
+# conteúdo didático (como rodar o servidor da aula), não preferência de editor.
 .idea/
 *.swp
 *.swo
@@ -108,3 +117,8 @@ disciplinas/*/docs/**
 **/neo4j
 
 TO-DO.md
+# Exceção: o settings.json da RAIZ é config compartilhada do repo (aponta o
+# interpretador Python do .venv da disciplina 06). Precisa vir depois de
+# `**/settings.json`, senão a regra anterior vence. Os .vscode/settings.json
+# de subpastas continuam ignorados — são preferência local de cada um.
+!/.vscode/settings.json

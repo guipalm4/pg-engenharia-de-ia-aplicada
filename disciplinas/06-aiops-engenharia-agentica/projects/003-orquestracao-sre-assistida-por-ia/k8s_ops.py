@@ -1,11 +1,6 @@
 import os
 import sys
 
-# Raiz do projeto: nesta trilha o entrypoint fica na raiz da aula, não em labs/
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
-
 from core.agents import get_architect, get_sre_agent
 from crewai import Crew, Process, Task
 from tools.k8s_ops import (
@@ -13,6 +8,11 @@ from tools.k8s_ops import (
     apply_k8s_manifest,
     generate_k8s_manifest,
 )
+
+# Raiz do projeto: nesta trilha o entrypoint fica na raiz da aula, não em labs/
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
 # Troque para "error_rate: 8%, latency: 80ms" para exercitar o caminho de ROLLBACK.
 CANARY_METRICS = "error_rate: 1%, latency: 80ms"
@@ -28,13 +28,13 @@ sre = get_sre_agent(tools=[apply_k8s_manifest, analyze_canary_metrics])
 task_design = Task(
     description="Desenhe o manifesto K8s para o app 'nexus-api-unipds' com 2 réplicas na porta 80.",
     expected_output="Arquivo YAML criado no disco com sintaxe Kubernetes V1 estrita.",
-    agent=architect
+    agent=architect,
 )
 
 task_sync = Task(
     description="Realize a reconciliação (Sync) do manifesto 'nexus-api-unipds-k8s.yaml' no cluster usando o apply_k8s_manifest.",
     expected_output="Confirmação de que o estado desejado foi enviado ao cluster.",
-    agent=sre
+    agent=sre,
 )
 
 task_monitor = Task(
@@ -45,7 +45,7 @@ task_monitor = Task(
     ),
     expected_output="Decisão final sobre o estado do deploy (Healthy/Unhealthy).",
     agent=sre,
-    tools=[analyze_canary_metrics]
+    tools=[analyze_canary_metrics],
 )
 
 # 3. Orquestração
@@ -53,7 +53,7 @@ nexus_k8s_pipeline = Crew(
     agents=[architect, sre],
     tasks=[task_design, task_sync, task_monitor],
     process=Process.sequential,
-    verbose=True
+    verbose=True,
 )
 
 if __name__ == "__main__":
