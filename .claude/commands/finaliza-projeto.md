@@ -98,17 +98,19 @@ Escreve o novo `README.md` baseando-se exclusivamente no output do passo 2. Não
 
 **A estrutura canônica é [`shared/templates/README_TEMPLATE.md`](../../shared/templates/README_TEMPLATE.md) — leia o arquivo.**
 
-**Voz da seção `Aprendizados`** — o modelo é o dos READMEs das disciplinas 01–05:
+**Voz do README** — o modelo são os 39 READMEs padronizados das disciplinas 01–05. O README é material de consulta do autor: storytelling da evolução dos estudos, fonte dos conceitos da aula e guia de execução do projeto. **Não é relatório da sessão que o escreveu.**
 
-- **Cada bullet tem que ser sobre o assunto DA AULA.** Se a aula é sobre observabilidade preditiva, os bullets falam de PromQL, janela de ação e projeção de série temporal — não de troca de modelo, cota de tokens, rate limit, `sys.path`, truncamento de painel ou qualquer incidente encontrado ao rodar o projeto. Teste antes de salvar: **um bullet que faria igual sentido no README de outra aula qualquer não é aprendizado desta aula.** Problemas de runtime que valha registrar vão para a seção onde pertencem (`Pré-requisitos`, `Como executar`) ou para o chat.
-- **A seção explica o que o exemplo ensina — não julga o exemplo.** Fato técnico concreto sobre a tecnologia central do projeto, uma frase, afirmativo. Não entram achados de code review, contagem de execuções, valores medidos, crítica ao material da aula nem ressalvas sobre o que o exemplo deixou de fazer.
-- **Leia dois READMEs da disciplina 02 ou 04 antes de escrever esta seção** (`002-langchain-intro`, `006-rag-neo4j-students-z`, `007-doc-analysis`, `001-contratos`) e escreva no mesmo registro — *"modelos de visão leem PDF direto via `data:application/pdf;base64`, sem converter para texto antes"*, *"usar o schema real do banco no prompt reduz erros de property inexistente"*.
-- **Não invente seções.** A estrutura canônica é a do template. `Real vs. simulado`, `Saída esperada`, `Herança` e parentes não existem nas disciplinas 01–05. O que o exemplo simula cabe numa frase da `Descrição`; o que aparece quando funciona, numa frase no fim de `Como executar`; o que a aula acrescenta à trilha, num parágrafo da `Descrição`.
+- **Nada que você descobriu rodando o projeto entra no README.** Cota de tokens, rate limit, troca de modelo, `max_tokens`, `sys.path`, truncamento de painel, exit code, teste vermelho, quantas execuções cabem numa cota — tudo isso é assunto do chat. Vale para todas as seções, não só `Aprendizados`.
+- **Sem números de execução.** Tokens consumidos, tempo de parede, `N passed`, variação entre runs ("em 7 execuções…", "o que muda é o texto") não aparecem em nenhum dos 39 READMEs de referência, nem nos que chamam OpenAI, OpenRouter ou Gemini. Envelhecem em semanas e não ajudam quem volta para consultar.
+- **O README apresenta o exemplo; não o julga.** Sem crítica ao material da aula, ao fixture, ao nome de uma tool ou ao enunciado da task; sem ressalvas sobre o que o exemplo deixou de fazer; sem narrar correções feitas no caminho. Isso vale para o resumo do `>`, para a `Descrição`, para `Como funciona` e para `Conceitos trabalhados` tanto quanto para `Aprendizados`.
+- **`Aprendizados`: de dois a cinco bullets, uma frase cada, sobre o assunto DA AULA.** Se a aula é sobre observabilidade preditiva, os bullets falam de PromQL, janela de ação e projeção de série temporal. Teste antes de salvar: **um bullet que faria igual sentido no README de outra aula qualquer não é aprendizado desta aula.**
+- **Leia dois READMEs da disciplina 02 ou 04 antes de escrever** (`002-langchain-intro`, `006-rag-neo4j-students-z`, `007-doc-analysis`, `001-contratos`) e escreva no mesmo registro — *"modelos de visão leem PDF direto via `data:application/pdf;base64`, sem converter para texto antes"*, *"usar o schema real do banco no prompt reduz erros de property inexistente"*.
+- **Não invente seções.** A ordem canônica e a lista de obrigatórias estão no fim do template. `Real vs. simulado`, `Saída esperada`, `Medição`, `Herança`, `O que faria diferente` e parentes não existem nas disciplinas 01–05 — foram tentadas na 06 e é de onde veio a degradação. O que o exemplo simula se declara no item de `Tecnologias e Ferramentas` (*"**Trivy** — apenas o formato do relatório; o binário não é instalado"*); o que a aula acrescenta à trilha cabe em **uma linha** da `Descrição`.
 - **Calibre pelo padrão do repositório, não pelo README anterior da mesma trilha.** Tomar o `NNN-1` como régua faz cada aula crescer sobre a anterior.
-Três notas que o template não cobre:
+
+Duas notas que o template não cobre:
 
 - **O delta do passo 2 é estratégia de leitura, não de escrita.** Ele existe para você não reler os arquivos herdados que já foram documentados em `PREV`. O README **não** abre comparando com a aula anterior: uma linha dizendo o que a aula acrescenta basta, e a narrativa da evolução mora no índice da disciplina.
-- **Só `Contexto`, `Descrição`, `Tecnologias`, `Como executar`, `Conceitos` e `Aprendizados` são obrigatórios.** As demais entram quando têm o que dizer.
 - **Se existir `README.original.md`**, acrescente ao final:
   `> Conteúdo original do README preservado em [`README.original.md`](./README.original.md).`
 
@@ -117,6 +119,7 @@ Três notas que o template não cobre:
 Lê o `README.md` raiz, adiciona o projeto na seção e tema corretos, atualiza a contagem de projetos.
 
 - Se a disciplina ainda não tiver linha na tabela `## Disciplinas` nem seção própria, crie as duas (nova linha na tabela + `## NN · <Nome da disciplina>` com pelo menos um tema).
+- **A linha do índice descreve o que o projeto é e o que ele demonstra** — mesma voz do resumo do `>`. Não é lugar de veredito sobre o exemplo ("o portão quase nunca decide", "o mesmo arquivo devolve quatro totais diferentes"), de resultado medido, nem de configuração de runtime (nome de modelo, env var) — a menos que o modelo seja o assunto do projeto, como nas aulas de Ollama e OpenRouter da disciplina 01.
 
 ### 5. Commit 1 — documentação
 

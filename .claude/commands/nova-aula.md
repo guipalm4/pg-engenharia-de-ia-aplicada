@@ -220,7 +220,7 @@ Depois, meça o custo. O free tier da Groq impõe **dois** limites, e o segundo 
 
 E um detalhe contraintuitivo: **não cape `max_tokens`.** O que consome orçamento é o consumo real, não o teto pedido — medido na API: `max_tokens=60000` passa num modelo com teto de 8.000 tokens/minuto (debitando os 113 tokens gerados), e 12 chamadas com `max_tokens=20000` passam contra o teto de 200.000/dia. O `Requested = prompt + max_tokens` que aparece no erro 429 é só a **checagem de admissão** contra o saldo restante, não o valor debitado. Capar, portanto, não economiza nada: só faz a chamada ser recusada mais cedo quando o saldo diário está no fim, e arrisca truncar a resposta. Por isso `core/llm_config.py` não passa `max_tokens`.
 
-O modelo padrão é `groq/qwen/qwen3.6-27b`, que mantém todas as aulas abaixo do teto. Se ele sair do catálogo (é "Preview"), troque via `GROQ_MODEL` no `.env` — não edite os cinco `llm_config.py`. O `RateLimitAwareLLM` segura o pipeline pausando quando o limite bate, mas o número medido precisa entrar no README.
+O modelo padrão é `groq/qwen/qwen3.6-27b`, que mantém todas as aulas abaixo do teto. Se ele sair do catálogo (é "Preview"), troque via `GROQ_MODEL` no `.env` — não edite os cinco `llm_config.py`. O `RateLimitAwareLLM` segura o pipeline pausando quando o limite bate. O número medido serve para você decidir se dá para seguir rodando hoje — ele fica no relatório do passo 6 e **não vai para o README**.
 
 > ⚠️ **Medir custo queima a cota diária — planeje isso.** Cada execução do pipeline gasta milhares de tokens, e o teto é de 200.000 por dia. Meia dúzia de execuções repetidas para estabilizar um número esgota o orçamento do modelo e **trava a validação da aula pelo resto do dia**. Duas defesas, nesta ordem:
 >
@@ -273,6 +273,8 @@ Reporte, sem embelezar:
 - **consumo de tokens medido** (real e reservado), se estourou o teto de 8.000/min e quantas execuções cabem nos 200.000/dia
 - se o artefato gerado validou
 - **o que quebrou ao rodar**, e só isso: erro na execução, teste vermelho, artefato que não validou, 429 que travou o pipeline. Se rodou limpo, escreva uma linha dizendo que rodou limpo e encerre.
+
+**Este relatório morre no chat.** Ele existe para você e eu decidirmos se a aula está pronta — consumo de tokens, cota, teste vermelho, artefato que não validou, troca de modelo. Nada disso entra no README que o `/finaliza-projeto` vai escrever depois, nem mesmo como nota de rodapé ou aviso em `Pré-requisitos`. O README é material de consulta: conceitos da aula e guia de execução. Se um problema de runtime for recorrente e valer registro permanente, o lugar é `projects/README.md`, que já documenta os limites do free tier.
 
 Isto é um laboratório de estudo, não um deploy. **Não audite o lab.** Nada de path traversal, entrada não validada, telemetria imprecisa, robustez, "e se o modelo alucinar" — nada que você teve que ir procurar. Se não apareceu sozinho ao executar, não entra no relatório.
 
