@@ -190,55 +190,12 @@ k8s_ops.py
 
 ## Aprendizados
 
-Estes cinco pontos nasceram como crítica ao código da aula e foram corrigidos depois — o diagnóstico ficou porque é ele que explica *por que* o código está como está.
-
-- [x] **Guardrail no prompt e guardrail no código não são intercambiáveis.**
-  *Problema:* a `task_design` carregava dois avisos em caixa alta — usar `nginx:latest`, escrever `initialDelaySeconds` e não `initialDelay` — mas `generate_k8s_manifest` monta o YAML por f-string, então nenhum dos dois podia ser violado pelo LLM. Eram cicatriz de uma versão anterior em que o modelo escrevia o manifesto inteiro.
-  *Correção:* os avisos saíram do prompt e um comentário no template marca onde a restrição de fato vive. Ao mover a estrutura para o código, o problema deixou de ser instruível e passou a ser impossível — que é o argumento a favor de codificar a restrição em vez de pedi-la.
-
-- [x] **Não afirme o que você não verificou.**
-  *Problema:* sem cluster, `apply_k8s_manifest` respondia que o manifesto *"is syntactically valid, but no cluster was detected"* — sem nunca tê-lo validado. Um YAML genuinamente quebrado recebia atestado de saúde.
-  *Correção:* a frase saiu de todos os ramos sem cluster, que agora dizem explicitamente **"the manifest was NOT validated"**. A tentação era construir validação offline; medir mostrou que ela não existe — `kubectl apply --dry-run=client` aceitou um manifesto com `replicas: "dois"` e o campo inventado `initialDelay`, retornando `rc=0`. Só `--dry-run=server --validate=strict` valida de verdade, e exige API server. Validar *sintaxe de arquivo* e validar *objeto Kubernetes* são coisas diferentes.
-
-- [x] **Classificar erro por lista de padrões conhecidos falha no caso que você não previu.**
-  *Problema:* a primeira correção distinguia "cluster ausente" de "manifesto recusado" casando o `stderr` contra marcadores como `connection refused`. Um cluster morto de verdade devolveu `error: EOF` — fora da lista — e a tool acusou o API server de ter rejeitado um manifesto que ele nunca viu. O bug que a correção deveria eliminar, reintroduzido pela própria correção.
-  *Correção:* alcançabilidade passou a ser estabelecida por **sinal positivo** (`kubectl api-versions` responde ou não), e a classificação de `stderr` virou rede de segurança secundária para o cluster cair no meio da operação. Conjunto fechado de sucessos é sempre mais confiável que conjunto aberto de falhas.
-
-- [x] **Análise de canário tem que falhar fechado.**
-  *Problema:* `analyze_canary_metrics` ignorava a latência e, se o regex não casasse, caía em `PROCEED` por omissão — uma métrica parafraseada pelo LLM aprovava o rollout sem ninguém ter medido nada.
-  *Correção:* as duas métricas são obrigatórias e qualquer uma ausente ou ilegível devolve `ROLLBACK` com o motivo explícito; a latência ganhou limiar próprio. Os limiares viraram constantes nomeadas no topo do módulo. O trade-off é real e deliberado: uma paráfrase do LLM agora reverte o deploy em vez de aprová-lo — que é o lado certo do erro para um canário.
-
-- [x] **Uma tool com efeito colateral fora do projeto precisa de grade, e de relógio.**
-  *Problema:* `kubectl apply` obedecia ao `current-context`, que pode ser produção se o desenvolvedor esqueceu de trocar. Era a primeira tool do repositório com alcance fora do diretório do projeto.
-  *Correção:* allowlist de contextos por glob (`kind-*`, `minikube`, …), sobrescrevível por `K8S_ALLOWED_CONTEXTS`, avaliada antes de qualquer chamada ao cluster; e o `--context` passou a ir explícito no comando, fechando a janela entre checar e aplicar. Um segundo defeito apareceu ao testar: sem cluster alcançável o `kubectl` tenta reconectar com backoff e **trava para sempre** — uma tool que bloqueia indefinidamente dentro de um pipeline de agente é tão inútil quanto uma que erra. Todas as chamadas passaram por um helper único com `--request-timeout` e timeout de subprocesso.
-
-- [x] **Herança preguiçosa acumula peso morto — e o remédio depende do que a duplicação está pagando.**
-  `tools/file_writer.py`, `security_scan.py` e `policy_rag.py` vieram na cópia da pasta anterior e não participam deste pipeline. **Ficaram de propósito:** o [README da disciplina](../README.md) vende essa duplicação como o mecanismo que permite abrir 001, 002 e 003 lado a lado e ver o delta — removê-los custaria mais do que economizaria. Já a dependência `checkov` no `pyproject.toml` não pagava nada: era declaração falsa, e saiu. Peso morto nomeado é decisão; peso morto silencioso é dívida.
-
-## O que faria diferente
-
-1. **Ligar o canário ao deploy.** É a lacuna que sustenta todas as outras: trocar o literal
-   `CANARY_METRICS` por uma consulta real — `kubectl get --raw /apis/metrics.k8s.io/...`, ou um
-   Prometheus no cluster de teste. Sem isso, a Task 3 é uma demonstração de formato.
-2. **Subir algo que emita métrica.** Mesmo com a consulta real, `nginx:latest` não produz
-   `error_rate`. Uma imagem que exponha `/metrics` (ou um gerador de carga sintética) é pré-requisito
-   para o item 1 fazer sentido.
-3. **Esperar o rollout antes de medir.** A Task 3 roda imediatamente após o `apply`. Um canário de
-   verdade aguarda `kubectl rollout status` e observa por uma janela de tempo — medir antes dos pods
-   ficarem prontos mede o estado anterior.
-4. **Tirar a métrica do caminho do LLM.** `CANARY_METRICS` é uma constante Python que a task pede ao
-   modelo para "repassar EXATAMENTE como está" até voltar ao código como argumento da tool. Todo o
-   mecanismo de falhar fechado existe para se defender de uma paráfrase nessa transcrição — passar o
-   valor direto elimina a necessidade da defesa. É o mesmo padrão estrutural do caminho de arquivo na
-   [007](../007-devsecops-com-agentes-de-IA/README.md): um valor determinístico desviado por uma etapa
-   probabilística sem necessidade.
-5. **Executar o rollback.** `ROLLBACK` hoje é texto. Uma tool `rollback_deployment` chamando
-   `kubectl rollout undo`, sob a mesma allowlist, fecharia o ciclo que a aula descreve — e obrigaria a
-   enfrentar a pergunta de quem autoriza a reversão, que é o assunto da 006.
-6. **Cobrir o caminho de bloqueio nos testes.** `tests/test_k8s_ops.py` testa bem os helpers de
-   decisão. A guarda de contexto — a parte que impede um `apply` em produção — não tem teste, e é a
-   que teria consequência real se regredisse.
-
+- [x] Guardrail no prompt e guardrail no código não são intercambiáveis: quando o manifesto é montado por template em `generate_k8s_manifest`, a restrição deixa de ser instruível e passa a ser impossível de violar
+- [x] `kubectl apply --dry-run=client` valida *sintaxe de arquivo*, não *objeto Kubernetes* — aceita `replicas: "dois"` e campos inventados; só `--dry-run=server --validate=strict` recusa, e isso exige API server
+- [x] Sem cluster alcançável, a tool declara explicitamente que **não** validou: afirmar validade sem ter verificado é pior que não validar
+- [x] Alcançabilidade se estabelece por sinal positivo (`kubectl api-versions` responde) e não por lista de mensagens de erro conhecidas — conjunto fechado de sucessos é mais confiável que conjunto aberto de falhas
+- [x] Análise de canário precisa **falhar fechado**: métrica ausente ou ilegível devolve `ROLLBACK` com motivo, porque aprovar por omissão é o lado errado do erro num rollout
+- [x] Toda tool com efeito fora do projeto precisa de allowlist (contextos `kind-*`/`minikube`) e de timeout — sem cluster, o `kubectl` reconecta com backoff e trava o pipeline indefinidamente
 
 ## Referências
 

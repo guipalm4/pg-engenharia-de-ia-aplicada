@@ -56,6 +56,10 @@ copiar daqui algo que só parecia funcionar.
 - [ ] Insight ou dificuldade superada
 - [ ] O que faria diferente
 
+> 4–6 bullets de **uma frase**, ≤ 200 palavras no total. A seção explica o que o exemplo
+> ensina — conhecimento técnico transferível, afirmativo. Não é lugar para crítica ao
+> material, achados de code review, contagem de execuções ou valores medidos.
+
 ## Referências
 
 - [ ] Links, artigos, papers, vídeos

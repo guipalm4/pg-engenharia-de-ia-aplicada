@@ -125,10 +125,10 @@ iac_copilot.py
 
 ## Aprendizados
 
-- [x] **Assinaturas inconsistentes entre tools quebram o agente de forma silenciosa.** As duas tools de auditoria nasceram com contratos diferentes — `run_checkov_scan(filename)` esperava caminho, `validate_opa_policies(content)` esperava o código. O LLM, lendo só os nomes, chamava as duas do mesmo jeito e passava `"main.tf"` para ambas; a política OPA então avaliava a *string do nome do arquivo*, nunca achava `us-east-1` e rejeitava um Terraform perfeitamente conforme. A correção foi padronizar as duas em `target: str = "main.tf"`, documentar no docstring e centralizar a resolução caminho-ou-conteúdo num helper `_read_target`. Contrato de tool é interface pública para o LLM: se dois nomes parecidos aceitam coisas diferentes, o agente erra.
-- [x] **Política por *substring* é frágil.** `"us-east-1" not in content` aprova um `main.tf` que só cita a região numa tag ou comentário, e reprova um que use `var.region`. Serve para a aula, mas um OPA real avalia o plano estruturado (`terraform show -json`), não o texto do HCL — a diferença entre validar *código* e validar *infraestrutura*.
-- [x] **Falha de auditoria não é falha do pipeline.** O Checkov continua apontando violações no `main.tf` gerado (o LLM esquece o `aws_s3_bucket_public_access_block` com frequência) — esse relatório é justamente o *input* do loop de self-healing, não um bug a ser silenciado.
-- [x] **Um agente novo custa pouco quando a fábrica já está desacoplada.** Adicionar o auditor foi só mais uma função em `core/agents.py` recebendo `tools` por injeção — o padrão `get_*(tools=...)` estabelecido no 001 pagou o investimento já no módulo seguinte.
+- [x] Contrato de tool é interface pública para o LLM: quando `run_checkov_scan` esperava caminho e `validate_opa_policies` esperava conteúdo, o agente chamou as duas do mesmo jeito e a política passou a avaliar a string `"main.tf"` em vez do Terraform
+- [x] Política por *substring* é frágil — `"us-east-1" not in content` aprova um arquivo que cita a região num comentário e reprova um que use `var.region`; um OPA real avalia o plano estruturado (`terraform show -json`), não o texto do HCL
+- [x] Falha de auditoria não é falha do pipeline: o relatório do Checkov apontando o `aws_s3_bucket_public_access_block` esquecido é o *input* do loop de self-healing, não um bug a silenciar
+- [x] Um agente novo custa pouco quando a fábrica já está desacoplada — o padrão `get_*(tools=...)` estabelecido na aula 001 pagou o investimento já no módulo seguinte
 
 ## Referências
 
