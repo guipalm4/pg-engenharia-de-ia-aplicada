@@ -1,6 +1,6 @@
 # Exemplo 009 — FinOps com Agentes de IA
 
-> Um agente lê um inventário de nuvem com três recursos desperdiçados e devolve um relatório de economia. A conta dos recursos zumbis sai do arquivo; a do rightsizing — que é 83% do total — sai da memória do modelo, e muda a cada execução.
+> Um agente lê um inventário de nuvem com três recursos desperdiçados — um volume EBS órfão, um Elastic IP solto e uma instância a 2,5% de CPU — e devolve o relatório de economia mensal.
 
 ## Contexto
 
@@ -14,11 +14,11 @@ Um agente com o papel de *Consultor de FinOps Cloud* recebe um inventário JSON 
 
 O que torna esta aula diferente das anteriores da trilha é que **a saída é um número**, não um texto ou um artefato. Nas aulas 002 e 003 o agente produzia `main.tf` e manifestos de Kubernetes, que um validador externo aceita ou rejeita. Na 008 produzia YAML, que ao menos é sintaticamente checável. Aqui o entregável é `$325,00/mês` — e a diferença entre um número certo e um número plausível não aparece em nenhuma verificação automática. É o formato de saída em que a alucinação é mais barata de produzir e mais cara de detectar.
 
-O pipeline é o mais curto da trilha: um agente, uma task, uma tool declarada inline, duas chamadas ao modelo. O material da aula está no que acontece com a aritmética — nove execuções controladas mostram que a economia total varia de `$325,00` a `$380,00` sobre o mesmo inventário, porque o preço da instância de destino não está no arquivo e é gerado pelo modelo a cada volta.
+O pipeline é o mais curto da trilha: um agente, uma task, uma tool declarada inline. O material da aula está no que acontece com a **aritmética**. A economia dos zumbis é uma soma do que está no arquivo; a do rightsizing depende de um segundo preço — o da instância de destino — que o inventário não traz, e que por isso é gerado pelo modelo. O total do relatório mistura as duas origens sem distingui-las.
 
-A AWS entra apenas como vocabulário: nenhuma credencial, nenhuma chamada de API, nenhuma conta. `data/inventario_cloud.json` é um fixture de três recursos com preços fora da escala real (`$340,00/mês` para uma `m5.4xlarge` que custa ~`$560`), `analyze_cloud_costs` é um `json.load`, nada confere a soma e nada é deletado ou redimensionado — o relatório não sai do terminal.
+A AWS entra apenas como vocabulário: nenhuma credencial, nenhuma chamada de API, nenhuma conta. `data/inventario_cloud.json` é um fixture de três recursos com preços próprios do cenário — a `m5.4xlarge` aparece a `$340,00/mês`, abaixo do preço on-demand real —, `analyze_cloud_costs` é um `json.load`, e nada é deletado ou redimensionado.
 
-**O que esta aula acrescenta à trilha:** `get_finops_agent` (9º papel), `finops.py` com a tool `analyze_cloud_costs` declarada inline e `data/inventario_cloud.json`, a entrada do pipeline.
+Esta aula acrescenta o `get_finops_agent` (9º papel), o `finops.py` com a tool `analyze_cloud_costs` declarada inline e o `data/inventario_cloud.json`, a entrada do pipeline.
 
 ## Tecnologias e Ferramentas
 
@@ -56,11 +56,9 @@ uv run finops.py
 uv run pytest -v
 ```
 
-Funcionando, o terminal mostra o painel `🤖 Agent Started`, a linha `Tool analyze_cloud_costs executed with result: {'account_id': '123456789012', ...}` e o painel `✅ Agent Final Answer` com o relatório em Markdown — tabela de zumbis, tabela de rightsizing, total e plano de ação. Roda em poucos segundos com 2 chamadas ao modelo (~2.700–2.900 tokens), não escreve nada em disco, e `uv run pytest -v` reporta **41 passed**.
+Funcionando, o terminal mostra o painel `🤖 Agent Started`, a linha `Tool analyze_cloud_costs executed with result: {'account_id': '123456789012', ...}` confirmando a leitura do inventário, e o painel `✅ Agent Final Answer` com o relatório em Markdown — tabela de zumbis, tabela de rightsizing, total e plano de ação. Nada é escrito em disco.
 
-Entre execuções, a tool é chamada uma vez, os três recursos são sempre classificados corretamente e o subtotal de zumbis é sempre `$55,00/mês`; o que muda é o tipo de instância recomendado, o preço atribuído a ele e a economia total. Quando a resposta bate o teto de saída do provedor, o relatório pode sair truncado — às vezes com um retry que dobra o custo, às vezes em silêncio.
-
-> O painel do CrewAI corta o relatório na largura do terminal e o lab chama `crew.kickoff()` sem guardar o retorno: para ler o texto inteiro é preciso capturar o valor de retorno.
+O subtotal de zumbis (`$55,00/mês`) sai direto do arquivo e é o mesmo sempre; o total, que inclui o rightsizing, depende do preço que o modelo atribuir à instância de destino.
 
 ## Estrutura do Projeto
 
@@ -75,10 +73,52 @@ Entre execuções, a tool é chamada uma vez, os três recursos são sempre clas
 │   ├── agents.py                 # + get_finops_agent()  ← novo papel (o 9º da trilha)
 │   └── llm_config.py             # Groq + RateLimitAwareLLM — herdado, intocado
 ├── tools/                        # 8 tools herdadas das aulas 001–006
-│                                 #   NENHUMA é usada neste pipeline
-├── tests/                        # 41 testes herdados das aulas 003–005
+│                                 #   nenhuma é usada neste pipeline
+├── tests/                        # testes herdados das aulas 003–005
 └── pyproject.toml                # idêntico ao da 008, só muda o `name`
 ```
+
+## Como funciona
+
+```
+uv run finops.py
+   │
+   ├─ PROJECT_ROOT = dirname(abspath(__file__))              ← raiz da aula
+   ├─ cloud_inventory_path = PROJECT_ROOT/data/inventario_cloud.json
+   │
+   ├─ @tool("analyze_cloud_costs")
+   │      def analyze_cloud_costs(file_path: str) -> dict:
+   │          return json.load(open(file_path))              ← devolve o inventário inteiro
+   │
+   ├─ agent = get_finops_agent(tools=[analyze_cloud_costs])
+   │
+   ├─ task = Task(description=f"""Analise o inventário em '{cloud_inventory_path}'.
+   │                             1. Recursos 'Zumbis' (volumes disponíveis, IPs soltos).
+   │                             2. Instâncias superdimensionadas (Rightsizing).
+   │                             Calcule a economia total estimada em dólares.""")
+   │
+   └─ Crew(agents=[agent], tasks=[task]).kickoff()
+            │
+            ├─ o LLM transcreve o caminho para o argumento da tool
+            │        └─ os 3 recursos entram no contexto com `cost_per_month`
+            │
+            ├─ classificação — duas categorias, duas aritméticas diferentes:
+            │        │
+            │        ├─ ZUMBIS   vol-0a1b2c3d (`available`, $50) + eipalloc-001122
+            │        │           (`unassociated`, $5)
+            │        │              └─ economia = SOMA do que está no arquivo → $55,00
+            │        │
+            │        └─ RIGHTSIZING  i-99887766, `m5.4xlarge` a 2,5% de CPU, $340
+            │                   └─ economia = $340 − preço da instância de destino
+            │                            ↑
+            │              o tipo de destino e o preço dele NÃO estão no inventário:
+            │              os dois saem do conhecimento prévio do modelo
+            │
+            └─ relatório em Markdown: tabela de zumbis + tabela de rightsizing
+               + total + plano de ação
+```
+
+As duas categorias exigem trabalhos diferentes. O zumbi é uma decisão de leitura: `status: available` num volume e `unassociated` num Elastic IP já bastam para dizer que ele é faturado sem uso, e a economia é o próprio `cost_per_month`. O rightsizing é uma decisão de dimensionamento: `avg_cpu_utilization: 2.5%` diz que a instância está grande demais, mas não diz qual o tamanho certo — e a economia só existe depois que alguém escolhe a instância de destino e sabe quanto ela custa.
 
 ## Conceitos trabalhados
 
@@ -88,23 +128,20 @@ Entre execuções, a tool é chamada uma vez, os três recursos são sempre clas
 - [x] **Tool declarada inline no entrypoint** — mesmo padrão da 007 e da 008, sem passar por `tools/`
 - [x] **Inventário como entrada do pipeline** — o caminho é montado em Python e viaja para o modelo dentro do prompt
 - [x] **Aritmética delegada ao LLM** — o que acontece quando o entregável é um número e não há validador
-- [x] **Teto de saída do provedor** — `finish_reason: length` e o que o framework faz com uma resposta cortada
+- [x] **Origem do dado dentro de um mesmo relatório** — números lidos do arquivo e números gerados pelo modelo saem na mesma tabela, sem marca que os separe
 
 ## Aprendizados
 
 - [x] Recurso zumbi e instância superdimensionada são desperdícios de naturezas diferentes: o zumbi (volume `available`, IP `unassociated`) se resolve deletando, enquanto o rightsizing exige medir utilização ao longo do tempo antes de decidir o destino
 - [x] Quando o entregável é um **número**, a alucinação fica barata de produzir e cara de detectar: não há validador que recuse `$325,00/mês` como o Checkov recusa um Terraform inseguro
 - [x] A economia de rightsizing depende de **dois** preços — o da instância atual e o da instância de destino; com só um no inventário, o outro vem da memória do modelo e a conta muda a cada execução
-- [x] Num relatório gerado por LLM, a confiabilidade de cada número é a do dado mais fraco que entra nele, e o relatório não sinaliza qual é qual: `$55,00` calculado do arquivo e `$270,00` estimado saem na mesma tabela
-- [x] Preço de fixture fora da escala real faz o agente subtrair um valor correto (que ele traz de memória) de um valor fictício — o resultado não descreve nem a nuvem real nem o cenário do exercício
+- [x] Num relatório gerado por LLM a confiabilidade de cada número é a do dado mais fraco que entra nele, e nada na tabela sinaliza qual é qual — com o preço do cenário e o preço que o modelo traz de memória na mesma conta, o resultado não descreve nem a nuvem real nem o exercício
 - [x] Uma auditoria de FinOps que não é arquivada não é auditoria: o relatório precisa de destino em disco ou ticket, senão morre no terminal junto com o processo
 
 ## Referências
 
 - [CrewAI Docs](https://docs.crewai.com/)
 - [CrewAI — Tools](https://docs.crewai.com/concepts/tools)
-- [Groq API — Chat Completions (`max_tokens` e `finish_reason`)](https://console.groq.com/docs/api-reference#chat-create)
-- [Groq — Rate limits (TPM/TPD por modelo)](https://console.groq.com/docs/rate-limits)
 - [FinOps Foundation — Framework](https://www.finops.org/framework/)
 - [AWS — EC2 On-Demand Pricing](https://aws.amazon.com/ec2/pricing/on-demand/)
 - [AWS — Elastic IP: cobrança de endereços não associados](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html)

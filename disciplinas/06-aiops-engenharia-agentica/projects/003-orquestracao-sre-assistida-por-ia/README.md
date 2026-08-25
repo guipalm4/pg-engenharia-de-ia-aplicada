@@ -14,11 +14,9 @@ Uma `Crew` de dois papéis percorre o ciclo GitOps completo em três tasks seque
 
 O que distingue esta aula é o **raio de ação**: `apply_k8s_manifest` executa `kubectl apply` num cluster de verdade — é a primeira tool do repositório com efeito fora do diretório do projeto. Por isso ela tem grade de proteção: só aplica em contextos que casem com uma **allowlist** de clusters descartáveis (`kind-*`, `minikube`, `docker-desktop`…, configurável por `K8S_ALLOWED_CONTEXTS`), verifica se o cluster responde (`kubectl api-versions`) e valida o manifesto contra o API server (`--dry-run=server --validate=strict`) antes de mutar qualquer coisa. Sem cluster, degrada para simulação e **declara que o manifesto não foi validado** — porque não foi: validar um manifesto K8s exige um API server, e nenhuma checagem local substitui isso.
 
-O terceiro estágio é o que dá nome à aula e o que mais merece leitura crítica. A decisão de rollout é determinística e vive em Python (limiares de 5% de erro e 300ms de latência, falhando fechado), mas a métrica que ela avalia é o literal `CANARY_METRICS` fixado no topo do entrypoint: a Task 3 **não mede o deploy que a Task 2 acabou de aplicar** — até porque o workload que sobe é um `nginx:latest`, que não produziria essas métricas. E um veredito `ROLLBACK` é só uma string: nada chama `kubectl rollout undo`. O que a aula demonstra é a *forma* de uma análise de canário — quem decide, com que limiar, falhando para que lado — e não a análise em si.
+O terceiro estágio é o que dá nome à aula. A decisão de rollout é determinística e vive em Python — limiares de 5% de erro e 300ms de latência, falhando fechado —, e a métrica que ela avalia é o literal `CANARY_METRICS` fixado no topo do entrypoint, editável para exercitar os dois caminhos. O que a aula demonstra é a **forma** de uma análise de canário: quem decide, contra que limiar e para que lado o erro cai quando não há medida confiável.
 
-**O que esta aula acrescenta à trilha:** `get_sre_agent` (3º papel), `tools/k8s_ops.py` com as três operações do ciclo, o entrypoint que monta a `Crew` sequencial e `tests/test_k8s_ops.py` — os primeiros testes da trilha. O `nexus-api-unipds-k8s.yaml` versionado aqui é **saída do agente**, sobrescrita a cada execução, não código escrito à mão.
-
-> ℹ️ **Runtime atualizado na aula 005:** o modelo vem de `GROQ_MODEL` no `.env`, `max_tokens` deixou de ser capado e o retry de rate limit passou a ler os formatos de tempo compostos da Groq. Detalhes em [005 · Aprendizados](../005-observabilidade-preditiva/README.md#aprendizados).
+Esta aula acrescenta o `get_sre_agent` (3º papel), o módulo `tools/k8s_ops.py` com as três operações do ciclo e `tests/test_k8s_ops.py`, os primeiros testes da trilha. O `nexus-api-unipds-k8s.yaml` versionado aqui é **saída do agente**, sobrescrita a cada execução, não código escrito à mão.
 
 ## Tecnologias e Ferramentas
 
@@ -147,12 +145,11 @@ k8s_ops.py
 
 ## Aprendizados
 
+- [x] Toda tool com efeito fora do diretório do projeto precisa de allowlist de destino e de timeout explícito, porque quem escolhe chamá-la é o modelo e o alvo não pode depender do que estiver configurado no ambiente
 - [x] Guardrail no prompt e guardrail no código não são intercambiáveis: quando o manifesto é montado por template em `generate_k8s_manifest`, a restrição deixa de ser instruível e passa a ser impossível de violar
-- [x] `kubectl apply --dry-run=client` valida *sintaxe de arquivo*, não *objeto Kubernetes* — aceita `replicas: "dois"` e campos inventados; só `--dry-run=server --validate=strict` recusa, e isso exige API server
-- [x] Sem cluster alcançável, a tool declara explicitamente que **não** validou: afirmar validade sem ter verificado é pior que não validar
+- [x] `kubectl apply --dry-run=client` valida *sintaxe de arquivo*, não *objeto Kubernetes* — aceita `replicas: "dois"` e campos inventados; só `--dry-run=server --validate=strict` recusa, e isso exige API server: sem cluster alcançável, o honesto é declarar que **não** validou, porque afirmar validade sem ter verificado é pior que não validar
 - [x] Alcançabilidade se estabelece por sinal positivo (`kubectl api-versions` responde) e não por lista de mensagens de erro conhecidas — conjunto fechado de sucessos é mais confiável que conjunto aberto de falhas
 - [x] Análise de canário precisa **falhar fechado**: métrica ausente ou ilegível devolve `ROLLBACK` com motivo, porque aprovar por omissão é o lado errado do erro num rollout
-- [x] Toda tool com efeito fora do projeto precisa de allowlist (contextos `kind-*`/`minikube`) e de timeout — sem cluster, o `kubectl` reconecta com backoff e trava o pipeline indefinidamente
 
 ## Referências
 

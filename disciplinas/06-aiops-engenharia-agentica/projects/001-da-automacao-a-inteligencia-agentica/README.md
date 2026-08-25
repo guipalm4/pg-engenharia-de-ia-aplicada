@@ -1,4 +1,5 @@
 # Exemplo 001 — Da Automação à Inteligência Agêntica
+
 > Primeiro agente autônomo da trilha AI-Ops: um Arquiteto de Cloud que projeta infraestrutura consultando, via RAG, as normas internas de compliance da empresa antes de responder.
 
 ## Contexto
@@ -11,7 +12,7 @@ Este projeto é o ponto de partida da trilha: um único agente CrewAI (`Arquitet
 
 A ideia central da aula é a passagem de **IA generativa solta** para **IA consultiva**: o agente não inventa a política de nomenclatura/segurança, ele é obrigado a buscá-la numa fonte de verdade (aqui, um stub de RAG) antes de produzir o plano de infraestrutura. É a base sobre a qual os módulos seguintes da trilha (IaC declarativo, Kubernetes, troubleshooting, FinOps etc.) vão se apoiar.
 
-A inteligência do projeto roda em cima da Groq (`qwen/qwen3.6-27b` via LiteLLM, trocável por `GROQ_MODEL`), com um workaround explícito no `llm_config.py` para um bug conhecido do CrewAI (`crewai/issues/5886`): o CrewAI marca toda mensagem com um `cache_breakpoint` pensado para prompt caching da Anthropic, e a Groq/LiteLLM rejeita esse campo desconhecido — o projeto neutraliza o marcador antes da chamada. O `llm_config.py` também lê o modelo de `GROQ_MODEL` (default `qwen/qwen3.6-27b`) e deixa `max_tokens` **aberto** de propósito: medido, a Groq debita o consumo real e não o teto pedido, então capar não economiza cota — só arrisca truncar a resposta. Essas escolhas foram medidas na [aula 005](../005-observabilidade-preditiva/README.md#aprendizados) e aplicadas retroativamente às cinco.
+A inferência roda na Groq via LiteLLM, e `core/llm_config.py` centraliza a instância `LLM` usada por todos os agentes da trilha — é o arquivo que as aulas seguintes herdam sem alteração.
 
 ## Tecnologias e Ferramentas
 - [x] **Python 3** — runtime do agente
@@ -46,7 +47,7 @@ uv run foundation.py
 ├── foundation.py           # entrypoint: monta a Task e roda a Crew com um único agente
 ├── core/
 │   ├── agents.py            # get_architect() — define o Agente Arquiteto de Cloud Nexus
-│   └── llm_config.py        # configura o LLM da Groq + workaround do cache_breakpoint
+│   └── llm_config.py        # instância LLM da Groq, compartilhada por todos os agentes
 ├── tools/
 │   └── policy_rag.py        # tool check_compliance_rules — consulta de políticas (RAG stub)
 └── pyproject.toml           # dependências desta aula (membro do workspace uv)
@@ -73,7 +74,7 @@ foundation.py
      agente incorpora a política na resposta final (plano de bucket S3)
 ```
 
-1. **Configuração do LLM** — `core/llm_config.py` centraliza a instância `LLM` da Groq usada por todos os agentes do projeto, incluindo o workaround para o bug do `cache_breakpoint` do CrewAI com a Groq/LiteLLM.
+1. **Configuração do LLM** — `core/llm_config.py` centraliza a instância `LLM` da Groq usada por todos os agentes do projeto, e é o ponto único a mudar quando se troca de modelo ou de provedor.
 2. **Definição do agente** — `core/agents.py` expõe `get_architect(tools)`, que monta o `Agent` com role, goal e backstory fixos, aceitando uma lista de tools injetável (aqui, só `check_compliance_rules`).
 3. **Tool de compliance** — `tools/policy_rag.py` expõe `check_compliance_rules` como uma `@tool` do CrewAI; hoje é uma resposta fixa, mas o papel dela na arquitetura é o de um RAG sobre normas corporativas.
 4. **Execução** — `foundation.py` instancia o agente com a tool, cria uma `Task` de design de bucket S3 e roda a `Crew` com `kickoff()`, imprimindo o resultado do agente.
@@ -82,16 +83,15 @@ foundation.py
 - [x] **IA consultiva vs. generativa solta** — o agente é forçado a consultar uma fonte de política antes de decidir, em vez de responder de memória
 - [x] **Agente com tool única e objetivo restrito** — primeiro contato da trilha com `Agent`/`Task`/`Crew` do CrewAI
 - [x] **Injeção de tools no agente** — `get_architect(tools=...)` recebe a lista de ferramentas de fora, desacoplando definição de agente de definição de capacidades
-- [x] **Compatibilidade entre provedores de LLM** — workaround explícito para uma incompatibilidade real entre CrewAI e Groq/LiteLLM (`cache_breakpoint`)
+- [x] **Tool como fonte de verdade** — o retorno da ferramenta entra no contexto do agente e passa a limitar o que ele pode afirmar sobre a política da empresa
 
 ## Aprendizados
 
 - [x] Uma tool simples (mesmo que hoje seja uma resposta fixa) já muda o comportamento do agente de "gerar" para "consultar e depois gerar" — é o embrião do padrão RAG que a trilha aprofunda na aula 010
 - [x] `role`, `goal` e `backstory` não são enfeite: são o que o CrewAI monta no system prompt, e é por eles que o mesmo modelo responde como arquiteto de cloud e não como assistente genérico
 - [x] Receber as tools por injeção (`get_architect(tools=[...])`) mantém o papel independente do pipeline — o mesmo agente serve qualquer composição de ferramentas nas aulas seguintes
-- [x] Trocar de provedor de LLM (Groq em vez de OpenAI/Anthropic) expõe incompatibilidades entre framework e adaptador que não aparecem na documentação — o `llm_config.py` documenta o workaround e a razão dele no próprio código
+- [x] A `Task` declara o objetivo em linguagem natural e o `kickoff()` roda o ciclo: é o agente que decide se e quando chamar a tool, e o código não impõe essa ordem em lugar nenhum
 
 ## Referências
 - [CrewAI Docs](https://docs.crewai.com/)
 - [Groq API](https://console.groq.com/docs)
-- [CrewAI issue #5886 — cache_breakpoint incompatível com Groq/LiteLLM](https://github.com/crewAIInc/crewAI/issues/5886)

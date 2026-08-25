@@ -12,13 +12,11 @@
 
 Este projeto evolui o [001 — Da Automação à Inteligência Agêntica](../001-da-automacao-a-inteligencia-agentica), que tinha **um** agente consultando políticas via tool de compliance e devolvendo um plano em texto. O delta da aula é triplo: o agente passa a **escrever artefato real em disco** (`main.tf`), entra um **segundo agente auditor** com ferramentas de scan, e a saída do auditor realimenta o arquiteto — o embrião do *self-healing*.
 
-O runtime herdado do 001 continua idêntico: `core/llm_config.py` (Groq via LiteLLM, com o workaround do `cache_breakpoint`), a fábrica de agentes em `core/agents.py` e a tool de RAG de políticas em `tools/policy_rag.py`. Sobre essa base, `core/agents.py` ganha `get_auditor()` — o Engenheiro de DevSecOps — e o entrypoint muda de `foundation.py` para `iac_copilot.py`, que monta uma `Crew` sequencial de duas tasks: gerar e auditar.
+O runtime herdado do 001 continua idêntico: `core/llm_config.py` (Groq via LiteLLM), a fábrica de agentes em `core/agents.py` e a tool de RAG de políticas em `tools/policy_rag.py`. Sobre essa base, `core/agents.py` ganha `get_auditor()` — o Engenheiro de DevSecOps — e o entrypoint muda de `foundation.py` para `iac_copilot.py`, que monta uma `Crew` sequencial de duas tasks: gerar e auditar.
 
 A auditoria acontece em duas camadas complementares. **Checkov** (`run_checkov_scan`) é um scanner estático real, instalado como CLI e invocado por `subprocess` — cobre as regras genéricas de segurança de S3 (criptografia, versionamento, bloqueio de acesso público). **OPA** (`validate_opa_policies`) é uma simulação do Open Policy Agent que codifica as regras de governança *corporativa* da Nexus, que nenhum scanner genérico conhece: soberania de dados em `us-east-1`, controle de custo (proibir `t3.large`) e proibição de ingress aberto (`0.0.0.0/0`). A distinção é o ponto pedagógico — segurança genérica e política de negócio são camadas separadas do pipeline.
 
 O `main.tf` versionado aqui é **saída do agente**, não código escrito à mão: é o artefato que `write_file` gravou em disco durante a execução do pipeline.
-
-> ℹ️ **Runtime atualizado na aula 005.** O modelo agora vem de `GROQ_MODEL` no `.env` (default `qwen/qwen3.6-27b`, no lugar do `openai/gpt-oss-20b`), `max_tokens` deixou de ser capado (a Groq debita o consumo real, não o teto pedido — capar não economizava cota e arriscava truncar) e o retry de rate limit passou a ler os formatos de tempo compostos da Groq (`3m9.648s`), que antes caíam num fallback curto demais e matavam o pipeline. Detalhes em [005 · Aprendizados](../005-observabilidade-preditiva/README.md#aprendizados).
 
 ## Tecnologias e Ferramentas
 
@@ -69,7 +67,7 @@ uv run checkov -f main.tf --quiet --compact
 ├── main.tf                  # artefato GERADO pelo agente (sobrescrito a cada run)
 ├── core/
 │   ├── agents.py            # get_architect() + get_auditor()  ← novo agente DevSecOps
-│   └── llm_config.py        # LLM da Groq + workaround do cache_breakpoint (herdado do 001)
+│   └── llm_config.py        # instância LLM da Groq (herdada do 001)
 ├── tools/
 │   ├── file_writer.py       # write_file — grava o HCL em disco, limpando cercas ```hcl
 │   ├── security_scan.py     # run_checkov_scan (CLI real) + validate_opa_policies (simulado)
@@ -125,10 +123,10 @@ iac_copilot.py
 
 ## Aprendizados
 
-- [x] Contrato de tool é interface pública para o LLM: quando `run_checkov_scan` esperava caminho e `validate_opa_policies` esperava conteúdo, o agente chamou as duas do mesmo jeito e a política passou a avaliar a string `"main.tf"` em vez do Terraform
+- [x] Contrato de tool é interface pública para o LLM: duas ferramentas do mesmo pipeline que esperam coisas diferentes — uma o caminho do arquivo, outra o conteúdo dele — precisam dizer isso no nome e na docstring, porque é tudo que o agente enxerga na hora de chamar
 - [x] Política por *substring* é frágil — `"us-east-1" not in content` aprova um arquivo que cita a região num comentário e reprova um que use `var.region`; um OPA real avalia o plano estruturado (`terraform show -json`), não o texto do HCL
-- [x] Falha de auditoria não é falha do pipeline: o relatório do Checkov apontando o `aws_s3_bucket_public_access_block` esquecido é o *input* do loop de self-healing, não um bug a silenciar
-- [x] Um agente novo custa pouco quando a fábrica já está desacoplada — o padrão `get_*(tools=...)` estabelecido na aula 001 pagou o investimento já no módulo seguinte
+- [x] Falha de auditoria não é falha do pipeline: um relatório do Checkov apontando o `aws_s3_bucket_public_access_block` ausente é o *input* do loop de self-healing, não um erro a silenciar
+- [x] Um agente que grava arquivo em disco entrega um artefato que ferramentas externas sabem ler — é o que permite um scanner de mercado entrar no pipeline; enquanto a saída do agente é texto no terminal, não há o que escanear
 
 ## Referências
 

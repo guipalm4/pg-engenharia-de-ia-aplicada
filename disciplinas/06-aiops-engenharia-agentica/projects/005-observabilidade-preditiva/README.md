@@ -18,8 +18,6 @@ A estrutura encolhe em vez de crescer, e isso é intencional. Onde a 004 tinha d
 
 O `incident_dashboard.json` versionado aqui é **saída do agente**, não código escrito à mão — mesma convenção do `checkout-k8s-fix.yaml` da 004.
 
-Esta é a primeira aula da trilha em que **a configuração herdada do LLM quebrou o pipeline**, e a investigação acabou mudando as cinco aulas. O `reasoning_effort="low"` que as 001–004 usavam fazia a Groq recusar o 3º tool call deste fluxo em ~80% das tentativas; ao testar os outros modelos do free tier para resolver, apareceu a causa real dos `RateLimitError` que matavam o pipeline — o retry lia mal o formato de tempo da Groq. As correções (modelo padrão trocado para `qwen/qwen3.6-27b` via `GROQ_MODEL`, `max_tokens` destravado e parser de espera consertado) foram aplicadas nas cinco aulas. O enunciado da task permanece o **original** do material — a solução foi de runtime, não de prompt. Detalhes em *Aprendizados*.
-
 ## Tecnologias e Ferramentas
 
 - [x] **Python 3.12** — runtime dos agentes
@@ -36,12 +34,6 @@ Esta é a primeira aula da trilha em que **a configuração herdada do LLM quebr
 
 - **[uv](https://docs.astral.sh/uv/getting-started/installation/)** — gerencia o Python e as dependências
 - Uma **chave de API da Groq** em `projects/.env` (`GROQ_API_KEY=...`)
-
-> ⚠️ **Se aparecer `RateLimitError`:** o `RateLimitAwareLLM` pausa e repete sozinho — mensagens `⏳ Aguardando Ns` são a proteção funcionando. Mas se ele avisar que a Groq pediu **minutos** de espera, é a cota **diária** (200.000 tokens/dia, contada por modelo) e esperar não resolve: troque `GROQ_MODEL` no `.env` (`groq/openai/gpt-oss-120b` tem cota própria) ou volte mais tarde.
-
-> ⚠️ Consumo medido em 7 execuções com o modelo padrão (`qwen/qwen3.6-27b`): **1.900 a 3.500 tokens por run**, em 4 chamadas ao LLM, ~7s de parede. O free tier da Groq tem dois limites — **8.000 tokens/minuto** e **200.000 tokens/dia**, este último invisível nos headers da API. Nesta aula os dois ficam folgados. O `RateLimitAwareLLM` (`core/llm_config.py`) segura o pipeline pausando se ainda assim bater, imprimindo `⏳ Limite de tokens/minuto da Groq atingido` — é a proteção funcionando, não erro.
->
-> Para comparação, o antigo padrão `openai/gpt-oss-20b` gastava 4.500 a 8.800 tokens no mesmo pipeline, raspando o teto por minuto sozinho.
 
 > ⚠️ Rode sempre a partir do diretório do projeto. `generate_grafana_dashboard` grava com caminho relativo (`open("incident_dashboard.json", "w")`), então o arquivo aparece no diretório de trabalho corrente, não no do projeto.
 
@@ -76,8 +68,7 @@ Para ver o resultado no Grafana: **Dashboards → New → Import → Upload JSON
 ├── incident_dashboard.json       # artefato GERADO pelo agente (sobrescrito a cada run)
 ├── core/
 │   ├── agents.py                 # + get_aiops_agent()  ← novo papel (o 5º da trilha)
-│   └── llm_config.py             # Groq + RateLimitAwareLLM — modelo por GROQ_MODEL,
-│                                 #   max_tokens recalibrado nesta aula (vale p/ as 5)
+│   └── llm_config.py             # instância LLM da Groq (herdada)
 ├── tools/
 │   ├── aiops_tools.py            # ← NOVO: nl_to_promql, predictive_disk_alert,
 │   │                             #         generate_grafana_dashboard
@@ -92,8 +83,6 @@ Para ver o resultado no Grafana: **Dashboards → New → Import → Upload JSON
 │   └── test_k8s_ops.py           # herdado da 003
 └── pyproject.toml
 ```
-
-> Nota: `tools/file_writer.py` aqui é a cópia **anterior** ao ancoramento de diretório feito na 004 (`_OUTPUT_DIR`). Como nenhum agente desta aula recebe `write_file`, a divergência não afeta o pipeline — mas é bom saber que o arquivo herdado não é o mais recente.
 
 ## Como funciona
 
@@ -135,15 +124,14 @@ aiops.py
 - [x] **NL→PromQL como camada de acesso** — traduzir a pergunta de negócio para a linguagem de query é o que tira a métrica das mãos de um único time
 - [x] **Alerta por tendência, não por limiar** — projetar a série temporal entrega janela de ação; o limiar entrega apenas o aviso
 - [x] **Agente com efeito colateral** — `generate_grafana_dashboard` escreve no disco; as outras duas só devolvem texto, e essa assimetria muda o que pode ser repetido sem consequência
-- [x] **Simplificação da orquestração** — um agente e uma task bastam quando a complexidade está nas ferramentas, não na coordenação; a 004 pagou caro pela delegação
+- [x] **Simplificação da orquestração** — um agente e uma task bastam quando a complexidade está nas ferramentas e não na coordenação, sem o custo em chamadas ao modelo que a delegação da 004 cobrava
 - [x] **Série temporal como entrada de decisão** — a projeção converte um valor instantâneo (85% de uso) num horizonte (saturação em 4h), que é o formato sobre o qual se decide agir
 - [x] **Acúmulo como método** — cinco papéis e sete módulos de tools convivem; este pipeline compõe apenas os três de que precisa
 
 ## Aprendizados
 
 - [x] Traduzir a pergunta de negócio para PromQL é o que tira a métrica das mãos de um único time: o agente decide *o que* perguntar e a tool devolve a query, sem ninguém precisar dominar a linguagem
-- [x] Alerta por limiar (`disco > 95%`) avisa quando já não há o que fazer; projetar a tendência da série entrega uma **janela de ação** — a predição vale pelo tempo que compra, não pela precisão do número
-- [x] Prever saturação exige duas grandezas que o limiar dispensa — a taxa de crescimento e a capacidade restante —, e é a razão de a resposta ser "4 horas" em vez de "85%"
+- [x] Alerta por limiar (`disco > 95%`) avisa quando já não há o que fazer; projetar a tendência entrega uma **janela de ação**, e isso exige duas grandezas que o limiar dispensa — a taxa de crescimento e a capacidade restante —, que é por que a resposta é "4 horas" e não "85%"
 - [x] Dashboard como código: materializar o painel do incidente em JSON no formato do Grafana faz a visualização nascer junto do diagnóstico, em vez de alguém montá-la na UI depois que o incidente já passou
 - [x] A assimetria entre as tools importa — consulta e predição só devolvem texto e podem ser repetidas sem consequência, enquanto a de dashboard escreve em disco e sobrescreve a cada volta
 - [x] Um agente e uma task bastam quando a complexidade está nas ferramentas e não na coordenação: as três camadas (consulta → predição → visualização) são encadeadas pelo próprio LLM, sem delegação
@@ -155,6 +143,4 @@ aiops.py
 - [Grafana — Dashboard JSON model](https://grafana.com/docs/grafana/latest/dashboards/build-dashboards/view-dashboard-json-model/)
 - [Prophet — Forecasting at scale](https://facebook.github.io/prophet/)
 - [scikit-learn — Isolation Forest](https://scikit-learn.org/stable/modules/outlier_detection.html#isolation-forest)
-- [Groq — Reasoning e `reasoning_effort`](https://console.groq.com/docs/reasoning)
-- [OpenAI — gpt-oss e o formato Harmony](https://cookbook.openai.com/articles/openai-harmony)
 - [Google SRE Book — Monitoring Distributed Systems](https://sre.google/sre-book/monitoring-distributed-systems/)

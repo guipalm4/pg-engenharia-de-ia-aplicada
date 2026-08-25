@@ -1,6 +1,6 @@
 # Exemplo 007 — DevSecOps com Agentes de IA
 
-> Um agente de segurança lê um relatório de scan de container, filtra o ruído e escreve o parecer executivo sobre o backdoor da `xz` — sem receber nenhum dos dados que uma triagem de vulnerabilidade exige.
+> Um agente de segurança lê um relatório de scan de container, separa o explorável do ruído e escreve o parecer executivo sobre o backdoor da `xz`.
 
 ## Contexto
 
@@ -16,9 +16,9 @@ O trabalho que o exercício automatiza é a **triagem**: a distância entre "o s
 
 O pipeline é o mais simples da disciplina: um agente, uma task, uma ferramenta — sem delegação, ciclo ReAct ou segunda passagem de revisão. O que torna o exercício interessante não é a orquestração, e sim o tipo de produto: um **julgamento**. Um `main.tf` pode ser validado pelo Checkov; um manifesto Kubernetes, pelo API server; um parecer em prosa não tem validador.
 
-O Trivy em si não entra: `data/trivy.json` é um fixture (que nem segue o schema real do scanner), `analyze_trivy_report` é um `json.load`, e nenhuma ação corretiva é aplicada — o parecer é texto e o pipeline termina sem erro em 100% das execuções porque nada de perigoso é feito.
+O Trivy entra apenas como formato: `data/trivy.json` é um fixture, `analyze_trivy_report` é um `json.load` e nenhuma ação corretiva é aplicada — o entregável é o parecer em prosa.
 
-**O que esta aula acrescenta à trilha:** `get_devsecops_agent` (7º papel), `devsecops.py` com a tool `analyze_trivy_report` declarada inline, e `data/trivy.json` — a primeira **entrada** de arquivo da trilha.
+Esta aula acrescenta o `get_devsecops_agent` (7º papel), o `devsecops.py` com a tool `analyze_trivy_report` declarada inline e o `data/trivy.json` — a primeira **entrada** de arquivo da trilha.
 
 ## Tecnologias e Ferramentas
 
@@ -56,11 +56,7 @@ uv run devsecops.py
 uv run pytest -v
 ```
 
-Funcionando, o terminal mostra o painel `🤖 Agent Started`, a linha `Tool analyze_trivy_report executed with result: {'ArtifactName': 'python:3.11-slim', ...}` e o painel `✅ Agent Final Answer` com o parecer em Markdown. Roda em ~10s, não escreve nada em disco, e `uv run pytest -v` reporta **41 passed**.
-
-Entre execuções, o que se repete é a CVE-2024-3094 como ameaça crítica com plano de ação prioritário; o texto do parecer e a **classificação das outras duas CVEs** mudam — a mesma CVE-2023-45853 já foi chamada de "baixa/média" e de "HIGH com risco baixo em ambiente containerizado". O que se reproduz é o comportamento, não o texto.
-
-> ⚠️ O painel do CrewAI **trunca** o parecer no terminal e o entrypoint descarta o retorno de `kickoff()`: o relatório completo não é visível em nenhuma execução.
+Funcionando, o terminal mostra o painel `🤖 Agent Started`, a linha `Tool analyze_trivy_report executed with result: {'ArtifactName': 'python:3.11-slim', ...}` confirmando a leitura do relatório, e o painel `✅ Agent Final Answer` com o parecer em Markdown. Nada é escrito em disco.
 
 ## Estrutura do Projeto
 
@@ -69,29 +65,29 @@ Entre execuções, o que se repete é a CVE-2024-3094 como ameaça crítica com 
 ├── devsecops.py                  # entrypoint — e também onde vive a tool desta aula
 │                                 #   @tool("analyze_trivy_report") declarada inline
 ├── data/
-│   └── trivy.json                # entrada do pipeline (fixture, não é o formato real do Trivy)
+│   └── trivy.json                # entrada do pipeline (fixture)
 ├── core/
 │   ├── agents.py                 # + get_devsecops_agent()  ← novo papel (o 7º da trilha)
 │   └── llm_config.py             # Groq + RateLimitAwareLLM — herdado, intocado
 ├── tools/                        # 8 tools herdadas das aulas 001–006
-│                                 #   NENHUMA é usada neste pipeline
-├── tests/                        # 41 testes herdados das aulas 003–005
+│                                 #   nenhuma é usada neste pipeline
+├── tests/                        # testes herdados das aulas 003–005
 └── pyproject.toml                # − streamlit (a 006 era a única a precisar dele)
 ```
 
-> `tools/security_scan.py`, herdado da 002, merece um olhar: aquela aula também tinha uma camada de segurança, mas rodava o **Checkov de verdade** por `subprocess`. A 007 tem "DevSecOps" no nome do agente e nenhum scanner no processo.
+> `tools/security_scan.py`, herdado da 002, é o contraponto útil: lá a camada de segurança invocava o **Checkov de verdade** por `subprocess`, sobre um artefato que o próprio pipeline tinha gerado. Aqui o scanner é anterior ao pipeline, e o agente trabalha sobre a saída dele.
 
 ## Como funciona
 
 ```
 uv run devsecops.py
    │
-   ├─ PROJECT_ROOT = dirname(abspath(__file__))        ← a aula onde isso passou a importar
+   ├─ PROJECT_ROOT = dirname(abspath(__file__))        ← raiz da aula
    ├─ trivy_report_path = PROJECT_ROOT/data/trivy.json ← caminho calculado em PYTHON
    │
    ├─ @tool("analyze_trivy_report")
    │      def analyze_trivy_report(file_path: str) -> dict:
-   │          return json.load(open(file_path))        ← é literalmente isso
+   │          return json.load(open(file_path))        ← lê e devolve o relatório
    │
    ├─ agent = get_devsecops_agent(tools=[analyze_trivy_report])
    │
@@ -106,15 +102,12 @@ uv run devsecops.py
             │        └─ analyze_trivy_report(file_path="/Users/.../data/trivy.json")
             │                 └─ devolve o JSON INTEIRO para o contexto
             │
-            ├─ o LLM classifica: o que é backdoor ativo, o que é ruído
-            │        └─ sem CVSS, sem vetor de ataque, sem VendorSeverity no input
-            │                 → a lacuna é preenchida com o conhecimento prévio do modelo
-            │
-            └─ retorno de kickoff() ── DESCARTADO ──✗
-                     └─ o painel do CrewAI imprime uma versão TRUNCADA
+            └─ o LLM classifica: o que é backdoor ativo, o que é ruído
+                     └─ o relatório traz `Severity`, mas não CVSS nem vetor de ataque:
+                        o que falta é preenchido pelo conhecimento prévio do modelo
 ```
 
-O caminho do arquivo faz um desvio curioso: é calculado deterministicamente em Python, convertido em texto no prompt, e precisa voltar para o código pela transcrição do modelo. Entre os dois pontos determinísticos há uma etapa probabilística que não precisava existir.
+O caminho do arquivo faz um trajeto que vale reparar: é calculado deterministicamente em Python, vira texto dentro do prompt e volta ao código pela transcrição do modelo. Entre dois pontos determinísticos há uma etapa probabilística — é o preço de deixar o argumento da tool na mão do agente.
 
 ## Conceitos trabalhados
 
@@ -125,16 +118,14 @@ O caminho do arquivo faz um desvio curioso: é calculado deterministicamente em 
 - [x] **Tool declarada inline** — `@tool` no entrypoint em vez de módulo em `tools/`, e o que isso muda para quem lê o projeto
 - [x] **Argumentos de tool decididos pelo LLM** — a assinatura `(file_path: str)` transfere ao modelo uma decisão que o código já tinha tomado
 - [x] **Contexto vs. parâmetros do modelo** — o parecer mistura o que estava no JSON com o que o modelo sabe da internet, sem distinguir os dois
-- [x] **Validação de entrada em pipelines de dados** — o que acontece quando nada checa se o arquivo recebido é o que se espera
 
 ## Aprendizados
 
 - [x] Triagem é o gargalo real de uma esteira de segurança: scanners produzem volume, e quase todo o custo humano está em separar o explorável do teórico — é esse trabalho, e não o scan, que o agente automatiza
 - [x] A CVE-2024-3094 (`xz`) é ataque de cadeia de suprimentos e não se trata como as falhas de código ao lado dela: a pergunta não é "qual versão corrige", é "o artefato que eu construí contém o backdoor"
-- [x] Avaliar explorabilidade exige vetor de ataque, privilégio necessário e CVSS; com um relatório que só traz `Severity`, o modelo preenche a lacuna — e um `goal` que manda eliminar falsos positivos empurra o viés para dispensar em vez de escalar
+- [x] Avaliar explorabilidade exige vetor de ataque, privilégio necessário e CVSS; com um relatório que só traz `Severity`, o modelo preenche a lacuna com o que sabe de fora — e um `goal` que pede para eliminar falsos positivos inclina essa lacuna para dispensar em vez de escalar
 - [x] Um identificador de CVE é verificável por regex antes de qualquer consulta a base: `CVE-2022-123` tem 3 dígitos na sequência e é sintaticamente impossível desde a mudança de 2014
-- [x] O primeiro trabalho de um auditor é desconfiar da procedência da evidência — o fixture não bate com o schema que o Trivy emite, e nada no pipeline reclamou
-- [x] Sem exigir citação da evidência, o parecer mistura o que veio do scan com o que veio dos pesos do modelo no mesmo tom e na mesma tabela
+- [x] O primeiro trabalho de um auditor é desconfiar da procedência da evidência: sem validar o schema na entrada e sem exigir citação na saída, o parecer mistura o que veio do scan com o que veio dos pesos do modelo, no mesmo tom e na mesma tabela
 
 ## Referências
 

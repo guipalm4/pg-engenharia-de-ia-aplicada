@@ -16,11 +16,9 @@ Três coisas são novas. Um quarto papel em `core/agents.py`, o `get_oncall_sre(
 
 O ciclo de *self-healing* que a aula 002 apenas insinuou aqui se fecha de ponta a ponta. O SRE correlaciona três fontes — métrica (`query_prometheus_metrics`), trace (`query_jaeger_traces`) e log/evento do pod (`inspect_pod_failure`) — chega a uma causa raiz, e o **Arquiteto** grava o hotfix em `checkout-k8s-fix.yaml` via `write_file`. O diagnóstico de um agente vira o input de outro.
 
-A diferença de mecânica em relação ao 003 está em **quem escreve o YAML**. No 003, `generate_k8s_manifest` montava o manifesto por template f-string e o LLM só fornecia três valores. Aqui é o LLM que redige o manifesto inteiro, e `write_file` grava o que vier. Por isso as cinco regras estritas no prompt da segunda task — imagem, porta, `path` do probe, `initialDelaySeconds` — **são de fato necessárias** nesta aula, ao contrário das que removi do 003.
+A diferença de mecânica em relação ao 003 está em **quem escreve o YAML**. No 003, `generate_k8s_manifest` montava o manifesto por template f-string e o LLM só fornecia três valores. Aqui é o LLM que redige o manifesto inteiro, e `write_file` grava o que vier. Por isso as cinco regras estritas no prompt da segunda task — imagem, porta, `path` do probe, `initialDelaySeconds` — são a única defesa contra um manifesto inválido: sem template, o guardrail só pode morar no enunciado.
 
 O `checkout-k8s-fix.yaml` versionado aqui é **saída do agente**, não código escrito à mão.
-
-> ℹ️ **Runtime atualizado na aula 005.** O modelo agora vem de `GROQ_MODEL` no `.env` (default `qwen/qwen3.6-27b`, no lugar do `openai/gpt-oss-20b`), `max_tokens` deixou de ser capado (a Groq debita o consumo real, não o teto pedido — capar não economizava cota e arriscava truncar) e o retry de rate limit passou a ler os formatos de tempo compostos da Groq (`3m9.648s`), que antes caíam num fallback curto demais e matavam o pipeline. Detalhes em [005 · Aprendizados](../005-observabilidade-preditiva/README.md#aprendizados).
 
 ## Tecnologias e Ferramentas
 
@@ -31,7 +29,7 @@ O `checkout-k8s-fix.yaml` versionado aqui é **saída do agente**, não código 
 - [x] **Groq** (`qwen/qwen3.6-27b`, trocável por `GROQ_MODEL` no `.env`) — motor de inferência dos agentes (free tier)
 - [x] **Kubernetes / `kubectl`** — onde o incidente é reproduzido e o hotfix validado
 - [x] **Prometheus e Jaeger** — fontes de observabilidade, aqui **simuladas** por tools que devolvem resposta roteirizada
-- [x] **pytest** — testes dos helpers de decisão e da limpeza de cercas
+- [x] **pytest** — testes dos helpers de decisão e da remoção de cercas de markdown
 - [x] **uv (workspace)** — ambiente único compartilhado por todas as aulas da disciplina
 
 ## Pré-requisitos
@@ -39,8 +37,6 @@ O `checkout-k8s-fix.yaml` versionado aqui é **saída do agente**, não código 
 - **[uv](https://docs.astral.sh/uv/getting-started/installation/)** — gerencia o Python e as dependências
 - Uma **chave de API da Groq** em `projects/.env` (`GROQ_API_KEY=...`)
 - **`kubectl` (opcional)** apontando para um **cluster descartável** (kind/minikube) — necessário só para reproduzir o incidente e validar o hotfix; o pipeline em si roda sem cluster
-
-> ⚠️ Esta é a aula mais cara da trilha, por causa do `allow_delegation=True`. Com o modelo padrão atual (`qwen/qwen3.6-27b`) são **~4.900 tokens por execução**, dentro do teto de 8.000/minuto do free tier. Com o antigo `openai/gpt-oss-20b` eram ~8.900, e o run estourava o limite sozinho. Se mesmo assim bater em rate limit, o `RateLimitAwareLLM` (`core/llm_config.py`) segura o pipeline pausando e imprime `⏳ Limite de tokens/minuto da Groq atingido` — é a proteção funcionando, não erro.
 
 ## Como executar
 
@@ -85,12 +81,12 @@ uv run pytest -v
 ├── tools/
 │   ├── k8s_diag.py               # ← NOVO: inspect_pod_failure, suggest_fix
 │   ├── obs_tools.py              # ← NOVO: query_prometheus_metrics, query_jaeger_traces
-│   ├── file_writer.py            # write_file — limpeza de cercas corrigida nesta aula
+│   ├── file_writer.py            # write_file — grava o YAML, removendo a cerca de markdown
 │   ├── k8s_ops.py                # herdado da 003 — não usado neste pipeline
 │   ├── security_scan.py          # herdado da 002 — não usado neste pipeline
 │   └── policy_rag.py             # herdado da 001 — não usado neste pipeline
 ├── tests/
-│   ├── test_file_writer.py       # regressão da limpeza de cercas (o bug desta aula)
+│   ├── test_file_writer.py       # cobre a remoção da cerca de markdown antes da gravação
 │   └── test_k8s_ops.py           # herdado da 003; as tools continuam no diretório
 └── pyproject.toml
 ```
@@ -151,8 +147,7 @@ troubleshooting.py
 - [x] Métrica diz *que* está ruim, trace diz *onde* e log diz *por quê*: a causa raiz sai do cruzamento dos três, e é exatamente isso que o ciclo ReAct encadeia antes de concluir
 - [x] O ganho de MTTR vem de encurtar a **coleta de evidência**, não de acelerar a correção — as três consultas que um plantonista faria em janelas separadas acontecem numa volta só
 - [x] `suggest_fix` mapeia tipo de problema para remediação por dicionário: a classificação é do LLM e a remediação é determinística, o que mantém o agente escolhendo *o quê* sem inventar o *como*
-- [x] Passar o relatório de diagnóstico de uma task para a seguinte é o que fecha o loop de self-healing — o Arquiteto redige o hotfix sem repetir a investigação
-- [x] `allow_delegation=True` deixa o SRE acionar o Arquiteto, mas insere ferramentas de coordenação no prompt de cada agente e multiplica as idas ao modelo: só compensa quando o segundo papel tem trabalho próprio a fazer
+- [x] Passar o relatório de diagnóstico de uma task para a seguinte é o que fecha o loop de self-healing, e `allow_delegation=True` amplia isso deixando o SRE acionar o Arquiteto — ao custo de inserir ferramentas de coordenação no prompt de cada agente e multiplicar as idas ao modelo
 - [x] Quando o LLM redige o manifesto inteiro, sem template, a limpeza da cerca de markdown é o que separa um YAML válido de um arquivo corrompido
 
 ## Referências

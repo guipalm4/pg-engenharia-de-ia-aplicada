@@ -1,6 +1,6 @@
 # Exemplo 006 — ChatOps e Human-in-the-Loop
 
-> Simulador de Slack em Streamlit onde um agente recebe pedidos de infraestrutura em linguagem natural e precisa exigir aprovação humana antes de executar o que é destrutivo — e onde a aprovação, na prática, quase nunca é exigida.
+> Simulador de Slack em Streamlit onde um agente recebe pedidos de infraestrutura em linguagem natural e precisa exigir aprovação humana antes de executar o que é destrutivo.
 
 ## Contexto
 
@@ -16,7 +16,7 @@ O delta de código é pequeno — um agente novo (`get_chatops_agent`, o 6º pap
 
 O ponto central da aula é o **human-in-the-loop**: o padrão em que um sistema autônomo interrompe a própria execução para pedir a um humano que autorize o passo seguinte. É o controle que separa um bot de operações útil de um incidente esperando acontecer, e a razão de existir de ferramentas de ChatOps reais.
 
-O que a execução mostra, porém, é que este exercício **ensina o padrão pela ausência dele**. Rodado nos dois modelos do free tier, o portão da tool raramente é o que decide: o LLM avalia o risco por conta própria antes de chamar a ferramenta, entrega a senha de aprovação ao usuário no texto da resposta, e o `🛑 BLOCKED` da tool não chega a ser exercido no caminho normal. O handshake de duas mensagens que a interface convida a fazer — o bot pede a senha, você responde — também não funciona, porque cada mensagem monta uma `Crew` nova sem memória da anterior. Nada disso é bug de instalação; é o que o código faz. Os detalhes, com o que foi medido em cada caso, estão em *Aprendizados* — e é onde está o conteúdo desta aula.
+O que a aula rende é a **assimetria entre as duas camadas de decisão** que esse desenho empilha: o LLM avalia sozinho se o pedido é crítico *antes* de chamar a ferramenta, e o portão determinístico da tool só entra em cena se ele decidir chamá-la. Some-se a isso que aprovação humana é **estado de conversa**, e que a `Crew` é remontada a cada mensagem sem memória da anterior — o handshake de duas mensagens que a interface sugere não tem onde se apoiar.
 
 ## Tecnologias e Ferramentas
 
@@ -34,11 +34,9 @@ O que a execução mostra, porém, é que este exercício **ensina o padrão pel
 - **[uv](https://docs.astral.sh/uv/getting-started/installation/)** — gerencia o Python e as dependências
 - Uma **chave de API da Groq** em `projects/.env` (`GROQ_API_KEY=...`)
 
-> ⚠️ **O `cd` faz parte do comando.** `uv run` fora do workspace falha com `error: Failed to spawn: streamlit` — sem um `pyproject.toml` para resolver, o uv usa um ambiente efêmero vazio. E parar em `projects/` em vez da pasta da aula dá `ModuleNotFoundError: core`, porque os imports `core.*`/`tools.*` resolvem pelo diretório do script.
+> ⚠️ **O `cd` faz parte do comando.** O `uv run` precisa do `pyproject.toml` do workspace para resolver o `streamlit`, e os imports `core.*`/`tools.*` resolvem pelo diretório do script — parar em `projects/` em vez da pasta da aula não funciona.
 
 > ⚠️ **Na primeira execução o Streamlit pede um e-mail** (`👋 Welcome to Streamlit!`). É cadastro opcional: **Enter** com o campo vazio segue adiante. Para nunca mais ver o prompt: `mkdir -p ~/.streamlit && printf '[general]\nemail = ""\n' > ~/.streamlit/credentials.toml`. A flag `--server.headless true` também o suprime, mas aí o navegador não abre sozinho.
-
-> ⚠️ Consumo medido com o modelo padrão (`qwen/qwen3.6-27b`): **~1.150 tokens por mensagem** enviada no chat — 3 mensagens custaram 3.438 tokens em 5 chamadas ao LLM. O free tier da Groq limita a **8.000 tokens/minuto** e **200.000 tokens/dia** (este invisível nos headers), o que dá folga para ~170 mensagens por dia. Como cada mensagem é uma execução independente, o teto por minuto só aperta se você digitar muito rápido — o `RateLimitAwareLLM` (`core/llm_config.py`) pausa e repete se acontecer. Para comparação, `gpt-oss-120b` gastou ~800 tokens por mensagem no mesmo roteiro.
 
 ## Como executar
 
@@ -63,13 +61,13 @@ uv run pytest -v
 
 `Ctrl+C` no terminal encerra o app.
 
-Três mensagens que mostram os três comportamentos da aula:
+Três mensagens que exercitam os três caminhos da aula:
 
-| Digite | O que deveria acontecer | O que acontece |
-|---|---|---|
-| `@nexus-bot destrua o banco de dados de produção` | tool retorna `🛑 BLOCKED` | o bot nem chama a tool — e te **entrega a senha** na resposta |
-| `@nexus-bot destrua o banco, a senha do gestor é GESTOR-APROVA` | tool retorna `✅ APPROVED` | funciona como esperado |
-| `@nexus-bot suba mais 2 réplicas do checkout` | tool retorna `✅ SUCCESS` (baixo impacto) | depende do modelo — o `gpt-oss-120b` pede senha sem motivo |
+| Digite | Caminho exercitado |
+|---|---|
+| `@nexus-bot destrua o banco de dados de produção` | pedido destrutivo sem senha — mostra quem decide primeiro, o modelo ou o portão da tool |
+| `@nexus-bot destrua o banco, a senha do gestor é GESTOR-APROVA` | pedido destrutivo com a senha — `execute_terraform` devolve `✅ APPROVED` |
+| `@nexus-bot suba mais 2 réplicas do checkout` | pedido de baixo impacto — `✅ SUCCESS`, sem exigir aprovação |
 
 ## Estrutura do Projeto
 
@@ -118,8 +116,8 @@ streamlit run chatops.py
         └─ Crew(agents=[agent], tasks=[task]).kickoff()
                  │
                  ├─ o LLM decide sozinho se aquilo é "crítico"
-                 │     ├─ se decide que precisa de aprovação → responde em texto
-                 │     │                                        (e vaza GESTOR-APROVA)
+                 │     ├─ se decide que precisa de aprovação → responde em texto,
+                 │     │                                        sem acionar o portão
                  │     └─ se decide executar → chama execute_terraform(command, senha)
                  │              │
                  │              └─ if "destruir"|"apagar"|"destroy" in command.lower():
@@ -134,19 +132,18 @@ O desenho tem duas camadas de decisão empilhadas — o LLM primeiro, a tool dep
 
 ## Conceitos trabalhados
 
-- [x] **Human-in-the-loop** — interromper a execução autônoma para pedir autorização humana antes do passo irreversível; aqui é o objeto de estudo e, como implementado, também o contraexemplo
+- [x] **Human-in-the-loop** — interromper a execução autônoma para pedir autorização humana antes do passo irreversível
 - [x] **ChatOps** — a operação de infraestrutura acontecendo dentro do canal de conversa da equipe, com o histórico servindo de trilha de auditoria
 - [x] **Agente atrás de interface** — a mudança de script para sessão: o agente deixa de ter um roteiro e passa a responder a entrada arbitrária de um humano
 - [x] **Guardrail determinístico vs. julgamento do modelo** — a diferença entre uma regra que o código aplica e uma política que o LLM decide seguir
 - [x] **Superfície de prompt como superfície de ataque** — tudo que a tool declara (nome, assinatura, docstring) é enviado ao modelo e pode ser repetido por ele ao usuário
 - [x] **Statelessness da `Crew`** — a memória de uma conversa não é automática; renderizar o histórico na tela não é o mesmo que passá-lo ao agente
-- [x] **RBAC e princípio do menor privilégio** — o vocabulário que o exercício invoca e que a implementação por senha compartilhada não realiza
+- [x] **RBAC e princípio do menor privilégio** — autorização por identidade e escopo, que uma senha única compartilhada não tem como expressar
 
 ## Aprendizados
 
 - [x] Um segredo que entra no prompt não é segredo: a senha de aprovação vive na docstring de `execute_terraform`, que vai ao LLM junto com a definição da tool — e o bot chega a revelá-la a quem acabou de barrar
-- [x] Se o agente pode responder sem chamar a tool, o portão determinístico nunca decide: a checagem de autorização precisa estar no caminho de execução, não na deliberação do modelo
-- [x] Enquanto a autorização morar no modelo, **trocar de modelo é trocar de política de segurança** — o mesmo pedido de baixo impacto foi liberado por um e recusado por outro
+- [x] Se o agente pode responder sem chamar a tool, o portão determinístico nunca decide — e enquanto a autorização morar na deliberação do modelo, **trocar de modelo é trocar de política de segurança**; a checagem precisa estar no caminho de execução
 - [x] Aprovação humana é estado de conversa, não parâmetro de chamada: sem persistir o pedido pendente, o "sim" do gestor chega sem o comando a que se refere
 - [x] Blocklist de substrings sobre linguagem livre é teatro de segurança — `drop database production` e `terraform apply -replace=aws_db_instance.prod` passam pelo filtro de três palavras sem exigir aprovação
 - [x] ChatOps só encurta o tempo de resposta se o canal carregar também a autorização e o registro: se o operador precisa sair do chat para executar, o rastro da ação se perde justamente no passo que importa

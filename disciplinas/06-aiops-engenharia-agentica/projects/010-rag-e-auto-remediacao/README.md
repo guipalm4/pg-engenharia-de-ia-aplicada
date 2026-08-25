@@ -14,31 +14,7 @@ A aula fecha a trilha com o padrão **RAG** (*Retrieval-Augmented Generation*): 
 
 É a diferença entre um agente que responde com o que o modelo sabe sobre PostgreSQL e um agente que responde com o que **a sua empresa** documentou sobre aquele incidente — mesmo padrão da tool de compliance da aula 001, agora aplicado à base de conhecimento operacional.
 
-**O que esta aula acrescenta à trilha:** o 10º papel (`get_sre_knowledge_agent`), o entrypoint `remediation.py` com a tool `consult_runbook` declarada inline e a base de conhecimento em `data/runbook_db.md`. O `core/llm_config.py`, os testes e as tools de `tools/` vêm das aulas anteriores sem alteração.
-
-## Como funciona
-
-```
-alerta ("Saturação de Conexões" no serviço db)
-   │
-   ▼
-Agente SRE de Resposta a Incidentes
-   │  decide consultar a base de conhecimento e escolhe o serviço
-   ▼
-consult_runbook("db")  ──▶  data/runbook_db.md  ──▶  conteúdo no contexto do LLM
-   │
-   ▼
-Resposta final em Markdown
-   ├── Plano de remediação (diagnóstico + comandos SQL)
-   └── Rascunho de post-mortem (resumo, linha do tempo, causa raiz, ações preventivas)
-```
-
-1. **Alerta** — a `Task` descreve o incidente e pede três coisas: consultar o runbook do serviço `db`, identificar o comando SQL de limpeza e escrever o post-mortem.
-2. **Recuperação** — o agente decide chamar `consult_runbook` e escolhe o argumento `service_name`; a tool monta o caminho `data/runbook_{service_name}.md` e devolve o arquivo inteiro.
-3. **Geração fundamentada** — o runbook entra no contexto do modelo, que redige o plano de remediação apoiado no que o documento traz sobre sintoma e diagnóstico.
-4. **Post-mortem** — como o contexto do incidente já está carregado, o rascunho do documento pós-incidente sai na mesma volta, sem nova consulta.
-
-O runbook (`data/runbook_db.md`) segue a estrutura clássica: **Sintoma** (o alerta, o erro da aplicação, a latência) e **Diagnóstico** (a query de `pg_stat_activity` que revela o estado das conexões).
+Esta aula acrescenta o 10º papel (`get_sre_knowledge_agent`), o entrypoint `remediation.py` com a tool `consult_runbook` declarada inline e a base de conhecimento em `data/runbook_db.md`. O `core/llm_config.py`, os testes e as tools de `tools/` vêm das aulas anteriores sem alteração.
 
 ## Tecnologias e Ferramentas
 
@@ -48,7 +24,7 @@ O runbook (`data/runbook_db.md`) segue a estrutura clássica: **Sintoma** (o ale
 - [x] **LiteLLM** — camada de abstração de LLM usada pelo CrewAI
 - [x] **Groq** — motor de inferência (free tier); modelo em `GROQ_MODEL`, default `qwen/qwen3.6-27b`
 - [x] **Markdown como base de conhecimento** — o runbook é um arquivo versionado no repositório, não um banco vetorial
-- [x] **pytest** — 41 testes herdados das aulas 003–005
+- [x] **pytest** — testes herdados das aulas 003–005
 - [x] **uv (workspace)** — ambiente único compartilhado por todas as aulas da disciplina
 
 ## Pré-requisitos
@@ -76,7 +52,7 @@ uv run remediation.py
 uv run pytest -v
 ```
 
-Funcionando, o terminal mostra o painel `🤖 Agent Started` com o enunciado, a linha `Tool consult_runbook executed with result: # Runbook: Saturação de Conexões no PostgreSQL...` confirmando a recuperação, e o painel `✅ Agent Final Answer` com o plano de remediação e o post-mortem em Markdown. Roda em poucos segundos, com uma chamada de tool e sem escrever nada em disco. `uv run pytest -v` reporta **41 passed**.
+Funcionando, o terminal mostra o painel `🤖 Agent Started` com o enunciado, a linha `Tool consult_runbook executed with result: # Runbook: Saturação de Conexões no PostgreSQL...` confirmando a recuperação, e o painel `✅ Agent Final Answer` com o plano de remediação e o post-mortem em Markdown. Nada é escrito em disco.
 
 ## Estrutura do Projeto
 
@@ -91,9 +67,33 @@ Funcionando, o terminal mostra o painel `🤖 Agent Started` com o enunciado, a 
 │   ├── agents.py                 # + get_sre_knowledge_agent()  ← o 10º papel da trilha
 │   └── llm_config.py             # Groq + RateLimitAwareLLM (herdado)
 ├── tools/                        # tools das aulas 001–006 (não usadas neste pipeline)
-├── tests/                        # 41 testes herdados das aulas 003–005
+├── tests/                        # testes herdados das aulas 003–005
 └── pyproject.toml                # membro virtual do workspace uv; pythonpath = ["."]
 ```
+
+## Como funciona
+
+```
+alerta ("Saturação de Conexões" no serviço db)
+   │
+   ▼
+Agente SRE de Resposta a Incidentes
+   │  decide consultar a base de conhecimento e escolhe o serviço
+   ▼
+consult_runbook("db")  ──▶  data/runbook_db.md  ──▶  conteúdo no contexto do LLM
+   │
+   ▼
+Resposta final em Markdown
+   ├── Plano de remediação (diagnóstico + comandos SQL)
+   └── Rascunho de post-mortem (resumo, linha do tempo, causa raiz, ações preventivas)
+```
+
+1. **Alerta** — a `Task` descreve o incidente e pede três coisas: consultar o runbook do serviço `db`, identificar o comando SQL de limpeza e escrever o post-mortem.
+2. **Recuperação** — o agente decide chamar `consult_runbook` e escolhe o argumento `service_name`; a tool monta o caminho `data/runbook_{service_name}.md` e devolve o arquivo inteiro.
+3. **Geração fundamentada** — o runbook entra no contexto do modelo, que redige o plano de remediação apoiado no que o documento traz sobre sintoma e diagnóstico.
+4. **Post-mortem** — como o contexto do incidente já está carregado, o rascunho do documento pós-incidente sai na mesma volta, sem nova consulta.
+
+O runbook (`data/runbook_db.md`) segue a estrutura clássica: **Sintoma** (o alerta, o erro da aplicação, a latência) e **Diagnóstico** (a query de `pg_stat_activity` que revela o estado das conexões).
 
 ## Conceitos trabalhados
 
@@ -120,4 +120,3 @@ Funcionando, o terminal mostra o painel `🤖 Agent Started` com o enunciado, a 
 - [PostgreSQL — `pg_stat_activity`](https://www.postgresql.org/docs/current/monitoring-stats.html#MONITORING-PG-STAT-ACTIVITY-VIEW)
 - [PostgreSQL — Funções de sinalização de servidor (`pg_terminate_backend`)](https://www.postgresql.org/docs/current/functions-admin.html#FUNCTIONS-ADMIN-SIGNAL)
 - [Google SRE Book — Postmortem Culture](https://sre.google/sre-book/postmortem-culture/)
-- [Groq — Rate limits (TPM/TPD por modelo)](https://console.groq.com/docs/rate-limits)
