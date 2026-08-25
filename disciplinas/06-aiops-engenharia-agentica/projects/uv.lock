@@ -17,6 +17,8 @@ members = [
     "aula-006-chatops-e-human-in-the-loop",
     "aula-007-devsecops-com-agentes-de-ia",
     "aula-008-otimizacao-inteligente-de-cicd",
+    "aula-009-finops-com-agentes-de-ia",
+    "aula-010-rag-e-auto-remediacao",
 ]
 
 [[package]]
@@ -360,6 +362,54 @@ dev = [{ name = "pytest", specifier = ">=8,<9" }]
 name = "aula-008-otimizacao-inteligente-de-cicd"
 version = "0"
 source = { virtual = "008-otimizacao-inteligente-de-cicd" }
+dependencies = [
+    { name = "crewai", extra = ["tools"] },
+    { name = "litellm" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "crewai" },
+    { name = "crewai", extras = ["tools"] },
+    { name = "litellm" },
+]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=8,<9" }]
+
+[[package]]
+name = "aula-009-finops-com-agentes-de-ia"
+version = "0"
+source = { virtual = "009-finops-com-agentes-de-IA" }
+dependencies = [
+    { name = "crewai", extra = ["tools"] },
+    { name = "litellm" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "crewai" },
+    { name = "crewai", extras = ["tools"] },
+    { name = "litellm" },
+]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=8,<9" }]
+
+[[package]]
+name = "aula-010-rag-e-auto-remediacao"
+version = "0"
+source = { virtual = "010-rag-e-auto-remediacao" }
 dependencies = [
     { name = "crewai", extra = ["tools"] },
     { name = "litellm" },
