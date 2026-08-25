@@ -98,20 +98,13 @@ Escreve o novo `README.md` baseando-se exclusivamente no output do passo 2. Não
 
 **A estrutura canônica é [`shared/templates/README_TEMPLATE.md`](../../shared/templates/README_TEMPLATE.md) — leia o arquivo.**
 
-**Régua de tamanho e voz** — medida nos READMEs das disciplinas 01–05, que são o padrão do repositório:
+**Voz da seção `Aprendizados`** — o modelo é o dos READMEs das disciplinas 01–05:
 
-| Alvo | Limite |
-|---|---|
-| README inteiro | ≤ 1.600 palavras |
-| `## Aprendizados` | 4–6 bullets de **uma frase**, ≤ 200 palavras no total |
-| Linha do projeto no índice raiz | ≤ 60 palavras |
-
-- **`Aprendizados` explica o que o exemplo ensina — não julga o exemplo.** Cada bullet é um conhecimento técnico transferível, afirmativo e curto, no tom dos que já existem no repositório: *"o RAG só funciona bem se o chunking for adequado ao documento"*, *"MCP = o que o agente pode fazer; skill = como ele deve fazer"*, *"forçar JSON estruturado não basta: é preciso um circuit breaker"*. **Não entram** achados de code review, contagem de execuções, valores medidos, crítica ao material da aula, ironia sobre nomes de tools, nem ressalvas sobre o que o exemplo deixou de fazer. Isso é conversa para o chat com o usuário, não conteúdo de documento.
 - **Cada bullet tem que ser sobre o assunto DA AULA.** Se a aula é sobre observabilidade preditiva, os bullets falam de PromQL, janela de ação e projeção de série temporal — não de troca de modelo, cota de tokens, rate limit, `sys.path`, truncamento de painel ou qualquer incidente encontrado ao rodar o projeto. Teste antes de salvar: **um bullet que faria igual sentido no README de outra aula qualquer não é aprendizado desta aula.** Problemas de runtime que valha registrar vão para a seção onde pertencem (`Pré-requisitos`, `Como executar`) ou para o chat.
-- **Leia dois READMEs da disciplina 02 ou 04 antes de escrever esta seção** (`002-langchain-intro`, `006-rag-neo4j-students-z`, `007-doc-analysis`, `001-contratos`). O formato é: fato técnico concreto sobre a tecnologia central do projeto, uma frase, afirmativo — *"modelos de visão leem PDF direto via `data:application/pdf;base64`, sem converter para texto antes"*, *"usar o schema real do banco no prompt reduz erros de property inexistente"*.
-- **Não invente seções.** A estrutura canônica é a do template. `Real vs. simulado`, `Saída esperada`, `Herança` e parentes **não existem** nas disciplinas 01–05. O que o exemplo simula cabe numa frase da `Descrição`; o que aparece quando funciona cabe numa frase no fim de `Como executar`; o que a aula acrescenta à trilha cabe num parágrafo da `Descrição`.
-- **Calibre pelo padrão do repositório, não pelo README anterior da mesma trilha.** Antes de escrever, abra dois READMEs de disciplinas 01–05 e use-os como referência de tom e tamanho. Tomar o `NNN-1` como régua faz cada aula crescer sobre a anterior: na disciplina 06 isso levou `Aprendizados` de 87 palavras (aula 001) a 1.302 (aula 007), e o README inteiro de 956 a 3.242.
-
+- **A seção explica o que o exemplo ensina — não julga o exemplo.** Fato técnico concreto sobre a tecnologia central do projeto, uma frase, afirmativo. Não entram achados de code review, contagem de execuções, valores medidos, crítica ao material da aula nem ressalvas sobre o que o exemplo deixou de fazer.
+- **Leia dois READMEs da disciplina 02 ou 04 antes de escrever esta seção** (`002-langchain-intro`, `006-rag-neo4j-students-z`, `007-doc-analysis`, `001-contratos`) e escreva no mesmo registro — *"modelos de visão leem PDF direto via `data:application/pdf;base64`, sem converter para texto antes"*, *"usar o schema real do banco no prompt reduz erros de property inexistente"*.
+- **Não invente seções.** A estrutura canônica é a do template. `Real vs. simulado`, `Saída esperada`, `Herança` e parentes não existem nas disciplinas 01–05. O que o exemplo simula cabe numa frase da `Descrição`; o que aparece quando funciona, numa frase no fim de `Como executar`; o que a aula acrescenta à trilha, num parágrafo da `Descrição`.
+- **Calibre pelo padrão do repositório, não pelo README anterior da mesma trilha.** Tomar o `NNN-1` como régua faz cada aula crescer sobre a anterior.
 Três notas que o template não cobre:
 
 - **O delta do passo 2 é estratégia de leitura, não de escrita.** Ele existe para você não reler os arquivos herdados que já foram documentados em `PREV`. O README **não** abre comparando com a aula anterior: uma linha dizendo o que a aula acrescenta basta, e a narrativa da evolução mora no índice da disciplina.
