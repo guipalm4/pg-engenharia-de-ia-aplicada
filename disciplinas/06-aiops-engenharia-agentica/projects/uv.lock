@@ -19,6 +19,8 @@ members = [
     "aula-008-otimizacao-inteligente-de-cicd",
     "aula-009-finops-com-agentes-de-ia",
     "aula-010-rag-e-auto-remediacao",
+    "aula-011-guardrails-e-governanca",
+    "aula-012-projeto-final-orquestracao-hierarquica",
 ]
 
 [[package]]
@@ -410,6 +412,54 @@ dev = [{ name = "pytest", specifier = ">=8,<9" }]
 name = "aula-010-rag-e-auto-remediacao"
 version = "0"
 source = { virtual = "010-rag-e-auto-remediacao" }
+dependencies = [
+    { name = "crewai", extra = ["tools"] },
+    { name = "litellm" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "crewai" },
+    { name = "crewai", extras = ["tools"] },
+    { name = "litellm" },
+]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=8,<9" }]
+
+[[package]]
+name = "aula-011-guardrails-e-governanca"
+version = "0"
+source = { virtual = "011-guardrails-e-governanca" }
+dependencies = [
+    { name = "crewai", extra = ["tools"] },
+    { name = "litellm" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "crewai" },
+    { name = "crewai", extras = ["tools"] },
+    { name = "litellm" },
+]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=8,<9" }]
+
+[[package]]
+name = "aula-012-projeto-final-orquestracao-hierarquica"
+version = "0"
+source = { virtual = "012-projeto-final-orquestracao-hierarquica" }
 dependencies = [
     { name = "crewai", extra = ["tools"] },
     { name = "litellm" },
