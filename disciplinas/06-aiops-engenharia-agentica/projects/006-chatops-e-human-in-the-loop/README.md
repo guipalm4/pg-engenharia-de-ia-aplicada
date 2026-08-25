@@ -142,7 +142,7 @@ O desenho tem duas camadas de decisão empilhadas — o LLM primeiro, a tool dep
 
 ## Aprendizados
 
-- [x] Um segredo que entra no prompt não é segredo: a senha de aprovação vive na docstring de `execute_terraform`, que vai ao LLM junto com a definição da tool — e o bot chega a revelá-la a quem acabou de barrar
+- [x] Um segredo que entra no prompt não é segredo: a senha de aprovação vive na docstring de `execute_terraform`, e a docstring vai ao LLM junto com a definição da tool — tudo que a ferramenta declara pode ser repetido ao usuário na resposta
 - [x] Se o agente pode responder sem chamar a tool, o portão determinístico nunca decide — e enquanto a autorização morar na deliberação do modelo, **trocar de modelo é trocar de política de segurança**; a checagem precisa estar no caminho de execução
 - [x] Aprovação humana é estado de conversa, não parâmetro de chamada: sem persistir o pedido pendente, o "sim" do gestor chega sem o comando a que se refere
 - [x] Blocklist de substrings sobre linguagem livre é teatro de segurança — `drop database production` e `terraform apply -replace=aws_db_instance.prod` passam pelo filtro de três palavras sem exigir aprovação

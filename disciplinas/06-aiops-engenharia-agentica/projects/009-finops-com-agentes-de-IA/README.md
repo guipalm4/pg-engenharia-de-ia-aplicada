@@ -134,7 +134,7 @@ As duas categorias exigem trabalhos diferentes. O zumbi é uma decisão de leitu
 
 - [x] Recurso zumbi e instância superdimensionada são desperdícios de naturezas diferentes: o zumbi (volume `available`, IP `unassociated`) se resolve deletando, enquanto o rightsizing exige medir utilização ao longo do tempo antes de decidir o destino
 - [x] Quando o entregável é um **número**, a alucinação fica barata de produzir e cara de detectar: não há validador que recuse `$325,00/mês` como o Checkov recusa um Terraform inseguro
-- [x] A economia de rightsizing depende de **dois** preços — o da instância atual e o da instância de destino; com só um no inventário, o outro vem da memória do modelo e a conta muda a cada execução
+- [x] A economia de rightsizing depende de **dois** preços — o da instância atual e o da instância de destino; com só um no inventário, o outro precisa vir de uma tabela de preços consultada, não da memória do modelo
 - [x] Num relatório gerado por LLM a confiabilidade de cada número é a do dado mais fraco que entra nele, e nada na tabela sinaliza qual é qual — com o preço do cenário e o preço que o modelo traz de memória na mesma conta, o resultado não descreve nem a nuvem real nem o exercício
 - [x] Uma auditoria de FinOps que não é arquivada não é auditoria: o relatório precisa de destino em disco ou ticket, senão morre no terminal junto com o processo
 

@@ -124,10 +124,10 @@ O workflow de entrada tem um único gargalo declarado — `run: npm install` sem
 ## Aprendizados
 
 - [x] Dar a resposta no prompt não economiza trabalho do modelo, escolhe por ele: nomear a técnica no enunciado prende a solução à técnica nomeada, mesmo quando existe uma mais atual para o mesmo problema
-- [x] `npm ci` aborta sem `package-lock.json`, e o fixture não menciona lockfile: recomendação certa em abstrato e não verificável contra a evidência é o risco típico de LLM revisando configuração
+- [x] `npm ci` exige `package-lock.json` e aborta sem ele: recomendá-lo sem ter visto o lockfile é o risco típico de LLM revisando configuração — a recomendação está certa em abstrato e não é verificável contra a evidência que ele recebeu
 - [x] Pedir estimativa de economia sem baseline produz número fabricado, no mesmo tom da parte correta do parecer — e número é o que se copia para um slide: uma economia de CI só se mede comparando a duração de dois runs reais
 - [x] Cache de dependências em CI tem duas formas: restaurar `node_modules` por hash do lockfile com `actions/cache`, ou usar o cache que o `actions/setup-node` já embute — a segunda é menos código e não deixa chave de cache para manter
-- [x] Artefato executável gerado por agente pede validador no pipeline (`actionlint`), não conferência manual depois — e cuidado: no YAML 1.1 do PyYAML a chave `on:` é lida como o booleano `True`
+- [x] Artefato executável gerado por agente pede validador no pipeline (`actionlint`), não conferência manual depois: YAML sintaticamente válido e workflow correto são coisas diferentes, e só a segunda importa quando o arquivo vira esteira
 
 ## Referências
 

@@ -123,9 +123,9 @@ O caminho do arquivo faz um trajeto que vale reparar: é calculado deterministic
 
 - [x] Triagem é o gargalo real de uma esteira de segurança: scanners produzem volume, e quase todo o custo humano está em separar o explorável do teórico — é esse trabalho, e não o scan, que o agente automatiza
 - [x] A CVE-2024-3094 (`xz`) é ataque de cadeia de suprimentos e não se trata como as falhas de código ao lado dela: a pergunta não é "qual versão corrige", é "o artefato que eu construí contém o backdoor"
-- [x] Avaliar explorabilidade exige vetor de ataque, privilégio necessário e CVSS; com um relatório que só traz `Severity`, o modelo preenche a lacuna com o que sabe de fora — e um `goal` que pede para eliminar falsos positivos inclina essa lacuna para dispensar em vez de escalar
-- [x] Um identificador de CVE é verificável por regex antes de qualquer consulta a base: `CVE-2022-123` tem 3 dígitos na sequência e é sintaticamente impossível desde a mudança de 2014
-- [x] O primeiro trabalho de um auditor é desconfiar da procedência da evidência: sem validar o schema na entrada e sem exigir citação na saída, o parecer mistura o que veio do scan com o que veio dos pesos do modelo, no mesmo tom e na mesma tabela
+- [x] Avaliar explorabilidade exige vetor de ataque, privilégio necessário e CVSS; um relatório que só traz `Severity` não sustenta esse julgamento, e o que falta é preenchido pelo que o modelo sabe de fora
+- [x] O `goal` do agente é o que decide para que lado a dúvida se inclina: pedir eliminação de falsos positivos empurra para dispensar, pedir cobertura empurra para escalar — numa triagem de segurança essa escolha é política, não estilo
+- [x] O primeiro trabalho de um auditor é desconfiar da procedência da evidência, e boa parte disso é barata: um identificador de CVE se valida por regex antes de qualquer consulta a base (`CVE-2022-123` tem 3 dígitos e é sintaticamente impossível desde a mudança de 2014), e exigir citação na saída é o que separa o que veio do scan do que veio dos pesos do modelo
 
 ## Referências
 
