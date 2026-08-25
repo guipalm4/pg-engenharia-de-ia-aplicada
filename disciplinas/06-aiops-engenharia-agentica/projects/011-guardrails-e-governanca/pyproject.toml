@@ -1,0 +1,20 @@
+[project]
+name = "aula-011-guardrails-e-governanca"
+version = "0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    # Framework Base de Agentes
+    "crewai",
+    "crewai[tools]",
+    "litellm",
+]
+
+# Sem [build-system]: membro virtual do workspace. O uv instala as dependências
+# no .venv compartilhado da raiz, mas não tenta buildar este diretório.
+
+[dependency-groups]
+dev = ["pytest>=8,<9"]
+
+[tool.pytest.ini_options]
+# tools/ é namespace package (sem __init__.py): sem isso o import falha.
+pythonpath = ["."]
