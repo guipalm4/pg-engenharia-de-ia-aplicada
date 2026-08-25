@@ -12,4 +12,4 @@ O Engenheiro de SRE deve verificar a contagem de processos ativos e seu estado:
 
 ```sql
 SELECT count(*), state FROM pg_stat_activity GROUP BY state;
-```em
+```
