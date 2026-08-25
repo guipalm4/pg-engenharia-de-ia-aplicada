@@ -14,12 +14,11 @@ Um agente com o papel de *Consultor de FinOps Cloud* recebe um inventário JSON 
 
 O que torna esta aula diferente das anteriores da trilha é que **a saída é um número**, não um texto ou um artefato. Nas aulas 002 e 003 o agente produzia `main.tf` e manifestos de Kubernetes, que um validador externo aceita ou rejeita. Na 008 produzia YAML, que ao menos é sintaticamente checável. Aqui o entregável é `$325,00/mês` — e a diferença entre um número certo e um número plausível não aparece em nenhuma verificação automática. É o formato de saída em que a alucinação é mais barata de produzir e mais cara de detectar.
 
-O pipeline é o mais curto da trilha: um agente, uma task, uma tool declarada inline, duas chamadas ao modelo. O material da aula está no que acontece com a aritmética — nove execuções controladas mostram que a economia total varia de `$325,00` a `$380,00` sobre o mesmo inventário, porque o preço da instância de destino é inventado pelo modelo a cada volta. Está tudo em *Aprendizados*.
+O pipeline é o mais curto da trilha: um agente, uma task, uma tool declarada inline, duas chamadas ao modelo. O material da aula está no que acontece com a aritmética — nove execuções controladas mostram que a economia total varia de `$325,00` a `$380,00` sobre o mesmo inventário, porque o preço da instância de destino não está no arquivo e é gerado pelo modelo a cada volta.
 
-## Herança
+A AWS entra apenas como vocabulário: nenhuma credencial, nenhuma chamada de API, nenhuma conta. `data/inventario_cloud.json` é um fixture de três recursos com preços fora da escala real (`$340,00/mês` para uma `m5.4xlarge` que custa ~`$560`), `analyze_cloud_costs` é um `json.load`, nada confere a soma e nada é deletado ou redimensionado — o relatório não sai do terminal.
 
-- **Esta aula acrescenta:** `get_finops_agent` (9º papel da trilha) · `finops.py`, que declara a tool `analyze_cloud_costs` inline · `data/inventario_cloud.json`, a entrada do pipeline.
-- **Vem da 008 sem alteração:** todo o resto — `core/llm_config.py`, os `tests/` e as **8 tools de `tools/`, nenhuma delas usada neste pipeline**. O `data/workflow_lento.yaml` da 008 saiu junto com o entrypoint que o consumia.
+**O que esta aula acrescenta à trilha:** `get_finops_agent` (9º papel), `finops.py` com a tool `analyze_cloud_costs` declarada inline e `data/inventario_cloud.json`, a entrada do pipeline.
 
 ## Tecnologias e Ferramentas
 
@@ -57,38 +56,11 @@ uv run finops.py
 uv run pytest -v
 ```
 
-## Saída esperada
+Funcionando, o terminal mostra o painel `🤖 Agent Started`, a linha `Tool analyze_cloud_costs executed with result: {'account_id': '123456789012', ...}` e o painel `✅ Agent Final Answer` com o relatório em Markdown — tabela de zumbis, tabela de rightsizing, total e plano de ação. Roda em poucos segundos com 2 chamadas ao modelo (~2.700–2.900 tokens), não escreve nada em disco, e `uv run pytest -v` reporta **41 passed**.
 
-`uv run finops.py` imprime o painel `🤖 Agent Started` com o enunciado; uma linha `Tool analyze_cloud_costs executed with result: {'account_id': '123456789012', ...}`; e o painel `✅ Agent Final Answer` com o relatório em Markdown — tabela de zumbis, tabela de rightsizing, total e plano de ação. Sai com código 0 em poucos segundos e **não escreve nada em disco**.
+Entre execuções, a tool é chamada uma vez, os três recursos são sempre classificados corretamente e o subtotal de zumbis é sempre `$55,00/mês`; o que muda é o tipo de instância recomendado, o preço atribuído a ele e a economia total. Quando a resposta bate o teto de saída do provedor, o relatório pode sair truncado — às vezes com um retry que dobra o custo, às vezes em silêncio.
 
-> O painel do CrewAI **corta o relatório na largura do terminal**, e o lab chama `crew.kickoff()` sem guardar o retorno. Para ler o relatório inteiro é preciso capturar o valor de retorno — não há como recuperá-lo depois que o processo termina.
-
-`uv run pytest -v` deve reportar **41 passed** — são os testes herdados das aulas 003 a 005; esta aula não acrescenta testes.
-
-**Custo medido** (`qwen/qwen3.6-27b`, 9 execuções): **2 chamadas, 2.728–2.879 tokens** no caso normal. A pior janela de 60s fica em torno de **36% do teto de 8.000 TPM**, e cabem **~69 execuções** no teto diário de 200.000 tokens por modelo. Quando a resposta bate o teto de saída e o CrewAI repete a volta (ver *Aprendizados*), sobe para **4 chamadas e 5.758 tokens** — o dobro, e a metade das execuções diárias.
-
-**O que é estável nas 9 execuções:**
-
-- a tool é chamada exatamente uma vez;
-- os três recursos são sempre classificados corretamente (2 zumbis, 1 superdimensionada);
-- o subtotal de zumbis é sempre `$55,00/mês`;
-- o formato é sempre Markdown com tabelas.
-
-**O que muda:** o tipo de instância recomendado (`m5.large` ou `t3.medium`), o preço atribuído a ele, a economia total (`$325,00`, `$336,50`, `$365,00`, `$380,00`) e se o relatório chega ou não ao fim.
-
-## Real vs. simulado
-
-| Componente | Real ou simulado | O que isso implica para quem reusar |
-|---|---|---|
-| **Agente e inferência** | **Real** — chamada à API da Groq | é a única parte que custa e que varia |
-| **AWS** | **Simulado** — nenhuma credencial, nenhuma chamada de API, nenhuma conta | o projeto **não** demonstra integração com Cost Explorer, Trusted Advisor ou Compute Optimizer |
-| **`data/inventario_cloud.json`** | **Fixture de 3 recursos, com preços fora da escala real** | `$340,00/mês` para uma `m5.4xlarge` que custa ~$560 on-demand; os números não são comparáveis aos preços que o modelo traz de memória |
-| **`analyze_cloud_costs`** | **Real, mas não faz o que o nome diz** — é `json.load` | não analisa, não valida schema, não calcula nada; a análise é 100% do LLM |
-| **Preço da instância de destino** | **Inventado a cada execução** | não está no inventário e não vem de API nenhuma — é o número que decide a economia anunciada |
-| **Economia total** | **Aritmética do LLM, não verificada** | nada no código confere a soma, e ela mudou em 4 valores diferentes sobre o mesmo arquivo |
-| **Execução das recomendações** | **Nenhuma** | nada é deletado, redimensionado ou liberado; o relatório não sai do terminal |
-
-O pipeline termina sem erro em 100% das execuções porque nada é aplicado — e, nas execuções em que o relatório é cortado no meio, ele **também** termina sem erro.
+> O painel do CrewAI corta o relatório na largura do terminal e o lab chama `crew.kickoff()` sem guardar o retorno: para ler o texto inteiro é preciso capturar o valor de retorno.
 
 ## Estrutura do Projeto
 

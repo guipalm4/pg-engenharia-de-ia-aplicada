@@ -14,12 +14,11 @@ Um agente com o papel de *Engenheiro de Platform e CI/CD* recebe um workflow de 
 
 O trabalho automatizado aqui é **otimização de pipeline**: a distância entre "o build demora" e "esta linha é a causa, troque por esta". É um problema com resposta conhecida — cache de dependências em CI é prática documentada há uma década —, e essa é justamente a razão de ele ser interessante como exercício: dá para checar o que o agente produziu contra um padrão externo, o que quase nenhuma aula da trilha permite.
 
-O pipeline é o mais simples possível: um agente, uma task, uma tool, uma volta. O que rende a aula é o **enunciado**, não a orquestração. A task entrega o diagnóstico pronto entre parênteses — `(dica: falta de cache)` — e pede que o agente o "identifique". Oito execuções controladas mostram que a dica é redundante para o diagnóstico e ativa para a solução: com ela, o agente escreve sempre o padrão manual de cache; sem ela, sempre o moderno. Está tudo em *Aprendizados*.
+O pipeline é o mais simples possível: um agente, uma task, uma tool, uma volta. O que rende a aula é o **enunciado**, não a orquestração. A task entrega o diagnóstico pronto entre parênteses — `(dica: falta de cache)` — e pede que o agente o "identifique"; oito execuções controladas mostram que a dica é redundante para o diagnóstico e ativa para a solução.
 
-## Herança
+O GitHub Actions não entra: nenhum runner é acionado, `data/workflow_lento.yaml` é fixture de um repositório fictício (sem `package.json` nem lockfile em lugar nenhum), `analyze_workflow_yaml` é um `open().read()` que não parseia YAML, e o resultado não é escrito nem validado por `actionlint`. A estimativa de economia que o enunciado pede não tem baseline algum por trás.
 
-- **Esta aula acrescenta:** `get_cicd_agent` (8º papel da trilha) · `cicd.py`, que declara a tool `analyze_workflow_yaml` inline · `data/workflow_lento.yaml`, a entrada do pipeline.
-- **Vem da 007 sem alteração:** todo o resto — `core/llm_config.py`, os `tests/` e as **8 tools de `tools/`, nenhuma delas usada neste pipeline**. O `data/trivy.json` da 007 saiu junto com o entrypoint que o consumia.
+**O que esta aula acrescenta à trilha:** `get_cicd_agent` (8º papel), `cicd.py` com a tool `analyze_workflow_yaml` declarada inline e `data/workflow_lento.yaml`, a entrada do pipeline.
 
 ## Tecnologias e Ferramentas
 
@@ -57,35 +56,9 @@ uv run cicd.py
 uv run pytest -v
 ```
 
-## Saída esperada
+Funcionando, o terminal mostra o painel `🤖 Agent Started`, a linha `Tool analyze_workflow_yaml executed with result: name: CI Checkout Service...` e o painel `✅ Agent Final Answer` com o YAML reescrito, a explicação técnica e a estimativa de economia. Roda em poucos segundos com 2 chamadas ao modelo (~2.200–2.800 tokens), não escreve nada em disco, e `uv run pytest -v` reporta **41 passed**.
 
-`uv run cicd.py` imprime o painel `🤖 Agent Started` com o enunciado; uma linha `Tool analyze_workflow_yaml executed with result: name: CI Checkout Service...`; e o painel `✅ Agent Final Answer` com o YAML reescrito em bloco de código, seguido da explicação técnica e da estimativa de economia. Sai com código 0 em poucos segundos e **não escreve nada em disco**.
-
-`uv run pytest -v` deve reportar **41 passed** — são os testes herdados das aulas 003 a 005; esta aula não acrescenta testes.
-
-**Custo medido** (`qwen/qwen3.6-27b`, 5 execuções da configuração original): **2 chamadas, 2.200–2.800 tokens**. A pior janela de 60s fica em torno de 35% do teto de 8.000 TPM, e cabem **~70 a 90 execuções** no teto diário de 200.000 tokens por modelo.
-
-**O que é estável entre execuções** (medido em 8 runs):
-
-- a tool é chamada exatamente uma vez;
-- o diagnóstico é sempre a ausência de cache de dependências;
-- o YAML devolvido é sempre sintaticamente válido e sempre tem 5 steps;
-- `npm ci` é sempre recomendado.
-
-**O que muda:** o texto da explicação, os nomes dos steps e — sempre — os números da estimativa de economia, que não têm base em dado nenhum (ver *Real vs. simulado*).
-
-## Real vs. simulado
-
-| Componente | Real ou simulado | O que isso implica para quem reusar |
-|---|---|---|
-| **Agente e inferência** | **Real** — chamada à API da Groq | é a única parte que custa e que varia |
-| **GitHub Actions** | **Simulado** — nenhum runner é acionado, nada é executado | o projeto **não** demonstra integração com CI; o YAML nunca sai do terminal |
-| **`data/workflow_lento.yaml`** | **Fixture válido, de repositório fictício** | não há `package.json` nem `package-lock.json` em lugar nenhum — o que derruba a recomendação que o agente sempre faz |
-| **`analyze_workflow_yaml`** | **Real, mas não faz o que o nome diz** — é `open().read()` | não parseia YAML, não valida nada; a análise é 100% do LLM |
-| **Estimativa de economia** | **Inventada** — não há histórico de build, tempo de runner ou baseline | "50 builds por dia", "70% de redução", "2 horas economizadas": todos números fabricados, e é o enunciado que os pede |
-| **Validação do YAML gerado** | **Nenhuma** | nada roda `actionlint`, nada escreve o arquivo, nada compara com o original |
-
-O pipeline termina sem erro em 100% das execuções porque nada é aplicado. Adequado para a aula, enganoso para quem copia.
+Entre execuções o diagnóstico é sempre a ausência de cache, o YAML sai válido com os 5 steps e `npm ci` é sempre recomendado; o que muda é o texto, os nomes dos steps e os números da estimativa.
 
 ## Estrutura do Projeto
 

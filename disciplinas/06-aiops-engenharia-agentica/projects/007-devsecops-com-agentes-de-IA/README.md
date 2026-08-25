@@ -14,12 +14,11 @@ Um agente com o papel de *Analista de DevSecOps* recebe um relatório de scan de
 
 O trabalho que o exercício automatiza é a **triagem**: a distância entre "o scanner achou 3 CVEs" e "uma delas exige ação hoje". É o gargalo real de qualquer esteira de segurança — scanners produzem volume, e quase todo o custo humano está em separar o explorável do teórico. O `goal` do agente diz exatamente isso: *"triar vulnerabilidades reais e eliminar falsos positivos, priorizando o que é explorável"*.
 
-O pipeline é o mais simples da disciplina: um agente, uma task, uma ferramenta. Não há delegação, ciclo ReAct nem segunda passagem de revisão — o agente chama a tool uma vez, recebe o JSON e escreve. O que torna o exercício interessante não é a orquestração, e sim o tipo de produto: um **julgamento**. Um `main.tf` pode ser validado pelo Checkov; um manifesto Kubernetes, pelo API server; um dashboard, pelo schema do Grafana. Um parecer em prosa não tem validador — e é aí que as perguntas úteis desta aula começam, todas registradas em *Aprendizados*.
+O pipeline é o mais simples da disciplina: um agente, uma task, uma ferramenta — sem delegação, ciclo ReAct ou segunda passagem de revisão. O que torna o exercício interessante não é a orquestração, e sim o tipo de produto: um **julgamento**. Um `main.tf` pode ser validado pelo Checkov; um manifesto Kubernetes, pelo API server; um parecer em prosa não tem validador.
 
-## Herança
+O Trivy em si não entra: `data/trivy.json` é um fixture (que nem segue o schema real do scanner), `analyze_trivy_report` é um `json.load`, e nenhuma ação corretiva é aplicada — o parecer é texto e o pipeline termina sem erro em 100% das execuções porque nada de perigoso é feito.
 
-- **Esta aula acrescenta:** `get_devsecops_agent` (7º papel da trilha) · `devsecops.py`, que declara a tool `analyze_trivy_report` inline em vez de em `tools/` · `data/trivy.json`, primeira **entrada** de arquivo da trilha.
-- **Vem da 006 sem alteração:** todo o resto — `core/llm_config.py`, os `tests/` e as **8 tools de `tools/`, nenhuma delas usada neste pipeline**. A dependência `streamlit`, que só a 006 usava, foi removida do `pyproject.toml`.
+**O que esta aula acrescenta à trilha:** `get_devsecops_agent` (7º papel), `devsecops.py` com a tool `analyze_trivy_report` declarada inline, e `data/trivy.json` — a primeira **entrada** de arquivo da trilha.
 
 ## Tecnologias e Ferramentas
 
@@ -57,32 +56,11 @@ uv run devsecops.py
 uv run pytest -v
 ```
 
-## Saída esperada
+Funcionando, o terminal mostra o painel `🤖 Agent Started`, a linha `Tool analyze_trivy_report executed with result: {'ArtifactName': 'python:3.11-slim', ...}` e o painel `✅ Agent Final Answer` com o parecer em Markdown. Roda em ~10s, não escreve nada em disco, e `uv run pytest -v` reporta **41 passed**.
 
-`uv run devsecops.py` imprime, nesta ordem: o painel `🤖 Agent Started` com o enunciado da task; uma linha `Tool analyze_trivy_report executed with result: {'ArtifactName': 'python:3.11-slim', ...}`; e o painel `✅ Agent Final Answer` com um relatório executivo em Markdown. Sai com código 0 em ~10s e **não escreve nada em disco**.
+Entre execuções, o que se repete é a CVE-2024-3094 como ameaça crítica com plano de ação prioritário; o texto do parecer e a **classificação das outras duas CVEs** mudam — a mesma CVE-2023-45853 já foi chamada de "baixa/média" e de "HIGH com risco baixo em ambiente containerizado". O que se reproduz é o comportamento, não o texto.
 
-`uv run pytest -v` deve reportar **41 passed** — são os testes herdados das aulas 003 a 005; esta aula não acrescenta testes.
-
-**O que é estável entre execuções:**
-
-- a tool é chamada exatamente uma vez;
-- a CVE-2024-3094 é sempre identificada como a ameaça crítica e sempre recebe o plano de ação prioritário.
-
-**O que muda a cada execução:** todo o resto. `temperature=0.2` não é zero — o texto do parecer, os títulos das seções e a estrutura das tabelas variam sempre. E, mais importante, **a classificação das outras duas CVEs varia**: em execuções diferentes a CVE-2023-45853 foi chamada de "criticidade baixa/média" (contrariando o `"Severity": "HIGH"` do arquivo) e de "HIGH, mas de risco de exploração baixo em ambientes containerizados". Se você reproduzir esta aula, espere um parecer diferente do que está descrito aqui — o que se reproduz é o comportamento, não o texto.
-
-> ⚠️ O painel do CrewAI **trunca** o parecer no terminal, e o entrypoint descarta o retorno de `kickoff()`. O relatório completo não é visível em nenhuma execução — ver *Aprendizados*.
-
-## Real vs. simulado
-
-| Componente | Real ou simulado | O que isso implica para quem reusar |
-|---|---|---|
-| **Agente e inferência** | **Real** — chamada à API da Groq | é a única parte que custa e que varia |
-| **Scanner Trivy** | **Simulado** — o binário não é instalado nem executado | o projeto **não** demonstra integração com scanner; para valer, trocar o fixture por `trivy image -f json` |
-| **`data/trivy.json`** | **Fixture, e não é o formato que o Trivy emite** | faltam `SchemaVersion`, `Class`, `Type`, `CVSS`, `Layer`, `DataSource`; não sirva de referência de schema |
-| **`analyze_trivy_report`** | **Real, mas não faz o que o nome diz** — é `json.load` | a análise é 100% do LLM; a tool só lê o arquivo |
-| **Ação corretiva** | **Nenhuma** — o parecer é texto | nada é aplicado, corrigido ou bloqueado; não há integração com esteira |
-
-O pipeline termina sem erro em 100% das execuções porque nada de perigoso é feito. Isso é adequado para a aula e enganoso para quem copia.
+> ⚠️ O painel do CrewAI **trunca** o parecer no terminal e o entrypoint descarta o retorno de `kickoff()`: o relatório completo não é visível em nenhuma execução.
 
 ## Estrutura do Projeto
 
@@ -91,7 +69,7 @@ O pipeline termina sem erro em 100% das execuções porque nada de perigoso é f
 ├── devsecops.py                  # entrypoint — e também onde vive a tool desta aula
 │                                 #   @tool("analyze_trivy_report") declarada inline
 ├── data/
-│   └── trivy.json                # entrada do pipeline (fixture; ver "Real vs. simulado")
+│   └── trivy.json                # entrada do pipeline (fixture, não é o formato real do Trivy)
 ├── core/
 │   ├── agents.py                 # + get_devsecops_agent()  ← novo papel (o 7º da trilha)
 │   └── llm_config.py             # Groq + RateLimitAwareLLM — herdado, intocado
