@@ -272,7 +272,9 @@ Reporte, sem embelezar:
 - resultado dos testes e do pipeline
 - **consumo de tokens medido** (real e reservado), se estourou o teto de 8.000/min e quantas execuções cabem nos 200.000/dia
 - se o artefato gerado validou
-- **qualquer defeito que apareceu ao rodar** — é o material mais valioso do README, e some se não for anotado agora
+- **o que quebrou ao rodar**, e só isso: erro na execução, teste vermelho, artefato que não validou, 429 que travou o pipeline. Se rodou limpo, escreva uma linha dizendo que rodou limpo e encerre.
+
+Isto é um laboratório de estudo, não um deploy. **Não audite o lab.** Nada de path traversal, entrada não validada, telemetria imprecisa, robustez, "e se o modelo alucinar" — nada que você teve que ir procurar. Se não apareceu sozinho ao executar, não entra no relatório.
 
 Não escreva o README aqui. Ele sai de `/finaliza-projeto $ARGUMENTS`, que faz README + índice raiz + commits.
 
