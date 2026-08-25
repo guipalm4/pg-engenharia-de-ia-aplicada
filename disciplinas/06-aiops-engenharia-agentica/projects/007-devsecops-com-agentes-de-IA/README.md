@@ -129,12 +129,12 @@ O caminho do arquivo faz um desvio curioso: é calculado deterministicamente em 
 
 ## Aprendizados
 
-- [x] Código de caminho copiado entre layouts diferentes sobrevive sem fazer nada até o dia em que faz: o `PROJECT_ROOT` com `".."` herdado do material só quebrou quando passou a montar caminho de arquivo
-- [x] Quando a tool recebe o caminho como argumento, **qual arquivo será aberto é decisão do modelo** — fechar sobre a constante do módulo devolve essa escolha ao código
-- [x] O primeiro trabalho de um auditor é desconfiar da evidência: o agente processou sem ressalva um fixture que não bate com o schema do Trivy e uma CVE de ID impossível (`CVE-2022-123`, 3 dígitos)
-- [x] Triagem de explorabilidade exige vetor de ataque, privilégio e CVSS; com um JSON que só traz `Severity` o modelo preenche a lacuna, e como o `goal` manda eliminar falsos positivos, o viés vai para dispensar
-- [x] Sem citação da evidência, o parecer mistura o que veio do scan com o que veio dos pesos do modelo no mesmo tom e na mesma tabela
-- [x] Quando a única saída é o console, o painel do CrewAI trunca o entregável — vale capturar o retorno de `crew.kickoff()` ou gravar em disco
+- [x] Triagem é o gargalo real de uma esteira de segurança: scanners produzem volume, e quase todo o custo humano está em separar o explorável do teórico — é esse trabalho, e não o scan, que o agente automatiza
+- [x] A CVE-2024-3094 (`xz`) é ataque de cadeia de suprimentos e não se trata como as falhas de código ao lado dela: a pergunta não é "qual versão corrige", é "o artefato que eu construí contém o backdoor"
+- [x] Avaliar explorabilidade exige vetor de ataque, privilégio necessário e CVSS; com um relatório que só traz `Severity`, o modelo preenche a lacuna — e um `goal` que manda eliminar falsos positivos empurra o viés para dispensar em vez de escalar
+- [x] Um identificador de CVE é verificável por regex antes de qualquer consulta a base: `CVE-2022-123` tem 3 dígitos na sequência e é sintaticamente impossível desde a mudança de 2014
+- [x] O primeiro trabalho de um auditor é desconfiar da procedência da evidência — o fixture não bate com o schema que o Trivy emite, e nada no pipeline reclamou
+- [x] Sem exigir citação da evidência, o parecer mistura o que veio do scan com o que veio dos pesos do modelo no mesmo tom e na mesma tabela
 
 ## Referências
 

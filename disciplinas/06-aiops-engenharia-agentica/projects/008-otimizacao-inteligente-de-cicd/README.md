@@ -94,7 +94,7 @@ Entre execuções o diagnóstico é sempre a ausência de cache, o YAML sai vál
 - [x] Um enunciado calibrado para reproduzir o gabarito herda a idade do gabarito — sem a dica o agente ainda acrescenta otimizações que nenhuma execução guiada produziu
 - [x] `npm ci` aborta sem `package-lock.json`, e o fixture não menciona lockfile: recomendação certa em abstrato e não verificável contra a evidência é o risco típico de LLM revisando configuração
 - [x] Pedir estimativa de economia sem baseline produz número fabricado, no mesmo tom da parte correta do parecer — e número é o que se copia para um slide
-- [x] Tool cujo nome promete análise mas cujo corpo é `open().read()` engana o LLM que lê esse nome para decidir usá-la
+- [x] Cache de dependências em CI tem duas formas: restaurar `node_modules` por hash do lockfile com `actions/cache`, ou usar o cache que o `actions/setup-node` já embute — a segunda é menos código e não deixa chave de cache para manter
 - [x] Artefato executável gerado por agente pede validador no pipeline (`actionlint`), não conferência manual depois — e cuidado: no YAML 1.1 do PyYAML a chave `on:` é lida como o booleano `True`
 
 ## Referências

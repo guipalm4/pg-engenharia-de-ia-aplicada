@@ -85,8 +85,11 @@ foundation.py
 - [x] **Compatibilidade entre provedores de LLM** — workaround explícito para uma incompatibilidade real entre CrewAI e Groq/LiteLLM (`cache_breakpoint`)
 
 ## Aprendizados
-- [x] Uma tool simples (mesmo que hoje seja uma resposta fixa) já muda o comportamento do agente de "gerar" para "consultar e depois gerar" — é o embrião do padrão RAG que a trilha vai aprofundar em módulos posteriores.
-- [x] Trocar de provedor de LLM (aqui, Groq em vez de OpenAI/Anthropic) expõe incompatibilidades de baixo nível entre frameworks (CrewAI) e adaptadores (LiteLLM) que não aparecem na documentação — o `llm_config.py` documenta o bug e a razão do workaround diretamente no código.
+
+- [x] Uma tool simples (mesmo que hoje seja uma resposta fixa) já muda o comportamento do agente de "gerar" para "consultar e depois gerar" — é o embrião do padrão RAG que a trilha aprofunda na aula 010
+- [x] `role`, `goal` e `backstory` não são enfeite: são o que o CrewAI monta no system prompt, e é por eles que o mesmo modelo responde como arquiteto de cloud e não como assistente genérico
+- [x] Receber as tools por injeção (`get_architect(tools=[...])`) mantém o papel independente do pipeline — o mesmo agente serve qualquer composição de ferramentas nas aulas seguintes
+- [x] Trocar de provedor de LLM (Groq em vez de OpenAI/Anthropic) expõe incompatibilidades entre framework e adaptador que não aparecem na documentação — o `llm_config.py` documenta o workaround e a razão dele no próprio código
 
 ## Referências
 - [CrewAI Docs](https://docs.crewai.com/)

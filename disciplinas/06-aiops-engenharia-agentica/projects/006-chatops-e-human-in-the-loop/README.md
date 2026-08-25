@@ -145,11 +145,11 @@ O desenho tem duas camadas de decisão empilhadas — o LLM primeiro, a tool dep
 ## Aprendizados
 
 - [x] Um segredo que entra no prompt não é segredo: a senha de aprovação vive na docstring de `execute_terraform`, que vai ao LLM junto com a definição da tool — e o bot chega a revelá-la a quem acabou de barrar
-- [x] Se o agente pode responder sem chamar a tool, o portão determinístico nunca decide: a checagem precisa estar no caminho de execução, não na deliberação do modelo
-- [x] Enquanto a autorização morar no modelo, **trocar de modelo é trocar de política de segurança** — o mesmo pedido foi liberado por um e recusado por outro
-- [x] Histórico renderizado não é histórico enviado: a `Task` é montada só com o turno atual, então o handshake "peço a senha / você responde" perde o comando original
-- [x] Blocklist de substrings sobre linguagem livre é teatro de segurança — `drop database production` passa pelo filtro de três palavras sem exigir aprovação
-- [x] Com Streamlit o entrypoint sobe por `uv run streamlit run chatops.py`, e `Failed to spawn` indica diretório errado (workspace não encontrado), não dependência faltando
+- [x] Se o agente pode responder sem chamar a tool, o portão determinístico nunca decide: a checagem de autorização precisa estar no caminho de execução, não na deliberação do modelo
+- [x] Enquanto a autorização morar no modelo, **trocar de modelo é trocar de política de segurança** — o mesmo pedido de baixo impacto foi liberado por um e recusado por outro
+- [x] Aprovação humana é estado de conversa, não parâmetro de chamada: sem persistir o pedido pendente, o "sim" do gestor chega sem o comando a que se refere
+- [x] Blocklist de substrings sobre linguagem livre é teatro de segurança — `drop database production` e `terraform apply -replace=aws_db_instance.prod` passam pelo filtro de três palavras sem exigir aprovação
+- [x] ChatOps só encurta o tempo de resposta se o canal carregar também a autorização e o registro: se o operador precisa sair do chat para executar, o rastro da ação se perde justamente no passo que importa
 
 ## Referências
 

@@ -92,12 +92,12 @@ Entre execuções, a tool é chamada uma vez, os três recursos são sempre clas
 
 ## Aprendizados
 
-- [x] Quando o entregável é um **número**, a alucinação fica barata de produzir e cara de detectar: não há validador que recuse `$325,00/mês` como recusaria um YAML inválido
-- [x] Num relatório gerado por LLM, a confiabilidade de cada número é a do dado mais fraco que entra nele — a soma dos zumbis, presente no JSON, é estável; o rightsizing, que depende de um preço ausente, varia de `$325,00` a `$380,00`
-- [x] Preço ausente do inventário vira geração, não consulta: o mesmo tipo de instância recebeu dois preços diferentes em execuções distintas
-- [x] Fixture com preço fora da escala real ensina a somar maçãs com laranjas — o agente subtrai um preço correto que traz de memória de um preço fictício do arquivo
-- [x] Não passar `max_tokens` prende a resposta no default do endpoint (2.048 na Groq): ela sai truncada com `finish_reason: length`, às vezes com retry que dobra o custo, às vezes pela metade com exit code 0
-- [x] Relatório que só existe no stdout de um processo encerrado não é auditoria — a `file_writer` está na pasta desde a aula 002 e segue sem ser entregue a nenhum agente
+- [x] Recurso zumbi e instância superdimensionada são desperdícios de naturezas diferentes: o zumbi (volume `available`, IP `unassociated`) se resolve deletando, enquanto o rightsizing exige medir utilização ao longo do tempo antes de decidir o destino
+- [x] Quando o entregável é um **número**, a alucinação fica barata de produzir e cara de detectar: não há validador que recuse `$325,00/mês` como o Checkov recusa um Terraform inseguro
+- [x] A economia de rightsizing depende de **dois** preços — o da instância atual e o da instância de destino; com só um no inventário, o outro vem da memória do modelo e a conta muda a cada execução
+- [x] Num relatório gerado por LLM, a confiabilidade de cada número é a do dado mais fraco que entra nele, e o relatório não sinaliza qual é qual: `$55,00` calculado do arquivo e `$270,00` estimado saem na mesma tabela
+- [x] Preço de fixture fora da escala real faz o agente subtrair um valor correto (que ele traz de memória) de um valor fictício — o resultado não descreve nem a nuvem real nem o cenário do exercício
+- [x] Uma auditoria de FinOps que não é arquivada não é auditoria: o relatório precisa de destino em disco ou ticket, senão morre no terminal junto com o processo
 
 ## Referências
 

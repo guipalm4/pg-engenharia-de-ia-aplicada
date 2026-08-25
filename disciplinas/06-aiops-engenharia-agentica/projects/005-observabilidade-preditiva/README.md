@@ -136,17 +136,17 @@ aiops.py
 - [x] **Alerta por tendência, não por limiar** — projetar a série temporal entrega janela de ação; o limiar entrega apenas o aviso
 - [x] **Agente com efeito colateral** — `generate_grafana_dashboard` escreve no disco; as outras duas só devolvem texto, e essa assimetria muda o que pode ser repetido sem consequência
 - [x] **Simplificação da orquestração** — um agente e uma task bastam quando a complexidade está nas ferramentas, não na coordenação; a 004 pagou caro pela delegação
-- [x] **Escolha de modelo como decisão de arquitetura** — o mesmo enunciado e as mesmas tools entregam 50% ou 100% de sucesso conforme o modelo; e o teto de `max_tokens` decide quantas chamadas cabem no orçamento antes do rate limit
+- [x] **Série temporal como entrada de decisão** — a projeção converte um valor instantâneo (85% de uso) num horizonte (saturação em 4h), que é o formato sobre o qual se decide agir
 - [x] **Acúmulo como método** — cinco papéis e sete módulos de tools convivem; este pipeline compõe apenas os três de que precisa
 
 ## Aprendizados
 
-- [x] O parser do provedor falha de forma não-determinística com modelos pequenos: o `gpt-oss-20b` quebrava o 3º tool call com `output_parse_failed`, e trocar o `GROQ_MODEL` resolveu sem tocar no enunciado
-- [x] Um pipeline que termina sem erro não é um pipeline que fez o trabalho — o critério de sucesso é o artefato em disco, não o exit code
-- [x] O que a Groq debita é o consumo real: o `Requested = prompt + max_tokens` das mensagens de 429 é checagem de admissão contra o saldo, não valor cobrado, então capar `max_tokens` não economiza e ainda arrisca truncar
-- [x] Um teste cujos blocos compartilham um recurso que se esgota não compara nada: quem roda depois sempre perde, e o efeito acaba creditado à variável errada
-- [x] Retry de rate limit precisa entender o formato de duração do provedor (`3m9.648s`, `547ms`) e desistir com instrução quando a espera indicar cota diária
-- [x] Tool que produz artefato deveria devolver o artefato: retornar só `"gerado com sucesso"` faz o agente chamá-la de novo esperando o conteúdo
+- [x] Traduzir a pergunta de negócio para PromQL é o que tira a métrica das mãos de um único time: o agente decide *o que* perguntar e a tool devolve a query, sem ninguém precisar dominar a linguagem
+- [x] Alerta por limiar (`disco > 95%`) avisa quando já não há o que fazer; projetar a tendência da série entrega uma **janela de ação** — a predição vale pelo tempo que compra, não pela precisão do número
+- [x] Prever saturação exige duas grandezas que o limiar dispensa — a taxa de crescimento e a capacidade restante —, e é a razão de a resposta ser "4 horas" em vez de "85%"
+- [x] Dashboard como código: materializar o painel do incidente em JSON no formato do Grafana faz a visualização nascer junto do diagnóstico, em vez de alguém montá-la na UI depois que o incidente já passou
+- [x] A assimetria entre as tools importa — consulta e predição só devolvem texto e podem ser repetidas sem consequência, enquanto a de dashboard escreve em disco e sobrescreve a cada volta
+- [x] Um agente e uma task bastam quando a complexidade está nas ferramentas e não na coordenação: as três camadas (consulta → predição → visualização) são encadeadas pelo próprio LLM, sem delegação
 
 ## Referências
 

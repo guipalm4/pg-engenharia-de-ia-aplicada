@@ -148,12 +148,12 @@ troubleshooting.py
 
 ## Aprendizados
 
-- [x] Limpeza de cerca de código precisa ser agnóstica de linguagem: o `write_file` da aula 002 removia só ```` ```hcl ````, e a primeira gravação de YAML deixou a palavra `yaml` como primeira linha do manifesto
-- [x] Guardrail em prompt é o que sobra quando não dá para codificar a restrição — aqui o LLM redige o manifesto inteiro, e as regras do enunciado são a única coisa entre o agente e um YAML inválido
-- [x] Diagnóstico por substring do nome do pod é frágil: a tool responde "falha de conexão com o banco" para qualquer pod com `api` no nome, enquanto o cenário aplicado produz `ErrImagePull`
-- [x] `allow_delegation=True` adiciona ferramentas de coordenação ao prompt de cada agente e multiplica as idas ao modelo — 7 chamadas por execução, o bastante para estourar o teto de 8.000 tokens/minuto do free tier
-- [x] A escolha do modelo pesa tanto quanto a arquitetura: o mesmo pipeline caiu de 8.870 para 4.924 tokens ao trocar o `gpt-oss-20b` pelo `qwen3.6-27b`
-- [x] Observabilidade simulada ensina a **correlação** entre métrica, trace e evento, mas não a instrumentação real (PromQL, cardinalidade, amostragem)
+- [x] Métrica diz *que* está ruim, trace diz *onde* e log diz *por quê*: a causa raiz sai do cruzamento dos três, e é exatamente isso que o ciclo ReAct encadeia antes de concluir
+- [x] O ganho de MTTR vem de encurtar a **coleta de evidência**, não de acelerar a correção — as três consultas que um plantonista faria em janelas separadas acontecem numa volta só
+- [x] `suggest_fix` mapeia tipo de problema para remediação por dicionário: a classificação é do LLM e a remediação é determinística, o que mantém o agente escolhendo *o quê* sem inventar o *como*
+- [x] Passar o relatório de diagnóstico de uma task para a seguinte é o que fecha o loop de self-healing — o Arquiteto redige o hotfix sem repetir a investigação
+- [x] `allow_delegation=True` deixa o SRE acionar o Arquiteto, mas insere ferramentas de coordenação no prompt de cada agente e multiplica as idas ao modelo: só compensa quando o segundo papel tem trabalho próprio a fazer
+- [x] Quando o LLM redige o manifesto inteiro, sem template, a limpeza da cerca de markdown é o que separa um YAML válido de um arquivo corrompido
 
 ## Referências
 
