@@ -1,11 +1,5 @@
 terraform {
-  required_version = ">= 1.0"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = ">= 5.0"
-    }
-  }
+  required_version = ">= 1.3"
 }
 
 provider "aws" {
@@ -28,8 +22,23 @@ resource "aws_s3_bucket" "nexus_apollo_data" {
     }
   }
 
-  lifecycle {
-    prevent_destroy = true
+  lifecycle_rule {
+    id      = "log"
+    enabled = true
+
+    transition {
+      days          = 30
+      storage_class = "STANDARD_IA"
+    }
+
+    expiration {
+      days = 365
+    }
+  }
+
+  tags = {
+    Environment = "Production"
+    Project     = "Nexus Apollo"
   }
 }
 
