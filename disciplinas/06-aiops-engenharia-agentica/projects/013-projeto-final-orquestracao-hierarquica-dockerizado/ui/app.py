@@ -333,7 +333,11 @@ resource "aws_instance" "app_server" {
 
     if st.button("🔬 Executar Auditoria OPA", use_container_width=True):
         st.markdown("### 📋 Relatório de Governança")
-        result = validate_opa_policies(code_input)
+        # `@tool` do CrewAI não devolve a função: devolve um objeto `Tool` que a
+        # embrulha. Quem normalmente o invoca é o executor do agente, via `run()`.
+        # Chamar `validate_opa_policies(...)` dá `TypeError: 'Tool' object is not
+        # callable` — a UI é o único ponto do projeto que aciona a tool sem agente.
+        result = validate_opa_policies.run(target=code_input)
         if "❌" in result:
             st.error(result)
             st.markdown("""
