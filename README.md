@@ -16,7 +16,7 @@
 | 03 | [Model Context Protocol (MCPs)](#03--model-context-protocol-mcps) | 6 projetos |
 | 04 | [Criação de Agentes](#04--criação-de-agentes) | 7 projetos |
 | 05 | [Ferramentas de IA para UX & UI](#05--ferramentas-de-ia-para-ux--ui) | 5 projetos |
-| 06 | [AI-Ops e Engenharia Agêntica](#06--ai-ops-e-engenharia-agêntica) | 12 projetos |
+| 06 | [AI-Ops e Engenharia Agêntica](#06--ai-ops-e-engenharia-agêntica) | 13 projetos |
 
 ---
 
@@ -196,6 +196,7 @@ Trilha de laboratórios incrementais de AI-Ops e Engenharia de Plataforma: cada 
 | 010 | [RAG e Auto-Remediação](disciplinas/06-aiops-engenharia-agentica/projects/010-rag-e-auto-remediacao/README.md) | Traz o padrão RAG: um SRE de Resposta a Incidentes recebe o alerta de saturação de conexões no PostgreSQL, consulta o runbook oficial do serviço por uma tool de recuperação e devolve o plano de remediação com o rascunho do post-mortem — a resposta deixa de vir da memória do modelo |
 | 011 | [Guardrails e Governança](disciplinas/06-aiops-engenharia-agentica/projects/011-guardrails-e-governanca/README.md) | Depois de dez aulas ampliando o que os agentes fazem sozinhos, esta marca onde a autonomia para: um `Safety_SRE` propõe o `kubectl set image` para a tag estável acompanhado de `--dry-run=client`, e a execução fica atrás de um portão de aprovação no terminal — o *human-in-the-loop* da aula 006 sem tool e sem interface, com o guardrail escrito na estrutura do orquestrador em vez de pedido no prompt |
 | 012 | [Projeto Final: Orquestração Hierárquica](disciplinas/06-aiops-engenharia-agentica/projects/012-projeto-final-orquestracao-hierarquica/README.md) | Fecha a trilha invertendo o desenho de todas as aulas anteriores: em vez de uma `Task` por agente executada na ordem declarada, uma única missão multidomínio — `checkout-api` fora do ar, backdoor na `xz` e custo 40% acima — entregue a um `Nexus Manager` que decide em runtime a quem perguntar o quê, delegando ao SRE, ao DevSecOps e ao FinOps por chamadas de tool e consolidando as respostas num relatório executivo |
+| 013 | [Projeto Final Dockerizado: o Nexus-Bot no Kubernetes](disciplinas/06-aiops-engenharia-agentica/projects/013-projeto-final-orquestracao-hierarquica-dockerizado/README.md) | Tira a crew hierárquica do `uv run` e a trata como carga de plataforma: a mesma imagem Docker serve o `Job` que executa a missão e o `Deployment` do painel Streamlit, com a chave da Groq vindo de um `Secret`, uma nuvem simulada em LocalStack alcançada por Service Discovery (`http://localstack:4566`) e o manifesto comentado de um Ollama no cluster como alternativa de LLM local |
 
 ---
 
