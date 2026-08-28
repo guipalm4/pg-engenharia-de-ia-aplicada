@@ -1,0 +1,157 @@
+# =============================================================================
+# CENÁRIO HIPOTÉTICO — Módulo 13.5: IA Offline com Ollama no Kubernetes
+# =============================================================================
+#
+# Este manifesto está INTEIRAMENTE COMENTADO de propósito. Ele não é aplicado
+# pelo projeto e o `kubectl apply -f k8s/ollama.yaml` aqui é inócuo.
+#
+# POR QUÊ?
+#   O projeto usa Groq como provedor de LLM (ver core/llm_config.py). O Ollama
+#   no cluster é uma demonstração do módulo — "soberania digital", rodar o
+#   modelo dentro do seu próprio Kubernetes — e não uma dependência de runtime.
+#
+# O QUE ACONTECE SE VOCÊ TENTAR RODAR COMO ESTÁ NOS SLIDES
+#   O comando do slide:
+#
+#       kubectl exec -it deployment/ollama -- ollama run llama3.1
+#
+#   baixa os 4.9 GB do modelo com sucesso e depois falha com:
+#
+#       Error: 500 Internal Server Error:
+#       llama-server process has terminated: signal: killed
+#
+#   Isso é um OOM kill, e ele engana: o Pod continua `Running` com
+#   `RESTARTS 0`, porque quem foi morto é o processo filho `llama-server`,
+#   e não o PID 1 do container (`ollama serve`). O Ollama traduz a morte do
+#   filho em um HTTP 500. Como o container sobreviveu, `kubectl describe`
+#   NÃO mostra `OOMKilled` — o diagnóstico real só aparece no kernel do node:
+#
+#       minikube ssh -- 'sudo dmesg -T | grep -i "killed process"'
+#
+#       Memory cgroup out of memory: Killed process (llama-server)
+#       oom_memcg=/docker/<id>          <- cgroup do minikube INTEIRO
+#       task_memcg=/docker/<id>/kubepods/.../pod<id>   <- cgroup do Pod
+#
+#   Repare no `oom_memcg`: quem estourou foi o limite de memória do container
+#   Docker do minikube, NÃO o `limits` do Pod. Aumentar só o `limits` do Pod
+#   não resolve nada.
+#
+# -----------------------------------------------------------------------------
+# COMO FAZER PARA RODAR DE VERDADE
+# -----------------------------------------------------------------------------
+#
+# 1) DESCUBRA O LIMITE REAL DO SEU NODE
+#
+#    Não use `free -h` dentro do `minikube ssh`: ele mostra a VM do Docker
+#    Desktop inteira (~11 GB), não a fatia do minikube. O número que importa é:
+#
+#        minikube ssh -- 'sudo cat /sys/fs/cgroup/memory.max'
+#
+#    Num minikube criado com o default de `--memory=4000mb` isso retorna
+#    4194304000 bytes (3.9 GiB) — e o control plane, o localstack e o
+#    nexus-ui já consomem ~1.4 GiB disso.
+#
+# 2) DIMENSIONE A MEMÓRIA PELO PICO DE CARGA, NÃO PELO TAMANHO DO ARQUIVO
+#
+#    O llama.cpp faz CPU_REPACK: reempacota os pesos quantizados para
+#    inferência em CPU, alocando uma segunda cópia ALÉM do mmap do arquivo
+#    original. Os logs do Pod mostram o custo real:
+#
+#        kubectl logs deployment/ollama | grep -E "buffer size|KV"
+#
+#        llama3.2:3b  ->  CPU 309 MiB + REPACK 1918 MiB + KV 448 MiB  ~= 2.7 GB
+#        llama3.1:8b  ->  CPU 283 MiB + REPACK 4402 MiB + mmap 4.9 GB ~= 9.5 GB
+#
+#    Regra prática: reserve ~2x o tamanho do arquivo do modelo.
+#
+# 3) AUMENTE A MEMÓRIA DO MINIKUBE (não a do Pod)
+#
+#    A quente, sem recriar o cluster nem perder os outros Deployments:
+#
+#        docker update --memory=8g --memory-swap=9g minikube
+#
+#    Para persistir a mudança (só vale após recriar o cluster):
+#
+#        minikube config set memory 8192
+#        minikube delete && minikube start
+#
+#    Num Mac de 16 GB com Docker Desktop em 11.7 GB, 8 GiB para o minikube é
+#    o teto sensato. Isso comporta o llama3.2:3b com folga, mas NÃO comporta
+#    o llama3.1:8b do slide (pico de ~9.5 GB) — para esse você precisaria
+#    aumentar a VM do Docker Desktop além dos 11.7 GB, o que deixa o macOS
+#    sem margem. Por isso o exemplo abaixo usa o 3b.
+#
+# 4) APLIQUE E BAIXE O MODELO
+#
+#        kubectl apply -f k8s/ollama.yaml
+#        kubectl exec deployment/ollama -- ollama pull llama3.2:3b
+#        kubectl exec deployment/ollama -- ollama run llama3.2:3b "Teste"
+#
+#    Os agentes acessam via service discovery em http://ollama:11434.
+#
+# -----------------------------------------------------------------------------
+# MANIFESTO (descomente para usar)
+# -----------------------------------------------------------------------------
+#
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: ollama
+# spec:
+#   selector:
+#     app: ollama
+#   ports:
+#   - port: 11434
+#     targetPort: 11434
+# ---
+# # Guarda os pesos baixados entre restarts do Pod. Sem isto, todo restart
+# # re-baixa o modelo inteiro — o `ollama pull` do passo 4 seria refeito
+# # do zero a cada rollout.
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: ollama-models
+# spec:
+#   accessModes:
+#   - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 20Gi
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: ollama
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: ollama
+#   template:
+#     metadata:
+#       labels:
+#         app: ollama
+#     spec:
+#       containers:
+#       - name: ollama
+#         image: ollama/ollama:latest
+#         ports:
+#         - containerPort: 11434
+#         volumeMounts:
+#         - name: models
+#           mountPath: /root/.ollama
+#         resources:
+#           # ATENÇÃO: declarar `limits` duas vezes é um erro silencioso —
+#           # em YAML a chave repetida sobrescreve a anterior, sem aviso.
+#           # O par correto é `requests` (garante o agendamento) + `limits`
+#           # (teto do cgroup). Valores dimensionados pelo passo 2 acima.
+#           requests:
+#             memory: "3Gi"
+#             cpu: "1"
+#           limits:
+#             memory: "5Gi"
+#             cpu: "4"
+#       volumes:
+#       - name: models
+#         persistentVolumeClaim:
+#           claimName: ollama-models

@@ -1,0 +1,18 @@
+# Segredos: nunca entram na imagem (vêm por --env-file / Secret do K8s)
+.env
+.env.*
+
+# Ambientes e caches locais
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Metadados que não fazem parte do runtime
+.git/
+.DS_Store
+slides/
+tests/
+requirements.txt.bak
+data/*.json

@@ -1,0 +1,23 @@
+# Versões espelhadas do uv.lock do workspace (projects/uv.lock): o container tem
+# de rodar o MESMO código que o .venv local, senão a imagem não é reprodução —
+# é uma segunda verdade. Foi exatamente o que quebrou aqui: crewai 1.14.4 não
+# tem `crewai.llms.cache`, exigido por core/llm_config.py.
+crewai==1.15.15
+litellm==1.83.0
+python-dotenv==1.2.2
+
+# streamlit: exigido por ui/app.py (a UI roda na MESMA imagem, com command
+# sobrescrito em k8s/streamlit.yaml). Estava fora daqui porque o grep original
+# cobriu só projeto_final.py, core/ e tools/ — ui/ ficou de fora, e o container
+# quebrava com `exec: "streamlit": executable file not found in $PATH`.
+streamlit==1.62.0
+
+# Removidos por não serem importados por nenhum .py deste projeto (verificado
+# com grep em projeto_final.py, core/, tools/ e ui/): pandas, numpy,
+# langchain-groq, kubernetes, checkov. Somavam ~2 GB na imagem.
+#
+# Se algum dia as tools forem plugadas nos agentes (hoje todos recebem
+# `tools=[]`), duas delas dependem de BINÁRIOS, não de pacotes Python:
+#   - tools/security_scan.py  -> CLI `checkov`
+#   - tools/k8s_ops.py        -> CLI `kubectl`
+boto3
