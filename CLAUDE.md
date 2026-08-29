@@ -48,6 +48,10 @@ estudos.
 
 ## Disciplina ativa: `07-ferramentas-de-IA-para-gestão-de-projetos`
 
+**O ciclo de trabalho está em [`WORKFLOW.md`](./WORKFLOW.md) — leia-o antes de operar a 07.** Ele traz
+o estado atual (em que módulo paramos), a divisão do que é meu e do que é do usuário, e as
+armadilhas já encontradas. Mantenha a seção "Estado atual" dele atualizada ao fim de cada módulo.
+
 Disciplinas 01–06 estão concluídas e permanecem no repo.
 
 A 07 rompe com o padrão das anteriores: **quase não tem código**. Em 8 dos 10 módulos o artefato é
