@@ -11,7 +11,7 @@
    Do instead: responder em Português (PT-BR), incluindo commits, READMEs e comentários.
 
 2. **[2026-08-29] Fonte única de verdade: `CLAUDE.md` (raiz) + `shared/templates/`**
-   Do instead: antes de criar rule/skill/template, checar `CLAUDE.md` e `shared/templates/`. `.cursor/` só contém ponteiros — nunca escrever conteúdo próprio lá.
+   Do instead: antes de criar rule/skill/template, checar `CLAUDE.md` e `shared/templates/`. Nunca criar uma segunda cópia de um template — foi o que degradou os READMEs da 06.
 
 ## Commits & Git
 1. **[2026-04-06] Mensagem de commit sempre no formato do template oficial**
@@ -36,6 +36,3 @@
 
 3. **[2026-08-29] Material autoral do professor não é redistribuído neste repo público**
    Do instead: referenciar por caminho relativo à raiz do gabarito + `sha256` (arquivos `.ref`), em vez de copiar prompts, PDFs e transcrições para dentro de `projects/`.
-
-4. **[2026-04-06] `disciplinas/*.md` são documentação humana / ponteiros — não fonte de verdade**
-   Do instead: não editar como se fossem configuração; apontar para `CLAUDE.md` (raiz) ou `shared/templates/` quando relevante.

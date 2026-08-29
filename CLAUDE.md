@@ -10,8 +10,8 @@ consulta do autor, não entregável de cliente.
 | Estrutura e voz do README de projeto | `shared/templates/README_TEMPLATE.md` |
 | Mensagem de commit | `shared/templates/COMMIT_TEMPLATE.md` |
 
-`.cursor/` contém **ponteiros** para `shared/`, nunca cópias. Se encontrar uma segunda versão de
-um template, ela é dívida — a de `shared/` vence.
+Se encontrar uma segunda versão de um template em qualquer lugar do repositório, ela é dívida —
+a de `shared/` vence.
 
 ## Convenções invioláveis
 
