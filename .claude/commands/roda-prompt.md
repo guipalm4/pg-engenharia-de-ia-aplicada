@@ -22,19 +22,20 @@ tende a "corrigir" o que viu, e a comparação deixa de medir o prompt.
 ```bash
 BASE="disciplinas/07-ferramentas-de-IA-para-gestão-de-projetos/projects"
 GAB_ROOT=$(find ~/Dev/Projects/Personal -maxdepth 4 -type d -name "unipds-gabarito" 2>/dev/null | head -1)/modulo07-ferramentas-de-ia-para-gestao-de-projetos
-NUM=$(echo "$ARGUMENTS" | awk '{print $1}' | grep -oE '^[0-9]+')
-VER=$(echo "$ARGUMENTS" | awk '{print $2}')
+# `cut`, nunca `awk '{print $1}'`: este command recebe DOIS argumentos, e o
+# harness substitui $1/$2 no texto do arquivo antes do shell ver. Dentro de um
+# slash command, parâmetro posicional é território do harness — use nomes.
+NUM=$(echo "$ARGUMENTS" | cut -d' ' -f1 | grep -oE '[0-9]+')
+VER=$(echo "$ARGUMENTS" | cut -d' ' -f2)
 PROJECT=$(find "$BASE" -maxdepth 1 -type d -name "$(printf %03d $((10#$NUM)))-*" | head -1)
 
 echo "PROJECT=$PROJECT  VER=$VER"
 
 # Resolve a fonte do prompt: .ref aponta para o gabarito, .md é seu.
-resolver() {  # resolver <base-sem-extensao> -> imprime o caminho real
-  if   [ -f "$1.md" ];  then echo "$1.md"
-  elif [ -f "$1.ref" ]; then echo "$GAB_ROOT/$(grep '^path:' "$1.ref" | cut -d' ' -f2-)"
-  fi
-}
-PROMPT_FILE=$(resolver "$PROJECT/prompts/$VER")
+BASE_PROMPT="$PROJECT/prompts/$VER"
+if   [ -f "$BASE_PROMPT.md" ];  then PROMPT_FILE="$BASE_PROMPT.md"
+elif [ -f "$BASE_PROMPT.ref" ]; then PROMPT_FILE="$GAB_ROOT/$(grep '^path:' "$BASE_PROMPT.ref" | cut -d' ' -f2-)"
+fi
 [ -z "$PROMPT_FILE" ] && echo "PARE: não achei prompts/$VER.md nem prompts/$VER.ref" && exit 1
 echo "PROMPT_FILE=$PROMPT_FILE"
 

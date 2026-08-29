@@ -55,25 +55,30 @@ done
 ### 2. Estrutura e referências
 
 ```bash
-mkdir -p "$BASE/$ARGUMENTS"/{prompts,outputs}
-cd "$BASE/$ARGUMENTS"
+P="$BASE/$ARGUMENTS"
+mkdir -p "$P"/{prompts,inputs,outputs}
 
 # Uma .ref por artefato do professor que este módulo consome.
 # Formato: chave: valor. O /roda-prompt lê `path` e confere `sha256`.
-ref() {  # ref <arquivo-no-modulo> <destino.ref> <papel>
-  local src="$MOD/$1"
-  [ -f "$src" ] || { echo "  faltou: $1"; return; }
-  cat > "$2" <<EOF
-# $3 — material do professor, referenciado e não redistribuído
-path: $(basename "$MOD")/$1
-sha256: $(shasum -a 256 "$src" | cut -d' ' -f1)
+# Parâmetro posicional ($1, $2...) NÃO é confiável dentro de um slash command:
+# o harness substitui esses tokens no texto do arquivo antes do shell executar.
+# Por isso a função lê variáveis nomeadas, definidas antes da chamada.
+fazer_ref() {
+  [ -f "$MOD/$SRC" ] || { echo "  faltou: $SRC"; return; }
+  cat > "$P/$DEST" <<EOF
+# $PAPEL — material do professor, referenciado e não redistribuído
+path: $(basename "$MOD")/$SRC
+sha256: $(shasum -a 256 "$MOD/$SRC" | cut -d' ' -f1)
 autor: Ahirton Lopes — PM AI Toolkit (UNIPDS)
 EOF
-  echo "  ref: $2 -> $1"
+  echo "  ref: $DEST -> $SRC"
 }
+
+# Uso, uma linha por artefato:
+# SRC="requirements-copilot-system-prompt.md"; DEST="prompts/v1.ref"; PAPEL="V1 — prompt original"; fazer_ref
 ```
 
-Chame `ref` uma vez para o system prompt (`prompts/v1.ref`) e uma por input que a atividade pede
+Chame `fazer_ref` uma vez para o system prompt (`prompts/v1.ref`) e uma por input que a atividade pede
 (`inputs/<nome>.ref`, criando `inputs/` se houver algum). Os nomes saem do passo 1 — não invente.
 
 **V1 é o prompt original, sem alteração.** Por isso ele é uma `.ref`, não um arquivo copiado: rodar
