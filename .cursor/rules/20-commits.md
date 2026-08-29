@@ -6,7 +6,7 @@ description: Padrão de commits (mensagem, data, fluxo com gh + git).
 Padronizar mensagens de commit e tornar o fluxo repetível, com baixo ruído e compatível com automação.
 
 ## Mensagem de commit (obrigatório)
-- Seguir o template oficial: `.cursor/templates/COMMIT_TEMPLATE.md`.
+- Seguir o template oficial: `shared/templates/COMMIT_TEMPLATE.md`.
 - Formato:
   - Linha 1: `tipo: descrição curta` (ex.: `feat: adiciona pipeline de pré-processamento`)
   - Linha 2: `Finalizado em: DD/MM/AAAA`

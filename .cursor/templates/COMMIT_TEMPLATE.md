@@ -1,10 +1,4 @@
-[Tipo]: feat, fix, docs, refactor, chore, etc.
-Breve descrição da mudança.
-Finalizado em: __/__/____
-
-
-
-Exemplo:
-feat: adiciona pipeline de pré-processamento de dados
-Finalizado em: 30/03/2026
-
+> **Este arquivo não é mais a fonte da verdade.**
+>
+> O template canônico de mensagem de commit vive em
+> [`shared/templates/COMMIT_TEMPLATE.md`](../../shared/templates/COMMIT_TEMPLATE.md).

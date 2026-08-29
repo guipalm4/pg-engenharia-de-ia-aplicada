@@ -11,7 +11,7 @@ date: 2026-03-30
 # Skill: README padronizado
 
 ## Fonte oficial
-- Template: `.cursor/templates/README_TEMPLATE.md`
+- Template: `shared/templates/README_TEMPLATE.md`
 - Regras: `.cursor/rules/10-readmes.md`
 
 ## Entrada esperada (mínima)
@@ -19,7 +19,7 @@ date: 2026-03-30
 
 ## Procedimento (sempre igual)
 1. Identificar a raiz do projeto-alvo (onde fica o código/artefatos do projeto).
-2. Ler `.cursor/templates/README_TEMPLATE.md`.
+2. Ler `shared/templates/README_TEMPLATE.md`.
 3. Coletar evidências mínimas do projeto (para reduzir tokens):
    - Nome do projeto (pelo nome da pasta).
    - Estrutura atual (lista de arquivos/pastas principais).

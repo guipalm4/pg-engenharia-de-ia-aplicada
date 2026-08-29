@@ -11,7 +11,7 @@ date: 2026-03-30
 # Skill: Commit padronizado com gh
 
 ## Fonte oficial
-- Template: `.cursor/templates/COMMIT_TEMPLATE.md`
+- Template: `shared/templates/COMMIT_TEMPLATE.md`
 - Regras: `.cursor/rules/20-commits.md`
 
 ## Pré-requisitos
@@ -46,7 +46,7 @@ git diff --staged
 ```
 
 ### 3) Gerar mensagem pelo template (obrigatório)
-- Ler `.cursor/templates/COMMIT_TEMPLATE.md`.
+- Ler `shared/templates/COMMIT_TEMPLATE.md`.
 - Produzir mensagem com:
   - Linha 1: `tipo: descrição curta` (em PT-BR; objetiva; sem ponto final)
   - Linha 2: `Finalizado em: DD/MM/AAAA` (data do dia)

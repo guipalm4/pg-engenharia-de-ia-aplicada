@@ -10,8 +10,8 @@
 1. **[2026-04-06] Sempre produzir texto e artefatos em PT-BR**
    Do instead: responder em Português (PT-BR), incluindo commits, READMEs e comentários.
 
-2. **[2026-04-06] Fonte única de verdade em `.cursor/`**
-   Do instead: antes de criar rules/skills/templates, verificar se já existe em `.cursor/rules/`, `.cursor/skills/`, ou `.cursor/templates/`.
+2. **[2026-08-29] Fonte única de verdade: `CLAUDE.md` (raiz) + `shared/templates/`**
+   Do instead: antes de criar rule/skill/template, checar `CLAUDE.md` e `shared/templates/`. `.cursor/` só contém ponteiros — nunca escrever conteúdo próprio lá.
 
 ## Commits & Git
 1. **[2026-04-06] Mensagem de commit sempre no formato do template oficial**
@@ -22,14 +22,20 @@
 
 ## README & Documentação
 1. **[2026-04-06] Todo projeto precisa de README na raiz gerado a partir do template**
-   Do instead: usar `.cursor/templates/README_TEMPLATE.md` — preencher todos os campos, nunca deixar seção vazia.
+   Do instead: usar `shared/templates/README_TEMPLATE.md` — preencher todos os campos, nunca deixar seção vazia, nunca inventar seção.
 
 2. **[2026-04-06] Atualizar Estrutura do Projeto no README quando estrutura mudar**
    Do instead: sempre que adicionar arquivos relevantes, atualizar a seção "Estrutura do Projeto" para refletir a árvore real.
 
 ## Estrutura do Repositório
-1. **[2026-07-21] Projetos ficam em `disciplinas/<disciplina>/projects/NNN-slug/`**
-   Do instead: ao criar novo projeto, respeitar esse caminho e a numeração sequencial (mesmo padrão em todas as disciplinas, incluindo a 05, migrada de `modulo-XX/<app>` pra `NNN-slug` em 2026-07-21). Disciplina atual ativa: `05-ferramentas-de-IA-para-UI-UX` (01–04 concluídas, permanecem no repo).
+1. **[2026-08-29] Projetos ficam em `disciplinas/<disciplina>/projects/NNN-slug/`**
+   Do instead: ao criar novo projeto, respeitar esse caminho e a numeração sequencial. Disciplina ativa: `07-ferramentas-de-IA-para-gestão-de-projetos` (01–06 concluídas, permanecem no repo).
 
-2. **[2026-04-06] `disciplinas/*.md` são documentação humana / ponteiros — não fonte de verdade**
-   Do instead: não editar como se fossem configuração; apontar para `.cursor/` quando relevante.
+2. **[2026-08-29] Na disciplina 07 o relato da iteração de prompt vai em `ENTREGA.md`, não no README**
+   Do instead: README segue o template canônico; V1/falhas/V2/comparação ficam no `ENTREGA.md` ao lado. Os dois documentos têm vozes opostas de propósito.
+
+3. **[2026-08-29] Material autoral do professor não é redistribuído neste repo público**
+   Do instead: referenciar por caminho relativo à raiz do gabarito + `sha256` (arquivos `.ref`), em vez de copiar prompts, PDFs e transcrições para dentro de `projects/`.
+
+4. **[2026-04-06] `disciplinas/*.md` são documentação humana / ponteiros — não fonte de verdade**
+   Do instead: não editar como se fossem configuração; apontar para `CLAUDE.md` (raiz) ou `shared/templates/` quando relevante.
