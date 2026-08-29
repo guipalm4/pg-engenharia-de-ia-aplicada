@@ -29,8 +29,9 @@ a de `shared/` vence.
 ## Repositório gabarito (material do professor)
 
 Fica **fora** deste repo, em `~/Dev/Projects/Personal/unipds/unipds-gabarito/`, uma pasta
-`moduloNN-*` por disciplina. Material autoral do professor **não é redistribuído aqui**: referencie
-por caminho relativo à raiz do gabarito, com `sha256`, em vez de copiar.
+`moduloNN-*` por disciplina. O material que um módulo consome é **copiado** para dentro da pasta do
+projeto, para que ela fique autocontida e reproduzível. É conteúdo didático num repositório de
+estudos.
 
 ## Commands
 

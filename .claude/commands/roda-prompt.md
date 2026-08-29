@@ -21,38 +21,20 @@ tende a "corrigir" o que viu, e a comparação deixa de medir o prompt.
 
 ```bash
 BASE="disciplinas/07-ferramentas-de-IA-para-gestão-de-projetos/projects"
-GAB_ROOT=$(find ~/Dev/Projects/Personal -maxdepth 4 -type d -name "unipds-gabarito" 2>/dev/null | head -1)/modulo07-ferramentas-de-ia-para-gestao-de-projetos
 # `cut`, nunca `awk '{print $1}'`: este command recebe DOIS argumentos, e o
-# harness substitui $1/$2 no texto do arquivo antes do shell ver. Dentro de um
-# slash command, parâmetro posicional é território do harness — use nomes.
+# harness substitui $1/$2 no texto do arquivo antes do shell ver.
 NUM=$(echo "$ARGUMENTS" | cut -d' ' -f1 | grep -oE '[0-9]+')
 VER=$(echo "$ARGUMENTS" | cut -d' ' -f2)
 PROJECT=$(find "$BASE" -maxdepth 1 -type d -name "$(printf %03d $((10#$NUM)))-*" | head -1)
+PROMPT_FILE="$PROJECT/prompts/$VER.md"
 
 echo "PROJECT=$PROJECT  VER=$VER"
-
-# Resolve a fonte do prompt: .ref aponta para o gabarito, .md é seu.
-BASE_PROMPT="$PROJECT/prompts/$VER"
-if   [ -f "$BASE_PROMPT.md" ];  then PROMPT_FILE="$BASE_PROMPT.md"
-elif [ -f "$BASE_PROMPT.ref" ]; then PROMPT_FILE="$GAB_ROOT/$(grep '^path:' "$BASE_PROMPT.ref" | cut -d' ' -f2-)"
-fi
-[ -z "$PROMPT_FILE" ] && echo "PARE: não achei prompts/$VER.md nem prompts/$VER.ref" && exit 1
+[ -f "$PROMPT_FILE" ] || { echo "PARE: não achei $PROMPT_FILE"; exit 1; }
 echo "PROMPT_FILE=$PROMPT_FILE"
-
-# Confere o sha256 quando a fonte é referenciada — o gabarito recebe atualizações.
-if [ -f "$PROJECT/prompts/$VER.ref" ]; then
-  ESPERADO=$(grep '^sha256:' "$PROJECT/prompts/$VER.ref" | cut -d' ' -f2)
-  ATUAL=$(shasum -a 256 "$PROMPT_FILE" | cut -d' ' -f1)
-  [ "$ESPERADO" = "$ATUAL" ] && echo "sha256 confere" \
-    || echo "AVISO: o prompt no gabarito MUDOU desde que a .ref foi criada ($ESPERADO -> $ATUAL)"
-fi
-
-echo "=== inputs deste módulo ==="
-find "$PROJECT/inputs" -maxdepth 1 -type f 2>/dev/null | sort
+echo "=== inputs ==="; find "$PROJECT/inputs" -maxdepth 1 -type f | sort
+echo "=== outputs já existentes (se houver, este é um re-run) ==="
+find "$PROJECT/outputs" -maxdepth 1 -type f | sort
 ```
-
-Se o `sha256` divergir, **pare e me diga** antes de rodar: um V1 gerado sobre um prompt diferente
-do registrado invalida a comparação com o V2.
 
 ### 2. Rodar em subagente
 
@@ -67,25 +49,33 @@ Dispare **um** subagente (`Agent`, `subagent_type: "general-purpose"`) com um pr
      avalie a própria resposta, não acrescente conclusões suas.
   3. *Devolva só o output*, sem preâmbulo nem fechamento.
 
-O subagente **não deve escrever o arquivo** — ele devolve o texto e você grava. Assim o cabeçalho de
-procedência é montado aqui, com dados que o subagente não tem.
+O subagente **grava o corpo** em `outputs/$VER.md` e devolve só uma confirmação curta. O cabeçalho de
+procedência é montado no passo 3, com dados que ele não tem.
 
 ### 3. Gravar com procedência
 
+Peça ao subagente que **escreva o corpo direto em `outputs/$VER.md`** e devolva só uma confirmação
+de uma linha. Depois prenda o cabeçalho no topo:
+
 ```bash
-cat > "$PROJECT/outputs/$VER.md" <<EOF
+OUT="$PROJECT/outputs/$VER.md"
+{ cat <<EOF
 ---
 versao: $VER
-prompt: $(basename "$PROMPT_FILE")
-prompt_sha256: $(shasum -a 256 "$PROMPT_FILE" | cut -d' ' -f1 | cut -c1-12)
+prompt: prompts/$VER.md
+input: $(find "$PROJECT/inputs" -maxdepth 1 -type f -exec basename {} \; | paste -sd, -)
 modelo: <o modelo em que o subagente rodou>
 gerado_em: <data de currentDate>
 execucao: subagente de contexto limpo
 ---
 
-<output integral do subagente>
 EOF
+  cat "$OUT"; } > "$OUT.tmp" && mv "$OUT.tmp" "$OUT"
 ```
+
+Fazer o subagente gravar é deliberado: estes outputs passam de 10 mil tokens, e trazê-los inteiros
+para esta sessão só para reescrevê-los em arquivo é desperdício puro — além de colocar o output no
+contexto de quem não deveria julgá-lo.
 
 `temperatura` **não entra no cabeçalho**: o parâmetro foi removido dos modelos Claude atuais
 (400 em Opus 5, Sonnet 5, Opus 4.8/4.7, Fable 5). As instruções de `temperatura 0.2/0.3` do material

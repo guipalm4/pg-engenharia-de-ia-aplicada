@@ -15,10 +15,9 @@ herança de arquivo.** Cada módulo tem system prompt e input próprios; o que s
 o *estado do case RouteWise* (o backlog do M1 vira entrada do M2, que vira entrada do M3…). Nunca
 copie a pasta anterior.
 
-O material autoral do professor **não é redistribuído** neste repo público. O que entra em
-`projects/` é só o que você produz: seu `prompts/v2.md`, seus `outputs/`, seu `ENTREGA.md`. O prompt
-original e os inputs ficam registrados como `.ref` — caminho relativo à raiz do gabarito + `sha256`,
-o bastante para o `/roda-prompt` resolver e para provar qual versão você usou.
+O material do módulo é **copiado** para dentro da pasta: `prompts/v1.md` é o system prompt do
+professor sem alteração, e `inputs/` traz os dados que a atividade manda usar. É conteúdo didático
+num repositório de estudos — a pasta fica autocontida e reproduzível, que é o que importa aqui.
 
 ## Passos
 
@@ -52,38 +51,30 @@ find "$MOD" -maxdepth 1 -type f | sort | while read -r f; do
 done
 ```
 
-### 2. Estrutura e referências
+### 2. Estrutura e cópia do material
 
 ```bash
 P="$BASE/$ARGUMENTS"
 mkdir -p "$P"/{prompts,inputs,outputs}
 
-# Uma .ref por artefato do professor que este módulo consome.
-# Formato: chave: valor. O /roda-prompt lê `path` e confere `sha256`.
-# Parâmetro posicional ($1, $2...) NÃO é confiável dentro de um slash command:
-# o harness substitui esses tokens no texto do arquivo antes do shell executar.
-# Por isso a função lê variáveis nomeadas, definidas antes da chamada.
-fazer_ref() {
-  [ -f "$MOD/$SRC" ] || { echo "  faltou: $SRC"; return; }
-  cat > "$P/$DEST" <<EOF
-# $PAPEL — material do professor, referenciado e não redistribuído
-path: $(basename "$MOD")/$SRC
-sha256: $(shasum -a 256 "$MOD/$SRC" | cut -d' ' -f1)
-autor: Ahirton Lopes — PM AI Toolkit (UNIPDS)
-EOF
-  echo "  ref: $DEST -> $SRC"
-}
+# V1 é o prompt do professor sem alteração — copie-o como prompts/v1.md.
+# Cópia byte a byte, sem cabeçalho injetado: este arquivo é executado como está,
+# e qualquer linha acrescentada vira instrução para o modelo.
+cp "$MOD/<nome>-prompt.md" "$P/prompts/v1.md"
 
-# Uso, uma linha por artefato:
-# SRC="requirements-copilot-system-prompt.md"; DEST="prompts/v1.ref"; PAPEL="V1 — prompt original"; fazer_ref
+# Os inputs que a atividade manda usar, com o nome original.
+cp "$MOD/<input>" "$P/inputs/"
+
+find "$P" -type f | sort
 ```
 
-Chame `fazer_ref` uma vez para o system prompt (`prompts/v1.ref`) e uma por input que a atividade pede
-(`inputs/<nome>.ref`, criando `inputs/` se houver algum). Os nomes saem do passo 1 — não invente.
+Os nomes saem do passo 1 — não invente. **Copie só o que a atividade consome**: o system prompt e os
+inputs que ela cita. Fora disso, use o julgamento — um `.wav` de 3 MB que só existe como fonte da
+transcrição não precisa entrar, e um CSV que só vira import de Jira num módulo posterior entra
+quando aquele módulo chegar.
 
-**V1 é o prompt original, sem alteração.** Por isso ele é uma `.ref`, não um arquivo copiado: rodar
-o prompt do professor como está é justamente o que a atividade pede na primeira execução. O
-`prompts/v2.md` é seu e nasce depois, no `/entrega-modulo`, com a alteração que você decidir.
+**Não copie o `Exemplo - Módulo N.pdf` nem os `output-*`.** Não é questão de redistribuição: é que
+tê-los na pasta convida a olhar antes da hora, e a análise de falhas do V1 é o núcleo da entrega.
 
 ### 3. Ler a atividade (é ela que define a entrega)
 

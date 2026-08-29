@@ -20,8 +20,9 @@ NNN-slug/
 ├── README.md          # material de consulta — conceitos e como reproduzir
 ├── ENTREGA.md         # o relato da iteração de prompt (V1 → falhas → V2 → comparação)
 ├── prompts/
-│   ├── v1.ref         # ponteiro para o prompt original (caminho + sha256)
+│   ├── v1.md          # o system prompt do professor, sem alteração
 │   └── v2.md          # sua versão, com a alteração
+├── inputs/            # os dados que a atividade manda usar
 └── outputs/
     ├── v1.md          # output da primeira execução, com procedência no cabeçalho
     └── v2.md          # output após a alteração
@@ -31,8 +32,9 @@ NNN-slug/
 chega daqui a um ano e segue o template canônico do repositório; o ENTREGA.md é a análise crítica da
 execução, que é justamente o que o template proíbe. Separá-los é o que evita que um degrade o outro.
 
-**O material autoral do professor não é redistribuído aqui.** System prompts, transcrições, CSVs e
-PDFs ficam no repositório gabarito e são referenciados por caminho + `sha256` nos arquivos `.ref`.
+**O material que cada módulo consome é copiado para dentro da pasta**, para que ela fique
+autocontida: quem abrir `001-planejamento-e-escopo/` encontra o prompt, o insumo e os dois outputs
+ali, sem precisar do repositório gabarito ao lado.
 
 ## 🔁 Fluxo por módulo
 

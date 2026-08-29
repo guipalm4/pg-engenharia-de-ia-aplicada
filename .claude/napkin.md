@@ -33,6 +33,3 @@
 
 2. **[2026-08-29] Na disciplina 07 o relato da iteração de prompt vai em `ENTREGA.md`, não no README**
    Do instead: README segue o template canônico; V1/falhas/V2/comparação ficam no `ENTREGA.md` ao lado. Os dois documentos têm vozes opostas de propósito.
-
-3. **[2026-08-29] Material autoral do professor não é redistribuído neste repo público**
-   Do instead: referenciar por caminho relativo à raiz do gabarito + `sha256` (arquivos `.ref`), em vez de copiar prompts, PDFs e transcrições para dentro de `projects/`.

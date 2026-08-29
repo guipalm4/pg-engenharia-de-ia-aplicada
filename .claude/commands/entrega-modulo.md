@@ -34,8 +34,7 @@ PROJECT=$(find "$BASE" -maxdepth 1 -type d -name "*$ARGUMENTS*" | head -1)
 echo "PROJECT=$PROJECT"
 find "$PROJECT" -type f ! -name ".DS_Store" | sort
 echo "=== diff dos prompts (o que você mudou) ==="
-diff "$PROJECT/prompts/v1.md" "$PROJECT/prompts/v2.md" 2>/dev/null \
-  || echo "(V1 é o prompt original do gabarito — ver prompts/v1.ref; o diff é conceitual, descreva-o)"
+diff "$PROJECT/prompts/v1.md" "$PROJECT/prompts/v2.md"
 ```
 
 Leia `outputs/v1.md` e `outputs/v2.md` inteiros. Leia a atividade em PDF (recipe em
@@ -58,7 +57,7 @@ Estrutura:
 > Uma linha: o que foi exercitado e sobre qual insumo.
 
 ## Configuração
-Modelo, execução em subagente isolado, prompt e sha, data. Uma tabela curta.
+Modelo, execução em subagente isolado, prompt e insumo, data. Uma tabela curta.
 
 ## Execução V1
 Link para `outputs/v1.md`. Não cole o output inteiro aqui.
@@ -68,8 +67,7 @@ Pelo menos duas, cada uma com: o que o modelo produziu, por que está errado, e 
 **causa provável no prompt** (instrução ausente, ambígua, ou que induziu o erro).
 
 ## Alteração no prompt
-O que mudou de V1 para V2 e o raciocínio que levou à mudança. Se V1 é o prompt do
-gabarito, descreva a alteração — não há arquivo para diffar.
+O diff entre `prompts/v1.md` e `prompts/v2.md`, e o raciocínio que levou à mudança.
 
 ## Comparação V1 × V2
 O que mudou no output, e **atribuição**: cada diferença é efeito do prompt ou ruído de
