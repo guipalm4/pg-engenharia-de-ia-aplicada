@@ -1,9 +1,22 @@
 # Skill: entrega-modulo
 
-Escreve o `ENTREGA.md` do módulo **$ARGUMENTS** — o relato da iteração de prompt que a atividade
-pede. Não escreve o README (isso é `/finaliza-projeto`).
+Escreve a entrega do módulo **$ARGUMENTS** em `entrega/<nível>/` — o relato da iteração de prompt
+que a atividade pede, mais os artefatos próprios do módulo. Não escreve o README do projeto
+(isso é `/finaliza-projeto`).
 
-`$ARGUMENTS` é `NNN` ou o nome completo da pasta.
+`$ARGUMENTS` é `NNN`, opcionalmente seguido do nível (`001 avancado`). Sem nível, usa
+**intermediário**, o alvo padrão da trilha.
+
+## Uma pasta por nível, autocontida
+
+Cada nível de rubrica é um pacote submetível independente: `entrega/basico/`, `entrega/intermediario/`,
+`entrega/avancado/`. **Só existe a pasta do nível que você realmente atacou** — não scaffoldar vazias.
+
+Subir de nível depois **não edita a pasta anterior**: cria a nova, completa. Uma entrega Avançada
+refeita meses depois com um interlocutor real reescreve a análise, não a complementa, e ver as duas
+lado a lado é o ponto. É a mesma convenção das pastas `NNN` da disciplina 06.
+
+`entrega/rubrica.md` fica fora dos níveis — é a mesma para os três.
 
 ## Por que existe um arquivo separado do README
 
@@ -15,7 +28,7 @@ Isso é exatamente o que `shared/templates/README_TEMPLATE.md` proíbe: relato d
 material da aula, comparação entre rodadas, números medidos. Os dois documentos não são
 redundantes — são opostos, e cada um está certo no seu lugar:
 
-| | `README.md` | `ENTREGA.md` |
+| | `README.md` do projeto | `entrega/<nível>/README.md` |
 |---|---|---|
 | Para quem | você daqui a um ano | o professor, agora |
 | Voz | expositiva, apresenta | analítica, julga |
@@ -44,20 +57,29 @@ Leia os dois arquivos de `outputs/` inteiros. Leia a atividade em PDF (recipe em
 se você quiser usá-los como termo de comparação. Eles não são a régua: a atividade pede a *sua*
 análise, não convergência com o gabarito.
 
-### 2. Escrever o `ENTREGA.md`
+### 2. Escrever a entrega
 
-Alvo de rubrica: **Intermediário**. A diferença para o Básico é que a análise é *causal* — qual dado
-específico causou a mudança e o que isso implica — não descritiva ("o ranking mudou").
+Leia `entrega/rubrica.md` e escreva **para o nível pedido**. No Intermediário, a diferença para o
+Básico é que a análise é *causal* — qual dado específico causou a mudança e o que isso implica — não
+descritiva ("o ranking mudou").
 
-Estrutura:
+`entrega/<nível>/README.md` é a porta de entrada. Os demais artefatos que a *Entrega Esperada* do
+módulo pedir ficam ao lado, como arquivos próprios — três relatórios no M7, `dangerfile.js` no M8,
+o print e a tabela no M9, o inventário das dez ferramentas no M10. Não embuta código nem tabela longa
+dentro do README quando ela pode ser um arquivo.
+
+Estrutura do `README.md`:
 
 ```
-# Missão #NN — <título do módulo>
+# Missão #NN — <título do módulo>  ·  nível <básico|intermediário|avançado>
 
 > Uma linha: o que foi exercitado e sobre qual insumo.
 
 ## Configuração
 Modelo, execução em subagente isolado, prompt e insumo, data. Uma tabela curta.
+
+## Artefatos desta entrega
+Uma linha por arquivo da pasta, dizendo o que é. Só se houver mais de um.
 
 ## Execução V1
 Link para o arquivo em `outputs/`. Não cole o output inteiro aqui.
@@ -96,8 +118,8 @@ Regras de escrita:
 
 ### 3. Parar
 
-Não escreva o README, não commite, não atualize o índice. `/finaliza-projeto $ARGUMENTS` faz os
-três, e ele lê o `ENTREGA.md` como uma das fontes — mas **não copia nada dele** para o README.
+Não escreva o README do projeto, não commite, não atualize o índice. `/finaliza-projeto $ARGUMENTS`
+faz os três, e ele lê `entrega/` como uma das fontes — mas **não copia nada de lá** para o README.
 
 ## O que esta skill deliberadamente NÃO faz
 

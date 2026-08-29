@@ -39,7 +39,7 @@ estudos.
 |---|---|
 | `/novo-modulo NNN-slug` | Prepara a pasta de um módulo da disciplina 07 |
 | `/roda-prompt NNN v1\|v2` | Executa um prompt em subagente de contexto limpo e grava o output |
-| `/entrega-modulo NNN` | Escreve o `ENTREGA.md` (relato da iteração de prompt) |
+| `/entrega-modulo NNN [nível]` | Escreve `entrega/<nível>/` (relato da iteração de prompt) |
 | `/readme-projeto NNN` | README do projeto + índice raiz + commit |
 | `/commit-projeto NNN` | Commita os fontes do projeto |
 | `/finaliza-projeto NNN` | README + índice + commits, em sequência |
@@ -63,8 +63,9 @@ Consequências operacionais:
 - **A herança entre módulos é documental, não de código.** `NNN` não parte de `NNN-1` — cada módulo
   tem prompt e input próprios. O que se acumula é o estado do case **RouteWise**: o backlog do M1
   alimenta o scoring do M2, que alimenta o cronograma do M3, e assim por diante. Nada de `cp -R`.
-- **O relato da iteração vive em `ENTREGA.md`, nunca no README.** O README continua canônico. Essa
-  separação existe porque o relato é exatamente o que o template proíbe.
+- **O relato da iteração vive em `entrega/<nível>/`, nunca no README.** O README continua canônico —
+  a separação existe porque o relato é exatamente o que o template proíbe. Cada nível de rubrica é
+  uma pasta autocontida; subir de nível cria pasta nova em vez de editar a anterior.
 - **Alvo de rubrica: Intermediário** — análise causal (qual dado específico causou a mudança), não
   descritiva.
 - **Engine: Claude.** O gabarito autoriza explicitamente (`modulo-01/nota-adaptacao-modelos.md`).

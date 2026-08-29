@@ -53,8 +53,8 @@ duas fontes da verdade divergem, e foi assim que a disciplina 06 saiu do padrão
 - **Calibre pelo padrão do repositório, não pelo README anterior da mesma trilha.** Tomar o `NNN-1` como régua faz cada aula crescer sobre a anterior.
 
 
-**Disciplina 07** — o projeto tem um `ENTREGA.md` ao lado. Ele é **fonte** para a `Descrição` e os
-`Conceitos trabalhados`, e **nunca** conteúdo: falhas do V1, comparação V1×V2, anti-padrão e números
+**Disciplina 07** — o projeto tem uma pasta `entrega/` ao lado. Ela é **fonte** para a `Descrição` e
+os `Conceitos trabalhados`, e **nunca** conteúdo: falhas do V1, comparação V1×V2, anti-padrão e números
 medidos não atravessam para o README. Em `Como executar`, descreva como reproduzir a execução
 (`/roda-prompt NNN v1`), não o que o output deu.
 

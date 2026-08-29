@@ -17,7 +17,7 @@ Guia de retomada. Se você voltou depois de um tempo, leia daqui.
 3. VOCÊ lê o V1 e acha as falhas
 4. VOCÊ decide a alteração      → prompts/<ferramenta>-v2.md
 5. /roda-prompt NNN v2          → eu: executa em subagente NOVO → outputs/<artefato>-v2.md
-6. /entrega-modulo NNN          → eu: escreve o ENTREGA.md com a SUA análise
+6. /entrega-modulo NNN          → eu: escreve entrega/<nível>/ com a SUA análise
 7. /finaliza-projeto NNN        → eu: README + índice raiz + commits
 ```
 
@@ -42,7 +42,11 @@ Três coisas concretas, que são as que o enunciado do M1 lista:
 ```
 disciplinas/07-.../projects/NNN-slug/
 ├── README.md      consulta daqui a um ano · voz expositiva · segue o template canônico
-├── ENTREGA.md     o que o professor lê · voz analítica · V1→falhas→V2→comparação
+├── entrega/
+│   ├── rubrica.md         os três níveis, extraídos do enunciado
+│   └── intermediario/     o nível que você atacou — pacote autocontido
+│       ├── README.md      o relato: V1 → falhas → V2 → comparação
+│       └── ...            artefatos que o módulo pedir
 ├── prompts/       <ferramenta>-v1.md (do professor) e -v2.md (seu)
 ├── inputs/        os dados que a atividade manda usar
 ├── material/      enunciado + Exemplo resolvido + output-* do professor
@@ -53,10 +57,15 @@ disciplinas/07-.../projects/NNN-slug/
 sufixo `-v1`/`-v2` marca a iteração — é ele que os commands resolvem. No módulo 1:
 `prompts/requirements-copilot-v1.md` → `outputs/backlog-estruturado-v1.md`.
 
-**`README.md` e `ENTREGA.md` têm vozes opostas de propósito.** O README é material de consulta e
-segue `shared/templates/README_TEMPLATE.md`, que proíbe relato de execução, crítica ao material e
-números medidos. O ENTREGA.md é exatamente isso. Separá-los é o que impede um de degradar o outro —
-foi a mistura dos dois que estragou os READMEs da disciplina 06.
+**O `README.md` do projeto e o que está em `entrega/` têm vozes opostas de propósito.** O README é
+material de consulta e segue `shared/templates/README_TEMPLATE.md`, que proíbe relato de execução,
+crítica ao material e números medidos. A entrega é exatamente isso. Separá-los é o que impede um de
+degradar o outro — foi a mistura dos dois que estragou os READMEs da disciplina 06.
+
+**Cada nível de rubrica é uma pasta autocontida**, e só existe a do nível que você atacou. Subir de
+nível depois não edita a pasta anterior: cria a nova, completa. Uma entrega Avançada refeita com um
+PO real reescreve a análise em vez de complementá-la, e ver as duas lado a lado é o ponto — mesma
+convenção das pastas `NNN` da disciplina 06.
 
 **Não abra `material/Exemplo - Módulo N.pdf` antes de escrever a sua análise.** É o gabarito
 resolvido. Ele está na pasta porque torna o módulo legível depois, não porque deva ser consultado
@@ -71,7 +80,7 @@ de limitação:
 
 > Uma diferença entre V1 e V2 só conta como efeito do prompt **se ela reproduzir**. Para testar,
 > rode `/roda-prompt NNN v1` uma segunda vez: se a falha reaparecer, é sistemática do prompt; se
-> não, era ruído de amostragem, e o `ENTREGA.md` diz isso em vez de creditar ao prompt.
+> não, era ruído de amostragem, e a entrega diz isso em vez de creditar ao prompt.
 
 Vale fazer nas duas falhas que você vai defender — não em todas.
 
@@ -90,7 +99,7 @@ commands, mas a armadilha volta se você escrever outro.
 |---|---|
 | Estrutura | 10 pastas `NNN-slug` em `projects/`, uma por módulo |
 | Case | RouteWise, do gabarito |
-| Entrega | `ENTREGA.md` separado; README permanece canônico |
+| Entrega | `entrega/<nível>/`, uma pasta por nível de rubrica; README do projeto permanece canônico |
 | Rubrica-alvo | **Intermediário** — análise causal, não descritiva |
 | Engine | Claude (o gabarito autoriza em `modulo-01/nota-adaptacao-modelos.md`) |
 | Execução | Subagente de contexto limpo, via `/roda-prompt` |

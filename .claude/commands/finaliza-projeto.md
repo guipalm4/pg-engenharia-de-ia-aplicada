@@ -41,10 +41,10 @@ case "$PROJECT" in *07-ferramentas-de-IA*) PREV=""; echo "disciplina 07 -> PREV 
 - **`PREV` é sempre vazio.** A numeração é sequencial, mas `NNN` não parte de `NNN-1`: o que se
   acumula entre os módulos é o estado do case RouteWise, não arquivo. Rodar o delta aqui compararia
   dois módulos sem relação e produziria ruído.
-- **`ENTREGA.md` entra no dump como fonte, nunca como conteúdo.** Ele diz o que você exercitou e
-  qual foi o insumo — use isso para escrever a `Descrição` e os `Conceitos trabalhados`. **Não
-  transponha nada dele**: as falhas do V1, a comparação V1×V2, o anti-padrão e qualquer número
-  medido ficam onde estão. É exatamente o material que o template proíbe no README.
+- **`entrega/` entra no dump como fonte, nunca como conteúdo.** Ela diz o que você exercitou e qual
+  foi o insumo — use isso para escrever a `Descrição` e os `Conceitos trabalhados`. **Não transponha
+  nada de lá**: as falhas do V1, a comparação V1×V2, o anti-padrão e qualquer número medido ficam
+  onde estão. É exatamente o material que o template proíbe no README.
 
 
 **Se `PREV` vier vazio** (projeto standalone, sem predecessor), dump completo de sempre:

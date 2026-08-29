@@ -55,7 +55,7 @@ done
 
 ```bash
 P="$BASE/$ARGUMENTS"
-mkdir -p "$P"/{prompts,inputs,outputs,material}
+mkdir -p "$P"/{prompts,inputs,outputs,material,entrega}
 
 # V1 é o prompt do professor sem alteração. Cópia byte a byte, sem cabeçalho
 # injetado: este arquivo é executado como está, e qualquer linha acrescentada
@@ -102,7 +102,28 @@ uvx --with pypdf --quiet python /tmp/extract-pdf.py "$P/material/Atividade - Mó
 resolvido, e lê-los agora contamina a análise de falhas do V1. Eles entram no `/entrega-modulo`, como
 termo de comparação, e só se você quiser.
 
-### 4. Relatório e entrega
+### 4. Extrair a rubrica
+
+O enunciado termina com uma tabela de três níveis que o `pypdf` achata em texto corrido. Reescreva-a
+como tabela markdown em `entrega/rubrica.md`, preservando o texto de cada nível — é ela que diz o que
+você precisa produzir para subir de nível depois.
+
+```markdown
+# Rubrica — Missão #NN
+
+| Nível | Critério |
+|---|---|
+| **Básico** | ... |
+| **Intermediário** | ... |
+| **Avançado** | ... |
+
+> Alvo padrão da trilha: **Intermediário**.
+> Cada nível vira uma pasta autocontida em `entrega/`. Subir de nível não edita a pasta anterior.
+```
+
+Não parafraseie: o critério é o texto do professor, e é contra ele que a entrega será avaliada.
+
+### 5. Relatório e entrega
 
 Reporte, em no máximo uma tela:
 

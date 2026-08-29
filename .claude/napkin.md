@@ -31,5 +31,5 @@
 1. **[2026-08-29] Projetos ficam em `disciplinas/<disciplina>/projects/NNN-slug/`**
    Do instead: ao criar novo projeto, respeitar esse caminho e a numeração sequencial. Disciplina ativa: `07-ferramentas-de-IA-para-gestão-de-projetos` (01–06 concluídas, permanecem no repo).
 
-2. **[2026-08-29] Na disciplina 07 o relato da iteração de prompt vai em `ENTREGA.md`, não no README**
-   Do instead: README segue o template canônico; V1/falhas/V2/comparação ficam no `ENTREGA.md` ao lado. Os dois documentos têm vozes opostas de propósito.
+2. **[2026-08-29] Na disciplina 07 o relato da iteração de prompt vai em `entrega/<nível>/`, não no README**
+   Do instead: README segue o template canônico; V1/falhas/V2/comparação ficam em `entrega/`. Uma pasta autocontida por nível de rubrica — subir de nível cria pasta nova, não edita a anterior.

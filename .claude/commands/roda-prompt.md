@@ -48,7 +48,7 @@ Dispare **um** subagente (`Agent`, `subagent_type: "general-purpose"`) com um pr
 - O conteúdo integral dos inputs resolvidos no passo 1 como a mensagem do usuário.
 - Estas três restrições, literalmente:
   1. *Não leia nenhum outro arquivo do repositório ou do gabarito.* Em especial, nada que comece
-     com `output-` ou `Exemplo -`, e nenhum `ENTREGA.md`.
+     com `output-` ou `Exemplo -`, e nada de `entrega/`.
   2. *Produza o output exatamente no formato que o system prompt define.* Não comente o prompt, não
      avalie a própria resposta, não acrescente conclusões suas.
   3. *Devolva só o output*, sem preâmbulo nem fechamento.
@@ -94,7 +94,7 @@ Uma tela, no máximo:
 - **Se este é um re-run de uma versão que já existia**, o que mudou em relação ao arquivo anterior.
   Esse é o teste que dá rigor à entrega: sem controle de temperatura, uma diferença entre V1 e V2 só
   conta como efeito do prompt **se ela reproduzir**. Diferença que aparece entre dois runs do *mesmo*
-  prompt é ruído de amostragem, e precisa ser tratada como tal no `ENTREGA.md`.
+  prompt é ruído de amostragem, e precisa ser tratada como tal na entrega.
 - Nada de análise das falhas. Ela é sua, e é o miolo da entrega.
 
 ## O que esta skill deliberadamente NÃO faz
