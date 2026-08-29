@@ -23,6 +23,7 @@ NNN-slug/
 │   ├── v1.md          # o system prompt do professor, sem alteração
 │   └── v2.md          # sua versão, com a alteração
 ├── inputs/            # os dados que a atividade manda usar
+├── material/          # enunciado, exemplo resolvido e outputs de referência do professor
 └── outputs/
     ├── v1.md          # output da primeira execução, com procedência no cabeçalho
     └── v2.md          # output após a alteração

@@ -40,8 +40,8 @@ diff "$PROJECT/prompts/v1.md" "$PROJECT/prompts/v2.md"
 Leia `outputs/v1.md` e `outputs/v2.md` inteiros. Leia a atividade em PDF (recipe em
 `/novo-modulo`, passo 3) para não escrever contra uma lembrança do enunciado.
 
-**Só agora** o `Exemplo - Módulo N.pdf` e os `output-*` do gabarito podem ser abertos, e apenas se
-você quiser usá-los como termo de comparação. Eles não são a régua: a atividade pede a *sua*
+**Só agora** o `Exemplo - Módulo N.pdf` e os `output-*` em `material/` podem ser abertos, e apenas
+se você quiser usá-los como termo de comparação. Eles não são a régua: a atividade pede a *sua*
 análise, não convergência com o gabarito.
 
 ### 2. Escrever o `ENTREGA.md`

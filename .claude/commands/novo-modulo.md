@@ -55,26 +55,31 @@ done
 
 ```bash
 P="$BASE/$ARGUMENTS"
-mkdir -p "$P"/{prompts,inputs,outputs}
+mkdir -p "$P"/{prompts,inputs,outputs,material}
 
-# V1 é o prompt do professor sem alteração — copie-o como prompts/v1.md.
-# Cópia byte a byte, sem cabeçalho injetado: este arquivo é executado como está,
-# e qualquer linha acrescentada vira instrução para o modelo.
+# V1 é o prompt do professor sem alteração. Cópia byte a byte, sem cabeçalho
+# injetado: este arquivo é executado como está, e qualquer linha acrescentada
+# vira instrução para o modelo.
 cp "$MOD/<nome>-prompt.md" "$P/prompts/v1.md"
 
-# Os inputs que a atividade manda usar, com o nome original.
+# Os dados que a atividade manda usar, com o nome original.
 cp "$MOD/<input>" "$P/inputs/"
+
+# O enunciado, o exemplo resolvido e os outputs de referência do professor.
+# Não são consumidos pelo prompt, mas são o que torna a pasta legível depois.
+cp "$MOD/Atividade - "*.pdf "$MOD/Exemplo - "*.pdf "$MOD"/output-* "$P/material/" 2>/dev/null
 
 find "$P" -type f | sort
 ```
 
-Os nomes saem do passo 1 — não invente. **Copie só o que a atividade consome**: o system prompt e os
-inputs que ela cita. Fora disso, use o julgamento — um `.wav` de 3 MB que só existe como fonte da
-transcrição não precisa entrar, e um CSV que só vira import de Jira num módulo posterior entra
-quando aquele módulo chegar.
+Os nomes saem do passo 1 — não invente. Use o julgamento no que é volumoso e não é consumido: um
+`.wav` de 3 MB que só existe como fonte da transcrição não precisa entrar, e um CSV que só vira
+import de Jira num módulo posterior entra quando aquele módulo chegar.
 
-**Não copie o `Exemplo - Módulo N.pdf` nem os `output-*`.** Não é questão de redistribuição: é que
-tê-los na pasta convida a olhar antes da hora, e a análise de falhas do V1 é o núcleo da entrega.
+**`material/` contém o gabarito resolvido — não o abra antes de analisar o seu V1.** Ele fica na
+pasta porque é o que torna o módulo legível daqui a um ano, e porque o isolamento que importa é
+imposto no prompt do subagente do `/roda-prompt`, não pela ausência do arquivo no disco. Mas ler o
+`Exemplo` antes da sua própria análise esvazia a Parte 3 da atividade, que é onde está o aprendizado.
 
 ### 3. Ler a atividade (é ela que define a entrega)
 
@@ -88,12 +93,12 @@ from pypdf import PdfReader
 for i, p in enumerate(PdfReader(sys.argv[1]).pages, 1):
     print(f"\n----- pág {i} -----\n{p.extract_text()}")
 PY
-uvx --with pypdf --quiet python /tmp/extract-pdf.py "$MOD/Atividade - Módulo $((10#$NUM)).pdf"
+uvx --with pypdf --quiet python /tmp/extract-pdf.py "$P/material/Atividade - Módulo $((10#$NUM)).pdf"
 ```
 
-**Não abra o `Exemplo - Módulo N.pdf` nem os `output-*`.** São o gabarito resolvido; lê-los agora
-contamina a sua análise de falhas do V1, que é o núcleo da entrega. Eles entram depois, no
-`/entrega-modulo`, como termo de comparação — e só se você quiser.
+**Leia só o `Atividade`. Não abra o `Exemplo` nem os `output-*` de `material/`** — são o gabarito
+resolvido, e lê-los agora contamina a análise de falhas do V1. Eles entram no `/entrega-modulo`, como
+termo de comparação, e só se você quiser.
 
 ### 4. Relatório e entrega
 
