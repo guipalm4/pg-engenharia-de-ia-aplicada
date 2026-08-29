@@ -1,7 +1,10 @@
 # Skill: roda-prompt
 
 Executa o system prompt de uma versão do módulo **em subagente de contexto limpo** e grava o output
-em `outputs/vN.md`, com procedência no cabeçalho.
+em `outputs/`, com procedência no cabeçalho.
+
+Os arquivos têm nome declarativo, não `vN.md`: `prompts/requirements-copilot-v1.md`,
+`outputs/backlog-estruturado-v1.md`. O sufixo `-v1`/`-v2` é o que a resolução usa.
 
 `$ARGUMENTS` é `NNN v1` ou `NNN v2` (ex.: `001 v1`).
 
@@ -26,10 +29,11 @@ BASE="disciplinas/07-ferramentas-de-IA-para-gestão-de-projetos/projects"
 NUM=$(echo "$ARGUMENTS" | cut -d' ' -f1 | grep -oE '[0-9]+')
 VER=$(echo "$ARGUMENTS" | cut -d' ' -f2)
 PROJECT=$(find "$BASE" -maxdepth 1 -type d -name "$(printf %03d $((10#$NUM)))-*" | head -1)
-PROMPT_FILE="$PROJECT/prompts/$VER.md"
+# Nome declarativo: prompts/<ferramenta>-vN.md. Glob, porque o nome muda por módulo.
+PROMPT_FILE=$(find "$PROJECT/prompts" -maxdepth 1 -name "*-$VER.md" | head -1)
 
 echo "PROJECT=$PROJECT  VER=$VER"
-[ -f "$PROMPT_FILE" ] || { echo "PARE: não achei $PROMPT_FILE"; exit 1; }
+[ -n "$PROMPT_FILE" ] || { echo "PARE: não achei prompts/*-$VER.md em $PROJECT"; exit 1; }
 echo "PROMPT_FILE=$PROMPT_FILE"
 echo "=== inputs ==="; find "$PROJECT/inputs" -maxdepth 1 -type f | sort
 echo "=== outputs já existentes (se houver, este é um re-run) ==="
@@ -49,20 +53,20 @@ Dispare **um** subagente (`Agent`, `subagent_type: "general-purpose"`) com um pr
      avalie a própria resposta, não acrescente conclusões suas.
   3. *Devolva só o output*, sem preâmbulo nem fechamento.
 
-O subagente **grava o corpo** em `outputs/$VER.md` e devolve só uma confirmação curta. O cabeçalho de
+O subagente **grava o corpo** no arquivo de output e devolve só uma confirmação curta. O cabeçalho de
 procedência é montado no passo 3, com dados que ele não tem.
 
 ### 3. Gravar com procedência
 
-Peça ao subagente que **escreva o corpo direto em `outputs/$VER.md`** e devolva só uma confirmação
+Peça ao subagente que **escreva o corpo direto no arquivo de output** e devolva só uma confirmação
 de uma linha. Depois prenda o cabeçalho no topo:
 
 ```bash
-OUT="$PROJECT/outputs/$VER.md"
+OUT="$PROJECT/outputs/<artefato>-$VER.md"   # nome do artefato, não "vN"
 { cat <<EOF
 ---
 versao: $VER
-prompt: prompts/$VER.md
+prompt: $(basename "$PROMPT_FILE")
 input: $(find "$PROJECT/inputs" -maxdepth 1 -type f -exec basename {} \; | paste -sd, -)
 modelo: <o modelo em que o subagente rodou>
 gerado_em: <data de currentDate>

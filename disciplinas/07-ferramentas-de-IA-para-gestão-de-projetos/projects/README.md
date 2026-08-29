@@ -20,14 +20,17 @@ NNN-slug/
 ├── README.md          # material de consulta — conceitos e como reproduzir
 ├── ENTREGA.md         # o relato da iteração de prompt (V1 → falhas → V2 → comparação)
 ├── prompts/
-│   ├── v1.md          # o system prompt do professor, sem alteração
-│   └── v2.md          # sua versão, com a alteração
-├── inputs/            # os dados que a atividade manda usar
-├── material/          # enunciado, exemplo resolvido e outputs de referência do professor
+│   ├── requirements-copilot-v1.md    # o system prompt do professor, sem alteração
+│   └── requirements-copilot-v2.md    # sua versão, com a alteração
+├── inputs/                           # os dados que a atividade manda usar
+├── material/                         # enunciado + gabarito resolvido do professor
 └── outputs/
-    ├── v1.md          # output da primeira execução, com procedência no cabeçalho
-    └── v2.md          # output após a alteração
+    ├── backlog-estruturado-v1.md     # 1ª execução, com procedência no cabeçalho
+    └── backlog-estruturado-v2.md     # após a alteração
 ```
+
+Os nomes são declarativos: o prompt leva o nome da ferramenta do módulo, o output leva o nome do
+artefato que ela produz. O sufixo `-v1`/`-v2` marca a iteração e é o que os commands resolvem.
 
 **`README.md` e `ENTREGA.md` têm vozes opostas, de propósito.** O README apresenta o módulo a quem
 chega daqui a um ano e segue o template canônico do repositório; o ENTREGA.md é a análise crítica da

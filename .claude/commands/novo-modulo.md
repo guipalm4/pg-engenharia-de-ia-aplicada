@@ -15,8 +15,8 @@ herança de arquivo.** Cada módulo tem system prompt e input próprios; o que s
 o *estado do case RouteWise* (o backlog do M1 vira entrada do M2, que vira entrada do M3…). Nunca
 copie a pasta anterior.
 
-O material do módulo é **copiado** para dentro da pasta: `prompts/v1.md` é o system prompt do
-professor sem alteração, e `inputs/` traz os dados que a atividade manda usar. É conteúdo didático
+O material do módulo é **copiado** para dentro da pasta: o system prompt do professor sem alteração
+vai para `prompts/<ferramenta>-v1.md`, e `inputs/` traz os dados que a atividade manda usar. É conteúdo didático
 num repositório de estudos — a pasta fica autocontida e reproduzível, que é o que importa aqui.
 
 ## Passos
@@ -60,7 +60,9 @@ mkdir -p "$P"/{prompts,inputs,outputs,material}
 # V1 é o prompt do professor sem alteração. Cópia byte a byte, sem cabeçalho
 # injetado: este arquivo é executado como está, e qualquer linha acrescentada
 # vira instrução para o modelo.
-cp "$MOD/<nome>-prompt.md" "$P/prompts/v1.md"
+# NOME DECLARATIVO: <ferramenta>-v1.md, nunca v1.md. Quem abre o repositório
+# precisa saber o que o arquivo é sem abrir. A tabela de nomes está abaixo.
+cp "$MOD/<nome>-prompt.md" "$P/prompts/<ferramenta>-v1.md"
 
 # Os dados que a atividade manda usar, com o nome original.
 cp "$MOD/<input>" "$P/inputs/"
@@ -119,7 +121,7 @@ Depois pare. A ordem a partir daqui é: `/roda-prompt NNN v1` → você analisa 
 talvez ler) os outputs de referência do professor. O `/roda-prompt` existe para isolar isso num subagente
 de contexto limpo.
 
-**Não escreve o `prompts/v2.md`.** A V2 é consequência das falhas que *você* identificou no V1.
+**Não escreve o prompt V2.** A V2 é consequência das falhas que *você* identificou no V1.
 Um script que a gerasse estaria inventando o achado que dá valor à entrega.
 
 **Não prepara vários módulos de uma vez.** O case RouteWise é encadeado: o artefato que você

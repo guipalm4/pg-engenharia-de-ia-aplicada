@@ -34,10 +34,10 @@ PROJECT=$(find "$BASE" -maxdepth 1 -type d -name "*$ARGUMENTS*" | head -1)
 echo "PROJECT=$PROJECT"
 find "$PROJECT" -type f ! -name ".DS_Store" | sort
 echo "=== diff dos prompts (o que você mudou) ==="
-diff "$PROJECT/prompts/v1.md" "$PROJECT/prompts/v2.md"
+diff "$(find "$PROJECT/prompts" -name "*-v1.md")" "$(find "$PROJECT/prompts" -name "*-v2.md")"
 ```
 
-Leia `outputs/v1.md` e `outputs/v2.md` inteiros. Leia a atividade em PDF (recipe em
+Leia os dois arquivos de `outputs/` inteiros. Leia a atividade em PDF (recipe em
 `/novo-modulo`, passo 3) para não escrever contra uma lembrança do enunciado.
 
 **Só agora** o `Exemplo - Módulo N.pdf` e os `output-*` em `material/` podem ser abertos, e apenas
@@ -60,14 +60,14 @@ Estrutura:
 Modelo, execução em subagente isolado, prompt e insumo, data. Uma tabela curta.
 
 ## Execução V1
-Link para `outputs/v1.md`. Não cole o output inteiro aqui.
+Link para o arquivo em `outputs/`. Não cole o output inteiro aqui.
 
 ## Falhas identificadas
 Pelo menos duas, cada uma com: o que o modelo produziu, por que está errado, e a
 **causa provável no prompt** (instrução ausente, ambígua, ou que induziu o erro).
 
 ## Alteração no prompt
-O diff entre `prompts/v1.md` e `prompts/v2.md`, e o raciocínio que levou à mudança.
+O diff entre os dois prompts, e o raciocínio que levou à mudança.
 
 ## Comparação V1 × V2
 O que mudou no output, e **atribuição**: cada diferença é efeito do prompt ou ruído de

@@ -4,7 +4,7 @@ Guia de retomada. Se você voltou depois de um tempo, leia daqui.
 
 ## Estado atual
 
-> **Módulo 1** — `outputs/v1.md` gerado. **Próximo passo: você ler o V1 e identificar duas falhas.**
+> **Módulo 1** — `outputs/backlog-estruturado-v1.md` gerado. **Próximo passo: você ler o V1 e identificar duas falhas.**
 > Branch de trabalho: `modulo-7.1` (a `main` tem só os commits de setup).
 >
 > *Atualize estas três linhas ao terminar cada módulo.*
@@ -13,10 +13,10 @@ Guia de retomada. Se você voltou depois de um tempo, leia daqui.
 
 ```
 1. /novo-modulo NNN-slug        → eu: cria a pasta, copia o material, lê o enunciado
-2. /roda-prompt NNN v1          → eu: executa em subagente isolado → outputs/v1.md
+2. /roda-prompt NNN v1          → eu: executa em subagente isolado → outputs/<artefato>-v1.md
 3. VOCÊ lê o V1 e acha as falhas
-4. VOCÊ decide a alteração      → prompts/v2.md
-5. /roda-prompt NNN v2          → eu: executa em subagente NOVO → outputs/v2.md
+4. VOCÊ decide a alteração      → prompts/<ferramenta>-v2.md
+5. /roda-prompt NNN v2          → eu: executa em subagente NOVO → outputs/<artefato>-v2.md
 6. /entrega-modulo NNN          → eu: escreve o ENTREGA.md com a SUA análise
 7. /finaliza-projeto NNN        → eu: README + índice raiz + commits
 ```
@@ -43,13 +43,15 @@ Três coisas concretas, que são as que o enunciado do M1 lista:
 disciplinas/07-.../projects/NNN-slug/
 ├── README.md      consulta daqui a um ano · voz expositiva · segue o template canônico
 ├── ENTREGA.md     o que o professor lê · voz analítica · V1→falhas→V2→comparação
-├── prompts/
-│   ├── v1.md      o system prompt do professor, cópia byte a byte
-│   └── v2.md      seu, com a alteração
+├── prompts/       <ferramenta>-v1.md (do professor) e -v2.md (seu)
 ├── inputs/        os dados que a atividade manda usar
 ├── material/      enunciado + Exemplo resolvido + output-* do professor
-└── outputs/       v1.md, v2.md — com procedência no cabeçalho
+└── outputs/       <artefato>-v1.md e -v2.md — com procedência no cabeçalho
 ```
+
+**Nada se chama `v1.md`.** O prompt leva o nome da ferramenta, o output leva o nome do artefato, e o
+sufixo `-v1`/`-v2` marca a iteração — é ele que os commands resolvem. No módulo 1:
+`prompts/requirements-copilot-v1.md` → `outputs/backlog-estruturado-v1.md`.
 
 **`README.md` e `ENTREGA.md` têm vozes opostas de propósito.** O README é material de consulta e
 segue `shared/templates/README_TEMPLATE.md`, que proíbe relato de execução, crítica ao material e
