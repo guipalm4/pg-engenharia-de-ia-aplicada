@@ -32,7 +32,20 @@ if [ -n "$NUM" ]; then
   PREV=$(find "$DISC_DIR" -maxdepth 1 -type d -name "${PREV_NUM}-*" | head -1)
 fi
 echo "PREV=$PREV"
+# A disciplina 07 NÃO é incremental: cada módulo tem prompt e input próprios.
+case "$PROJECT" in *07-ferramentas-de-IA*) PREV=""; echo "disciplina 07 -> PREV zerado (sem herança de código)";; esac
 ```
+
+**Disciplina 07 — duas diferenças que mudam este passo:**
+
+- **`PREV` é sempre vazio.** A numeração é sequencial, mas `NNN` não parte de `NNN-1`: o que se
+  acumula entre os módulos é o estado do case RouteWise, não arquivo. Rodar o delta aqui compararia
+  dois módulos sem relação e produziria ruído.
+- **`ENTREGA.md` entra no dump como fonte, nunca como conteúdo.** Ele diz o que você exercitou e
+  qual foi o insumo — use isso para escrever a `Descrição` e os `Conceitos trabalhados`. **Não
+  transponha nada dele**: as falhas do V1, a comparação V1×V2, o anti-padrão e qualquer número
+  medido ficam onde estão. É exatamente o material que o template proíbe no README.
+
 
 **Se `PREV` vier vazio** (projeto standalone, sem predecessor), dump completo de sempre:
 ```bash

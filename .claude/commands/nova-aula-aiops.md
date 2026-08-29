@@ -1,4 +1,13 @@
-# Skill: nova-aula
+# Skill: nova-aula-aiops  ·  ⚠️ CONGELADO — disciplina 06
+
+> **Este command não se aplica à disciplina 07 nem às seguintes.** Ele é específico da
+> trilha `06-aiops-engenharia-agentica`, que está encerrada: labs Python do gabarito,
+> CrewAI, workspace `uv`, cota da Groq. Fica no repositório como registro legível de
+> como aquela trilha foi montada.
+>
+> Para a disciplina 07, use `/novo-modulo` — o mecanismo é outro (a herança é
+> documental, não de código).
+
 
 Prepara o projeto **$ARGUMENTS** da disciplina 06 a partir do lab correspondente no repositório gabarito: copia a aula anterior, soma os agentes e tools novos, ajusta o `pyproject`, roda o pipeline e mede o custo.
 
