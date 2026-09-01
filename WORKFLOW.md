@@ -45,8 +45,9 @@ disciplinas/07-.../projects/NNN-slug/
 ├── entrega/
 │   ├── rubrica.md         os três níveis, extraídos do enunciado
 │   └── intermediario/     o nível que você atacou — pacote autocontido
-│       ├── README.md      o relato: V1 → falhas → V2 → comparação
-│       └── ...            artefatos que o módulo pedir
+│       ├── README.md      o relato inteiro (não picotar: é um argumento só)
+│       └── ...            só vira arquivo o que não é prosa, tem outro
+│                          público, ou é consultável isolado
 ├── prompts/       <ferramenta>-v1.md (do professor) e -v2.md (seu)
 ├── inputs/        os dados que a atividade manda usar
 ├── material/      enunciado + Exemplo resolvido + output-* do professor

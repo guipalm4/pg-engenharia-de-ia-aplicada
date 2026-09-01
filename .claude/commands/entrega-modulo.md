@@ -63,10 +63,43 @@ Leia `entrega/rubrica.md` e escreva **para o nível pedido**. No Intermediário,
 Básico é que a análise é *causal* — qual dado específico causou a mudança e o que isso implica — não
 descritiva ("o ranking mudou").
 
-`entrega/<nível>/README.md` é a porta de entrada. Os demais artefatos que a *Entrega Esperada* do
-módulo pedir ficam ao lado, como arquivos próprios — três relatórios no M7, `dangerfile.js` no M8,
-o print e a tabela no M9, o inventário das dez ferramentas no M10. Não embuta código nem tabela longa
-dentro do README quando ela pode ser um arquivo.
+#### O que vira arquivo próprio
+
+`entrega/<nível>/README.md` é a porta de entrada. Um item da *Entrega Esperada* sai dele e vira
+arquivo ao lado quando satisfaz **pelo menos uma** destas:
+
+1. **Não é prosa** — código, tabela longa, imagem, diff
+2. **Tem outro público** — algo que você mandaria ao PO ou ao gestor, não ao professor
+3. **É consultável isolado** — alguém abriria esse arquivo sem ler o resto
+
+O que não satisfaz nenhuma fica como seção do README. **O erro fácil é picotar um relato que é um
+argumento só:** falha → causa → alteração → efeito é uma linha de raciocínio, e quebrá-la em quatro
+arquivos faz o leitor remontar o que você já tinha montado. No M1 isso dá três arquivos, não seis:
+
+```
+entrega/intermediario/
+├── README.md                      o relato inteiro
+├── perguntas-ao-stakeholder.md    regra 2 — endereçado ao Carlos, não ao professor
+└── prompt-v1-v2.diff              regra 1
+```
+
+Como escala nos módulos que abrem em vários artefatos:
+
+| Módulo | `README.md` + | Regra |
+|---|---|---|
+| M7 | `01-relatorio-tecnico.md`, `02-relatorio-gestor.md`, `03-relatorio-executivo.md`, `emails-de-envio.md` | 3 — audiências diferentes |
+| M8 | `dangerfile.js`, `checklist-conformidade.md` | 1, 3 |
+| M9 | `avaliacao-5-mensagens.md`, `automacao-funcionando.png` | 1 |
+| M10 | `matriz-backlog-okr.md`, `inventario-ferramentas.md` | 1, 3 |
+
+Prefixo numérico só onde há vários artefatos de mesma natureza e a ordem importa — os três
+relatórios do M7. Nos demais, o nome limpo basta.
+
+#### O output do V1 é linkado, não copiado
+
+Vários módulos pedem "o output completo da primeira execução" como item da entrega. Ele já está em
+`outputs/<artefato>-v1.md`, versionado no mesmo commit — **linke, não duplique.** O critério de
+pasta autocontida vale para o que *você escreveu*; o insumo gerado mora onde foi gerado.
 
 Estrutura do `README.md`:
 
