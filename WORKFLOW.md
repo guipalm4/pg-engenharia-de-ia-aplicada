@@ -4,10 +4,11 @@ Guia de retomada. Se você voltou depois de um tempo, leia daqui.
 
 ## Estado atual
 
-> **Módulo 1** — `outputs/backlog-estruturado-v1.md` gerado. **Próximo passo: você ler o V1 e identificar duas falhas.**
-> Branch de trabalho: `modulo-7.1` (a `main` tem só os commits de setup).
->
-> *Atualize estas três linhas ao terminar cada módulo.*
+> **Módulo 1 — concluído.** README, índice raiz e commits feitos. As entregas Básica e
+> Intermediária ficaram enxutas, no formato do exercício: duas falhas, a alteração no prompt e a
+> comparação, mais a pergunta ao stakeholder no Intermediário. **Próximo passo: `/novo-modulo
+> 002-priorizacao-de-backlog`** — o backlog do M1 é o insumo do scoring. Branch: `modulo-7.1`.
+> _Atualize estas três linhas ao terminar cada módulo._
 
 ## O ciclo de um módulo
 
@@ -21,9 +22,9 @@ Guia de retomada. Se você voltou depois de um tempo, leia daqui.
 7. /finaliza-projeto NNN        → eu: README + índice raiz + commits
 ```
 
-**Os passos 3 e 4 são seus, e não por formalidade.** A rubrica avalia exatamente isso: *"onde ele
+**Os passos 3 e 4 são seus, e não por formalidade.** A rubrica avalia exatamente isso: _"onde ele
 inventou uma especificação que o stakeholder não deu? onde faltou uma flag de risco que você como
-dev sênior teria visto?"* Se eu gerasse as falhas, o passo 5 mediria a minha hipótese sobre o
+dev sênior teria visto?"_ Se eu gerasse as falhas, o passo 5 mediria a minha hipótese sobre o
 prompt, não a sua — e a entrega perderia o que ela existe para exercitar. Os commands estão
 escritos para recusar isso.
 
@@ -96,16 +97,16 @@ commands, mas a armadilha volta se você escrever outro.
 
 ## Decisões travadas (não re-decidir)
 
-| | |
-|---|---|
-| Estrutura | 10 pastas `NNN-slug` em `projects/`, uma por módulo |
-| Case | RouteWise, do gabarito |
-| Entrega | `entrega/<nível>/`, uma pasta por nível de rubrica; README do projeto permanece canônico |
-| Rubrica-alvo | **Intermediário** — análise causal, não descritiva |
-| Engine | Claude (o gabarito autoriza em `modulo-01/nota-adaptacao-modelos.md`) |
-| Execução | Subagente de contexto limpo, via `/roda-prompt` |
-| Material do professor | Copiado para dentro da pasta — é conteúdo didático |
-| Ferramentas | Jira Free + Slack Free; Danger local (`--local --mock`); sem Make.com |
+|                       |                                                                                          |
+| --------------------- | ---------------------------------------------------------------------------------------- |
+| Estrutura             | 10 pastas `NNN-slug` em `projects/`, uma por módulo                                      |
+| Case                  | RouteWise, do gabarito                                                                   |
+| Entrega               | `entrega/<nível>/`, uma pasta por nível de rubrica; README do projeto permanece canônico |
+| Rubrica-alvo          | **Intermediário** — análise causal, não descritiva                                       |
+| Engine                | Claude (o gabarito autoriza em `modulo-01/nota-adaptacao-modelos.md`)                    |
+| Execução              | Subagente de contexto limpo, via `/roda-prompt`                                          |
+| Material do professor | Copiado para dentro da pasta — é conteúdo didático                                       |
+| Ferramentas           | Jira Free + Slack Free; Danger local (`--local --mock`); sem Make.com                    |
 
 **Por que subagente e não esta sessão:** se o output fosse produzido por uma sessão que já leu o
 gabarito resolvido ou já discutiu o que o prompt deveria fazer, a análise de falhas seria circular.
@@ -114,18 +115,18 @@ prompt.
 
 ## Os dez módulos
 
-| # | Módulo | Ferramenta | Código? |
-|---|---|---|---|
-| 001 | Planejamento e Escopo | Requirements Copilot | — |
-| 002 | Priorização de Backlog | Backlog Scorer (RICE, WSJF) | — |
-| 003 | Cronograma e Capacidade | Scheduling Prompt | — |
-| 004 | Estimativas e Previsões | Probability Forecast | Monte Carlo (JS/Py) |
-| 005 | Riscos e AIOps | Risk Monitor | — |
-| 006 | Reuniões Turbinadas | Meeting Digest | *(Jira real)* |
-| 007 | Status Reports | Status Report | — |
-| 008 | Governança e Compliance | Compliance Checklist | Danger (JS/Py) |
-| 009 | Automação de Ecossistema | NL to Workflow | Bot Node + ngrok |
-| 010 | Portfólio e OKRs | OKR Aligner | — |
+| #   | Módulo                   | Ferramenta                  | Código?             |
+| --- | ------------------------ | --------------------------- | ------------------- |
+| 001 | Planejamento e Escopo    | Requirements Copilot        | —                   |
+| 002 | Priorização de Backlog   | Backlog Scorer (RICE, WSJF) | —                   |
+| 003 | Cronograma e Capacidade  | Scheduling Prompt           | —                   |
+| 004 | Estimativas e Previsões  | Probability Forecast        | Monte Carlo (JS/Py) |
+| 005 | Riscos e AIOps           | Risk Monitor                | —                   |
+| 006 | Reuniões Turbinadas      | Meeting Digest              | _(Jira real)_       |
+| 007 | Status Reports           | Status Report               | —                   |
+| 008 | Governança e Compliance  | Compliance Checklist        | Danger (JS/Py)      |
+| 009 | Automação de Ecossistema | NL to Workflow              | Bot Node + ngrok    |
+| 010 | Portfólio e OKRs         | OKR Aligner                 | —                   |
 
 A trilha é encadeada: o backlog que você curar no M1 é a entrada do M2, que alimenta o M3, e assim
 por diante. **Prepare um módulo por vez** — preparar o M5 hoje congelaria uma entrada que ainda não
