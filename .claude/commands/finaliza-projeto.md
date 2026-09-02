@@ -12,7 +12,8 @@ Equivale a `/readme-projeto` seguido de `/commit-projeto`, em sequência otimiza
 PROJECT=$(find . -maxdepth 7 -type d -name "*$ARGUMENTS*" ! -path "*/node_modules/*" | head -1)
 echo "PROJECT=$PROJECT"
 echo "=== Fontes não rastreados (excl. README.md raiz; READMEs internos entram) ==="
-git ls-files --others --exclude-standard -- "$PROJECT" | grep -vx "${PROJECT#./}/README.md"
+git -c core.quotePath=false ls-files --others --exclude-standard \
+  -- "$PROJECT" ":(exclude)$PROJECT/README.md"
 ```
 
 ### 2. Dump dos arquivos-fonte (script único — leia só o output)
@@ -144,8 +145,15 @@ git push
 
 ### 6. Commit 2 — código-fonte
 
+> **Nome com acento ou espaço quebra o `xargs`.** `git ls-files` cita esses caminhos com escapes
+> octais (`gest\303\243o`), e um espaço faz o `xargs` partir o nome em dois — os PDFs do professor
+> (`Atividade - Módulo 1.pdf`) têm os dois. Por isso `-z` no `git` e `-0` no `xargs`, sempre, e
+> `:(exclude)` como pathspec no lugar de filtrar com `grep`. Nas linhas de leitura,
+> `-c core.quotePath=false` mostra o acento em vez do escape.
+
 ```bash
-git ls-files --others --exclude-standard -- "$PROJECT" | grep -vx "${PROJECT#./}/README.md" | xargs -r git add
+git ls-files --others --exclude-standard -z \
+  -- "$PROJECT" ":(exclude)$PROJECT/README.md" | xargs -0 -r git add --
 git commit -m "feat: adiciona $ARGUMENTS (<título resumido>) Finalizado em: DD/MM/AAAA"
 git push
 ```
