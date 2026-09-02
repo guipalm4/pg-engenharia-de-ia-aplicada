@@ -23,7 +23,7 @@ tende a "corrigir" o que viu, e a comparação deixa de medir o prompt.
 ### 1. Resolver prompt e inputs
 
 ```bash
-BASE="disciplinas/07-ferramentas-de-IA-para-gestão-de-projetos/projects"
+BASE="disciplinas/07-ferramentas-de-IA-para-gestao-de-projetos/projects"
 # `cut`, nunca `awk '{print $1}'`: este command recebe DOIS argumentos, e o
 # harness substitui $1/$2 no texto do arquivo antes do shell ver.
 NUM=$(echo "$ARGUMENTS" | cut -d' ' -f1 | grep -oE '[0-9]+')

@@ -46,7 +46,7 @@ estudos.
 | `/readme-index` | Reconstrói o índice raiz do zero |
 | `/nova-aula-aiops` | ⚠️ Congelado — específico da disciplina 06, encerrada |
 
-## Disciplina ativa: `07-ferramentas-de-IA-para-gestão-de-projetos`
+## Disciplina ativa: `07-ferramentas-de-IA-para-gestao-de-projetos`
 
 **O ciclo de trabalho está em [`WORKFLOW.md`](./WORKFLOW.md) — leia-o antes de operar a 07.** Ele traz
 o estado atual (em que módulo paramos), a divisão do que é meu e do que é do usuário, e as

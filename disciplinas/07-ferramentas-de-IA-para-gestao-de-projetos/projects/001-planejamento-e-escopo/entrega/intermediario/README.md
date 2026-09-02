@@ -1,6 +1,6 @@
 # Missão #01 — Planejamento e Escopo com IA · nível Intermediário
 
-Inclui os itens do [nível Básico](../básico/README.md) — duas falhas, a alteração no prompt e a
+Inclui os itens do [nível Básico](../basico/README.md) — duas falhas, a alteração no prompt e a
 comparação V1×V2. Aqui está o que o Intermediário acrescenta: o campo marcado, a pergunta ao
 stakeholder e a instrução adicional derivada do padrão de erro.
 
@@ -85,4 +85,4 @@ número é quem precisa agir sobre o alerta a tempo"*, redirecionando para super
 **O que ainda persiste.** As alternativas passaram a ser obrigatórias por regra, então parte das 12
 pode ser preenchimento de formato e não trade-off real — com uma execução por versão não dá para
 separar. E o `[A CONFIRMAR]` da latência sumiu do critério de aceite pelo motivo errado, trocado
-pelo teto de 5 minutos (ver [Básico](../básico/README.md), *o que ainda persiste*).
+pelo teto de 5 minutos (ver [Básico](../basico/README.md), *o que ainda persiste*).

@@ -42,7 +42,7 @@ Se algo não couber em nenhum dos dois, o lugar é o chat.
 ### 1. Reunir o material
 
 ```bash
-BASE="disciplinas/07-ferramentas-de-IA-para-gestão-de-projetos/projects"
+BASE="disciplinas/07-ferramentas-de-IA-para-gestao-de-projetos/projects"
 PROJECT=$(find "$BASE" -maxdepth 1 -type d -name "*$ARGUMENTS*" | head -1)
 echo "PROJECT=$PROJECT"
 find "$PROJECT" -type f ! -name ".DS_Store" | sort

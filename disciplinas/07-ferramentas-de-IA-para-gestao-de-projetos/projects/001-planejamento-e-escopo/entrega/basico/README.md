@@ -40,7 +40,7 @@ Repetir "não faça gold plating" não resolveria — já está no prompt duas v
 
 **C2 — INVEST ternário.** Em vez de proibir a gradação, define o terceiro valor e ensina o portão a usá-lo: `[INVEST-COND]` para falha que o time resolve sozinho (mockar, fatiar, usar o legado) gera card com a condição no topo; `[INVEST-FAIL]` para falha que depende de terceiro continua bloqueando. Mais a verificação de que o nº de bloqueadas tem de bater com o nº de histórias com `[INVEST-FAIL]`, os dois números impressos.
 
-Diff completo: [`../intermediário/prompt-v1-v2.diff`](../intermediário/prompt-v1-v2.diff).
+Diff completo: [`../intermediario/prompt-v1-v2.diff`](../intermediario/prompt-v1-v2.diff).
 
 ---
 

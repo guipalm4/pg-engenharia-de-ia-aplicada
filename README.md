@@ -207,7 +207,7 @@ Trilha de *system prompts* para gestão de projetos, percorrendo um caso único 
 
 | # | Projeto | O que demonstra |
 |---|---------|----------------|
-| 001 | [Planejamento e Escopo com IA](disciplinas/07-ferramentas-de-IA-para-gestão-de-projetos/projects/001-planejamento-e-escopo/README.md) | Abre a trilha do RouteWise: um Requirements Copilot converte a transcrição bruta de uma reunião de discovery em backlog estruturado — mapa de domínios e stakeholders, épicos, User Stories validadas por INVEST critério a critério, critérios de aceite em Gherkin e cards de Jira — sob um protocolo que proíbe inventar valores numéricos e transforma cada lacuna em `[A CONFIRMAR COM STAKEHOLDER]` mais uma pergunta endereçada ao stakeholder |
+| 001 | [Planejamento e Escopo com IA](disciplinas/07-ferramentas-de-IA-para-gestao-de-projetos/projects/001-planejamento-e-escopo/README.md) | Abre a trilha do RouteWise: um Requirements Copilot converte a transcrição bruta de uma reunião de discovery em backlog estruturado — mapa de domínios e stakeholders, épicos, User Stories validadas por INVEST critério a critério, critérios de aceite em Gherkin e cards de Jira — sob um protocolo que proíbe inventar valores numéricos e transforma cada lacuna em `[A CONFIRMAR COM STAKEHOLDER]` mais uma pergunta endereçada ao stakeholder |
 
 ---
 

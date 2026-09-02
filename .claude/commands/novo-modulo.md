@@ -24,7 +24,7 @@ num repositório de estudos — a pasta fica autocontida e reproduzível, que é
 ### 1. Descoberta (script único — leia só o output)
 
 ```bash
-BASE="disciplinas/07-ferramentas-de-IA-para-gestão-de-projetos/projects"
+BASE="disciplinas/07-ferramentas-de-IA-para-gestao-de-projetos/projects"
 GAB=$(find ~/Dev/Projects/Personal -maxdepth 4 -type d -name "unipds-gabarito" 2>/dev/null | head -1)/modulo07-ferramentas-de-ia-para-gestao-de-projetos
 NUM=$(echo "$ARGUMENTS" | grep -oE '^[0-9]+')
 MOD=$(find "$GAB" -maxdepth 1 -type d -name "modulo-$(printf %02d $((10#$NUM)))-*" | head -1)
