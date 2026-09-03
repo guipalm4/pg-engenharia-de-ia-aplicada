@@ -1,9 +1,22 @@
 # Skill: entrega-modulo
 
-Escreve o `ENTREGA.md` do módulo **$ARGUMENTS** — o relato da iteração de prompt que a atividade
-pede. Não escreve o README (isso é `/finaliza-projeto`).
+Escreve a entrega do módulo **$ARGUMENTS** em `entrega/<nível>/` — o relato da iteração de prompt
+que a atividade pede, mais os artefatos próprios do módulo. Não escreve o README do projeto
+(isso é `/finaliza-projeto`).
 
-`$ARGUMENTS` é `NNN` ou o nome completo da pasta.
+`$ARGUMENTS` é `NNN`, opcionalmente seguido do nível (`001 avancado`). Sem nível, usa
+**intermediário**, o alvo padrão da trilha.
+
+## Uma pasta por nível, autocontida
+
+Cada nível de rubrica é um pacote submetível independente: `entrega/basico/`, `entrega/intermediario/`,
+`entrega/avancado/`. **Só existe a pasta do nível que você realmente atacou** — não scaffoldar vazias.
+
+Subir de nível depois **não edita a pasta anterior**: cria a nova, completa. Uma entrega Avançada
+refeita meses depois com um interlocutor real reescreve a análise, não a complementa, e ver as duas
+lado a lado é o ponto. É a mesma convenção das pastas `NNN` da disciplina 06.
+
+`entrega/rubrica.md` fica fora dos níveis — é a mesma para os três.
 
 ## Por que existe um arquivo separado do README
 
@@ -15,7 +28,7 @@ Isso é exatamente o que `shared/templates/README_TEMPLATE.md` proíbe: relato d
 material da aula, comparação entre rodadas, números medidos. Os dois documentos não são
 redundantes — são opostos, e cada um está certo no seu lugar:
 
-| | `README.md` | `ENTREGA.md` |
+| | `README.md` do projeto | `entrega/<nível>/README.md` |
 |---|---|---|
 | Para quem | você daqui a um ano | o professor, agora |
 | Voz | expositiva, apresenta | analítica, julga |
@@ -29,47 +42,87 @@ Se algo não couber em nenhum dos dois, o lugar é o chat.
 ### 1. Reunir o material
 
 ```bash
-BASE="disciplinas/07-ferramentas-de-IA-para-gestão-de-projetos/projects"
+BASE="disciplinas/07-ferramentas-de-IA-para-gestao-de-projetos/projects"
 PROJECT=$(find "$BASE" -maxdepth 1 -type d -name "*$ARGUMENTS*" | head -1)
 echo "PROJECT=$PROJECT"
 find "$PROJECT" -type f ! -name ".DS_Store" | sort
 echo "=== diff dos prompts (o que você mudou) ==="
-diff "$PROJECT/prompts/v1.md" "$PROJECT/prompts/v2.md" 2>/dev/null \
-  || echo "(V1 é o prompt original do gabarito — ver prompts/v1.ref; o diff é conceitual, descreva-o)"
+diff "$(find "$PROJECT/prompts" -name "*-v1.md")" "$(find "$PROJECT/prompts" -name "*-v2.md")"
 ```
 
-Leia `outputs/v1.md` e `outputs/v2.md` inteiros. Leia a atividade em PDF (recipe em
+Leia os dois arquivos de `outputs/` inteiros. Leia a atividade em PDF (recipe em
 `/novo-modulo`, passo 3) para não escrever contra uma lembrança do enunciado.
 
-**Só agora** o `Exemplo - Módulo N.pdf` e os `output-*` do gabarito podem ser abertos, e apenas se
-você quiser usá-los como termo de comparação. Eles não são a régua: a atividade pede a *sua*
+**Só agora** o `Exemplo - Módulo N.pdf` e os `output-*` em `material/` podem ser abertos, e apenas
+se você quiser usá-los como termo de comparação. Eles não são a régua: a atividade pede a *sua*
 análise, não convergência com o gabarito.
 
-### 2. Escrever o `ENTREGA.md`
+### 2. Escrever a entrega
 
-Alvo de rubrica: **Intermediário**. A diferença para o Básico é que a análise é *causal* — qual dado
-específico causou a mudança e o que isso implica — não descritiva ("o ranking mudou").
+Leia `entrega/rubrica.md` e escreva **para o nível pedido**. No Intermediário, a diferença para o
+Básico é que a análise é *causal* — qual dado específico causou a mudança e o que isso implica — não
+descritiva ("o ranking mudou").
 
-Estrutura:
+#### O que vira arquivo próprio
+
+`entrega/<nível>/README.md` é a porta de entrada. Um item da *Entrega Esperada* sai dele e vira
+arquivo ao lado quando satisfaz **pelo menos uma** destas:
+
+1. **Não é prosa** — código, tabela longa, imagem, diff
+2. **Tem outro público** — algo que você mandaria ao PO ou ao gestor, não ao professor
+3. **É consultável isolado** — alguém abriria esse arquivo sem ler o resto
+
+O que não satisfaz nenhuma fica como seção do README. **O erro fácil é picotar um relato que é um
+argumento só:** falha → causa → alteração → efeito é uma linha de raciocínio, e quebrá-la em quatro
+arquivos faz o leitor remontar o que você já tinha montado. No M1 isso dá três arquivos, não seis:
 
 ```
-# Missão #NN — <título do módulo>
+entrega/intermediario/
+├── README.md                      o relato inteiro
+├── perguntas-ao-stakeholder.md    regra 2 — endereçado ao Carlos, não ao professor
+└── prompt-v1-v2.diff              regra 1
+```
+
+Como escala nos módulos que abrem em vários artefatos:
+
+| Módulo | `README.md` + | Regra |
+|---|---|---|
+| M7 | `01-relatorio-tecnico.md`, `02-relatorio-gestor.md`, `03-relatorio-executivo.md`, `emails-de-envio.md` | 3 — audiências diferentes |
+| M8 | `dangerfile.js`, `checklist-conformidade.md` | 1, 3 |
+| M9 | `avaliacao-5-mensagens.md`, `automacao-funcionando.png` | 1 |
+| M10 | `matriz-backlog-okr.md`, `inventario-ferramentas.md` | 1, 3 |
+
+Prefixo numérico só onde há vários artefatos de mesma natureza e a ordem importa — os três
+relatórios do M7. Nos demais, o nome limpo basta.
+
+#### O output do V1 é linkado, não copiado
+
+Vários módulos pedem "o output completo da primeira execução" como item da entrega. Ele já está em
+`outputs/<artefato>-v1.md`, versionado no mesmo commit — **linke, não duplique.** O critério de
+pasta autocontida vale para o que *você escreveu*; o insumo gerado mora onde foi gerado.
+
+Estrutura do `README.md`:
+
+```
+# Missão #NN — <título do módulo>  ·  nível <básico|intermediário|avançado>
 
 > Uma linha: o que foi exercitado e sobre qual insumo.
 
 ## Configuração
-Modelo, execução em subagente isolado, prompt e sha, data. Uma tabela curta.
+Modelo, execução em subagente isolado, prompt e insumo, data. Uma tabela curta.
+
+## Artefatos desta entrega
+Uma linha por arquivo da pasta, dizendo o que é. Só se houver mais de um.
 
 ## Execução V1
-Link para `outputs/v1.md`. Não cole o output inteiro aqui.
+Link para o arquivo em `outputs/`. Não cole o output inteiro aqui.
 
 ## Falhas identificadas
 Pelo menos duas, cada uma com: o que o modelo produziu, por que está errado, e a
 **causa provável no prompt** (instrução ausente, ambígua, ou que induziu o erro).
 
 ## Alteração no prompt
-O que mudou de V1 para V2 e o raciocínio que levou à mudança. Se V1 é o prompt do
-gabarito, descreva a alteração — não há arquivo para diffar.
+O diff entre os dois prompts, e o raciocínio que levou à mudança.
 
 ## Comparação V1 × V2
 O que mudou no output, e **atribuição**: cada diferença é efeito do prompt ou ruído de
@@ -98,8 +151,8 @@ Regras de escrita:
 
 ### 3. Parar
 
-Não escreva o README, não commite, não atualize o índice. `/finaliza-projeto $ARGUMENTS` faz os
-três, e ele lê o `ENTREGA.md` como uma das fontes — mas **não copia nada dele** para o README.
+Não escreva o README do projeto, não commite, não atualize o índice. `/finaliza-projeto $ARGUMENTS`
+faz os três, e ele lê `entrega/` como uma das fontes — mas **não copia nada de lá** para o README.
 
 ## O que esta skill deliberadamente NÃO faz
 

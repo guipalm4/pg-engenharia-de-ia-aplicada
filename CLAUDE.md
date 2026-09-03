@@ -29,8 +29,9 @@ a de `shared/` vence.
 ## Repositório gabarito (material do professor)
 
 Fica **fora** deste repo, em `~/Dev/Projects/Personal/unipds/unipds-gabarito/`, uma pasta
-`moduloNN-*` por disciplina. Material autoral do professor **não é redistribuído aqui**: referencie
-por caminho relativo à raiz do gabarito, com `sha256`, em vez de copiar.
+`moduloNN-*` por disciplina. O material que um módulo consome é **copiado** para dentro da pasta do
+projeto, para que ela fique autocontida e reproduzível. É conteúdo didático num repositório de
+estudos.
 
 ## Commands
 
@@ -38,14 +39,18 @@ por caminho relativo à raiz do gabarito, com `sha256`, em vez de copiar.
 |---|---|
 | `/novo-modulo NNN-slug` | Prepara a pasta de um módulo da disciplina 07 |
 | `/roda-prompt NNN v1\|v2` | Executa um prompt em subagente de contexto limpo e grava o output |
-| `/entrega-modulo NNN` | Escreve o `ENTREGA.md` (relato da iteração de prompt) |
+| `/entrega-modulo NNN [nível]` | Escreve `entrega/<nível>/` (relato da iteração de prompt) |
 | `/readme-projeto NNN` | README do projeto + índice raiz + commit |
 | `/commit-projeto NNN` | Commita os fontes do projeto |
 | `/finaliza-projeto NNN` | README + índice + commits, em sequência |
 | `/readme-index` | Reconstrói o índice raiz do zero |
 | `/nova-aula-aiops` | ⚠️ Congelado — específico da disciplina 06, encerrada |
 
-## Disciplina ativa: `07-ferramentas-de-IA-para-gestão-de-projetos`
+## Disciplina ativa: `07-ferramentas-de-IA-para-gestao-de-projetos`
+
+**O ciclo de trabalho está em [`WORKFLOW.md`](./WORKFLOW.md) — leia-o antes de operar a 07.** Ele traz
+o estado atual (em que módulo paramos), a divisão do que é meu e do que é do usuário, e as
+armadilhas já encontradas. Mantenha a seção "Estado atual" dele atualizada ao fim de cada módulo.
 
 Disciplinas 01–06 estão concluídas e permanecem no repo.
 
@@ -58,8 +63,9 @@ Consequências operacionais:
 - **A herança entre módulos é documental, não de código.** `NNN` não parte de `NNN-1` — cada módulo
   tem prompt e input próprios. O que se acumula é o estado do case **RouteWise**: o backlog do M1
   alimenta o scoring do M2, que alimenta o cronograma do M3, e assim por diante. Nada de `cp -R`.
-- **O relato da iteração vive em `ENTREGA.md`, nunca no README.** O README continua canônico. Essa
-  separação existe porque o relato é exatamente o que o template proíbe.
+- **O relato da iteração vive em `entrega/<nível>/`, nunca no README.** O README continua canônico —
+  a separação existe porque o relato é exatamente o que o template proíbe. Cada nível de rubrica é
+  uma pasta autocontida; subir de nível cria pasta nova em vez de editar a anterior.
 - **Alvo de rubrica: Intermediário** — análise causal (qual dado específico causou a mudança), não
   descritiva.
 - **Engine: Claude.** O gabarito autoriza explicitamente (`modulo-01/nota-adaptacao-modelos.md`).

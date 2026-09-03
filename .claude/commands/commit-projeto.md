@@ -12,17 +12,27 @@ TITLE=$(head -1 "$PROJECT/README.md" 2>/dev/null | sed 's/^# //' || echo "$ARGUM
 echo "PROJECT=$PROJECT"
 echo "TITLE=$TITLE"
 echo "=== Fontes não rastreados (excl. README.md raiz; READMEs internos entram) ==="
-git ls-files --others --exclude-standard -- "$PROJECT" | grep -vx "${PROJECT#./}/README.md"
+git -c core.quotePath=false ls-files --others --exclude-standard \
+  -- "$PROJECT" ":(exclude)$PROJECT/README.md"
 echo "=== Fontes modificados ==="
-git diff --name-only -- "$PROJECT" | grep -vx "${PROJECT#./}/README.md"
+git -c core.quotePath=false diff --name-only \
+  -- "$PROJECT" ":(exclude)$PROJECT/README.md"
 ```
 
 ### 2. Stage, commit e push
 
+> **Nome com acento ou espaço quebra o `xargs`.** `git ls-files` cita esses caminhos com escapes
+> octais (`gest\303\243o`), e um espaço faz o `xargs` partir o nome em dois — os PDFs do professor
+> (`Atividade - Módulo 1.pdf`) têm os dois. Por isso `-z` no `git` e `-0` no `xargs`, sempre, e
+> `:(exclude)` como pathspec no lugar de filtrar com `grep`. Nas linhas de leitura,
+> `-c core.quotePath=false` mostra o acento em vez do escape.
+
 ```bash
 # Stage fontes + READMEs internos (exclui só o README.md raiz do projeto, responsabilidade do /readme-projeto)
-git ls-files --others --exclude-standard -- "$PROJECT" | grep -vx "${PROJECT#./}/README.md" | xargs -r git add
-git diff --name-only -- "$PROJECT" | grep -vx "${PROJECT#./}/README.md" | xargs -r git add
+git ls-files --others --exclude-standard -z \
+  -- "$PROJECT" ":(exclude)$PROJECT/README.md" | xargs -0 -r git add --
+git diff --name-only -z \
+  -- "$PROJECT" ":(exclude)$PROJECT/README.md" | xargs -0 -r git add --
 
 git commit -m "feat: adiciona $ARGUMENTS (<título do passo 1>) Finalizado em: DD/MM/AAAA"
 git push

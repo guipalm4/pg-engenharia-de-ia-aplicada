@@ -1,7 +1,10 @@
 # Skill: roda-prompt
 
 Executa o system prompt de uma versão do módulo **em subagente de contexto limpo** e grava o output
-em `outputs/vN.md`, com procedência no cabeçalho.
+em `outputs/`, com procedência no cabeçalho.
+
+Os arquivos têm nome declarativo, não `vN.md`: `prompts/requirements-copilot-v1.md`,
+`outputs/backlog-estruturado-v1.md`. O sufixo `-v1`/`-v2` é o que a resolução usa.
 
 `$ARGUMENTS` é `NNN v1` ou `NNN v2` (ex.: `001 v1`).
 
@@ -20,38 +23,22 @@ tende a "corrigir" o que viu, e a comparação deixa de medir o prompt.
 ### 1. Resolver prompt e inputs
 
 ```bash
-BASE="disciplinas/07-ferramentas-de-IA-para-gestão-de-projetos/projects"
-GAB_ROOT=$(find ~/Dev/Projects/Personal -maxdepth 4 -type d -name "unipds-gabarito" 2>/dev/null | head -1)/modulo07-ferramentas-de-ia-para-gestao-de-projetos
-NUM=$(echo "$ARGUMENTS" | awk '{print $1}' | grep -oE '^[0-9]+')
-VER=$(echo "$ARGUMENTS" | awk '{print $2}')
+BASE="disciplinas/07-ferramentas-de-IA-para-gestao-de-projetos/projects"
+# `cut`, nunca `awk '{print $1}'`: este command recebe DOIS argumentos, e o
+# harness substitui $1/$2 no texto do arquivo antes do shell ver.
+NUM=$(echo "$ARGUMENTS" | cut -d' ' -f1 | grep -oE '[0-9]+')
+VER=$(echo "$ARGUMENTS" | cut -d' ' -f2)
 PROJECT=$(find "$BASE" -maxdepth 1 -type d -name "$(printf %03d $((10#$NUM)))-*" | head -1)
+# Nome declarativo: prompts/<ferramenta>-vN.md. Glob, porque o nome muda por módulo.
+PROMPT_FILE=$(find "$PROJECT/prompts" -maxdepth 1 -name "*-$VER.md" | head -1)
 
 echo "PROJECT=$PROJECT  VER=$VER"
-
-# Resolve a fonte do prompt: .ref aponta para o gabarito, .md é seu.
-resolver() {  # resolver <base-sem-extensao> -> imprime o caminho real
-  if   [ -f "$1.md" ];  then echo "$1.md"
-  elif [ -f "$1.ref" ]; then echo "$GAB_ROOT/$(grep '^path:' "$1.ref" | cut -d' ' -f2-)"
-  fi
-}
-PROMPT_FILE=$(resolver "$PROJECT/prompts/$VER")
-[ -z "$PROMPT_FILE" ] && echo "PARE: não achei prompts/$VER.md nem prompts/$VER.ref" && exit 1
+[ -n "$PROMPT_FILE" ] || { echo "PARE: não achei prompts/*-$VER.md em $PROJECT"; exit 1; }
 echo "PROMPT_FILE=$PROMPT_FILE"
-
-# Confere o sha256 quando a fonte é referenciada — o gabarito recebe atualizações.
-if [ -f "$PROJECT/prompts/$VER.ref" ]; then
-  ESPERADO=$(grep '^sha256:' "$PROJECT/prompts/$VER.ref" | cut -d' ' -f2)
-  ATUAL=$(shasum -a 256 "$PROMPT_FILE" | cut -d' ' -f1)
-  [ "$ESPERADO" = "$ATUAL" ] && echo "sha256 confere" \
-    || echo "AVISO: o prompt no gabarito MUDOU desde que a .ref foi criada ($ESPERADO -> $ATUAL)"
-fi
-
-echo "=== inputs deste módulo ==="
-find "$PROJECT/inputs" -maxdepth 1 -type f 2>/dev/null | sort
+echo "=== inputs ==="; find "$PROJECT/inputs" -maxdepth 1 -type f | sort
+echo "=== outputs já existentes (se houver, este é um re-run) ==="
+find "$PROJECT/outputs" -maxdepth 1 -type f | sort
 ```
-
-Se o `sha256` divergir, **pare e me diga** antes de rodar: um V1 gerado sobre um prompt diferente
-do registrado invalida a comparação com o V2.
 
 ### 2. Rodar em subagente
 
@@ -61,30 +48,38 @@ Dispare **um** subagente (`Agent`, `subagent_type: "general-purpose"`) com um pr
 - O conteúdo integral dos inputs resolvidos no passo 1 como a mensagem do usuário.
 - Estas três restrições, literalmente:
   1. *Não leia nenhum outro arquivo do repositório ou do gabarito.* Em especial, nada que comece
-     com `output-` ou `Exemplo -`, e nenhum `ENTREGA.md`.
+     com `output-` ou `Exemplo -`, e nada de `entrega/`.
   2. *Produza o output exatamente no formato que o system prompt define.* Não comente o prompt, não
      avalie a própria resposta, não acrescente conclusões suas.
   3. *Devolva só o output*, sem preâmbulo nem fechamento.
 
-O subagente **não deve escrever o arquivo** — ele devolve o texto e você grava. Assim o cabeçalho de
-procedência é montado aqui, com dados que o subagente não tem.
+O subagente **grava o corpo** no arquivo de output e devolve só uma confirmação curta. O cabeçalho de
+procedência é montado no passo 3, com dados que ele não tem.
 
 ### 3. Gravar com procedência
 
+Peça ao subagente que **escreva o corpo direto no arquivo de output** e devolva só uma confirmação
+de uma linha. Depois prenda o cabeçalho no topo:
+
 ```bash
-cat > "$PROJECT/outputs/$VER.md" <<EOF
+OUT="$PROJECT/outputs/<artefato>-$VER.md"   # nome do artefato, não "vN"
+{ cat <<EOF
 ---
 versao: $VER
 prompt: $(basename "$PROMPT_FILE")
-prompt_sha256: $(shasum -a 256 "$PROMPT_FILE" | cut -d' ' -f1 | cut -c1-12)
+input: $(find "$PROJECT/inputs" -maxdepth 1 -type f -exec basename {} \; | paste -sd, -)
 modelo: <o modelo em que o subagente rodou>
 gerado_em: <data de currentDate>
 execucao: subagente de contexto limpo
 ---
 
-<output integral do subagente>
 EOF
+  cat "$OUT"; } > "$OUT.tmp" && mv "$OUT.tmp" "$OUT"
 ```
+
+Fazer o subagente gravar é deliberado: estes outputs passam de 10 mil tokens, e trazê-los inteiros
+para esta sessão só para reescrevê-los em arquivo é desperdício puro — além de colocar o output no
+contexto de quem não deveria julgá-lo.
 
 `temperatura` **não entra no cabeçalho**: o parâmetro foi removido dos modelos Claude atuais
 (400 em Opus 5, Sonnet 5, Opus 4.8/4.7, Fable 5). As instruções de `temperatura 0.2/0.3` do material
@@ -99,7 +94,7 @@ Uma tela, no máximo:
 - **Se este é um re-run de uma versão que já existia**, o que mudou em relação ao arquivo anterior.
   Esse é o teste que dá rigor à entrega: sem controle de temperatura, uma diferença entre V1 e V2 só
   conta como efeito do prompt **se ela reproduzir**. Diferença que aparece entre dois runs do *mesmo*
-  prompt é ruído de amostragem, e precisa ser tratada como tal no `ENTREGA.md`.
+  prompt é ruído de amostragem, e precisa ser tratada como tal na entrega.
 - Nada de análise das falhas. Ela é sua, e é o miolo da entrega.
 
 ## O que esta skill deliberadamente NÃO faz

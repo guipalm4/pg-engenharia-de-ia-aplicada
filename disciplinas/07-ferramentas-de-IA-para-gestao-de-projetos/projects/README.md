@@ -18,21 +18,33 @@ que alimenta o cronograma do M3, confrontado com o forecast do M4, e assim por d
 ```bash
 NNN-slug/
 ├── README.md          # material de consulta — conceitos e como reproduzir
-├── ENTREGA.md         # o relato da iteração de prompt (V1 → falhas → V2 → comparação)
+├── entrega/
+│   ├── rubrica.md                    # os três níveis, extraídos do enunciado
+│   └── intermediario/                # uma pasta por nível atacado, autocontida
+│       └── README.md                 # o relato: V1 → falhas → V2 → comparação
 ├── prompts/
-│   ├── v1.ref         # ponteiro para o prompt original (caminho + sha256)
-│   └── v2.md          # sua versão, com a alteração
+│   ├── requirements-copilot-v1.md    # o system prompt do professor, sem alteração
+│   └── requirements-copilot-v2.md    # sua versão, com a alteração
+├── inputs/                           # os dados que a atividade manda usar
+├── material/                         # enunciado + gabarito resolvido do professor
 └── outputs/
-    ├── v1.md          # output da primeira execução, com procedência no cabeçalho
-    └── v2.md          # output após a alteração
+    ├── backlog-estruturado-v1.md     # 1ª execução, com procedência no cabeçalho
+    └── backlog-estruturado-v2.md     # após a alteração
 ```
 
-**`README.md` e `ENTREGA.md` têm vozes opostas, de propósito.** O README apresenta o módulo a quem
-chega daqui a um ano e segue o template canônico do repositório; o ENTREGA.md é a análise crítica da
-execução, que é justamente o que o template proíbe. Separá-los é o que evita que um degrade o outro.
+Os nomes são declarativos: o prompt leva o nome da ferramenta do módulo, o output leva o nome do
+artefato que ela produz. O sufixo `-v1`/`-v2` marca a iteração e é o que os commands resolvem.
 
-**O material autoral do professor não é redistribuído aqui.** System prompts, transcrições, CSVs e
-PDFs ficam no repositório gabarito e são referenciados por caminho + `sha256` nos arquivos `.ref`.
+**O `README.md` e o conteúdo de `entrega/` têm vozes opostas, de propósito.** O README apresenta o
+módulo a quem chega daqui a um ano e segue o template canônico do repositório; a entrega é a análise
+crítica da execução, que é justamente o que o template proíbe. Separá-los evita que um degrade o outro.
+
+Cada nível de rubrica é uma **pasta autocontida** — a Avançada não complementa a Básica, ela reescreve
+a análise com outro interlocutor. Ver as duas lado a lado é o ponto.
+
+**O material que cada módulo consome é copiado para dentro da pasta**, para que ela fique
+autocontida: quem abrir `001-planejamento-e-escopo/` encontra o prompt, o insumo e os dois outputs
+ali, sem precisar do repositório gabarito ao lado.
 
 ## 🔁 Fluxo por módulo
 
@@ -41,7 +53,7 @@ PDFs ficam no repositório gabarito e são referenciados por caminho + `sha256` 
 /roda-prompt NNN v1       # executa em subagente de contexto limpo
 #   ← você analisa as falhas e decide a alteração
 /roda-prompt NNN v2       # executa a versão revisada, em subagente novo
-/entrega-modulo NNN       # escreve o ENTREGA.md
+/entrega-modulo NNN       # escreve entrega/<nível>/
 /finaliza-projeto NNN     # README + índice raiz + commits
 ```
 
@@ -59,7 +71,7 @@ sessão que já leu o gabarito resolvido, a análise das falhas seria circular.
 
 > **Sobre temperatura:** o material da disciplina especifica temperatura 0.2–0.3 em vários módulos.
 > Essa instrução é do AI Studio e **não tem equivalente nos modelos Claude atuais**, onde o
-> parâmetro foi removido. Consequência prática registrada em cada `ENTREGA.md`: uma diferença entre
+> parâmetro foi removido. Consequência prática registrada em cada entrega: uma diferença entre
 > V1 e V2 só conta como efeito do prompt **se ela reproduzir** — diferença que não reproduz é ruído
 > de amostragem, e é tratada como tal.
 
