@@ -40,6 +40,7 @@ estudos.
 | `/novo-modulo NNN-slug` | Prepara a pasta de um módulo da disciplina 07 |
 | `/roda-prompt NNN v1\|v2` | Executa um prompt em subagente de contexto limpo e grava o output |
 | `/entrega-modulo NNN [nível]` | Escreve `entrega/<nível>/` (relato da iteração de prompt) |
+| `/corrige-entrega NNN [nível]` | Corrige uma entrega já escrita contra o enunciado, a rubrica e o exemplo do professor |
 | `/readme-projeto NNN` | README do projeto + índice raiz + commit |
 | `/commit-projeto NNN` | Commita os fontes do projeto |
 | `/finaliza-projeto NNN` | README + índice + commits, em sequência |
