@@ -17,7 +17,7 @@
 | 04 | [Criação de Agentes](#04--criação-de-agentes) | 7 projetos |
 | 05 | [Ferramentas de IA para UX & UI](#05--ferramentas-de-ia-para-ux--ui) | 5 projetos |
 | 06 | [AI-Ops e Engenharia Agêntica](#06--ai-ops-e-engenharia-agêntica) | 13 projetos |
-| 07 | [Ferramentas de IA para Gestão de Projetos](#07--ferramentas-de-ia-para-gestão-de-projetos) | 2 projetos |
+| 07 | [Ferramentas de IA para Gestão de Projetos](#07--ferramentas-de-ia-para-gestão-de-projetos) | 3 projetos |
 
 ---
 
@@ -209,6 +209,7 @@ Trilha de *system prompts* para gestão de projetos, percorrendo um caso único 
 |---|---------|----------------|
 | 001 | [Planejamento e Escopo com IA](disciplinas/07-ferramentas-de-IA-para-gestao-de-projetos/projects/001-planejamento-e-escopo/README.md) | Abre a trilha do RouteWise: um Requirements Copilot converte a transcrição bruta de uma reunião de discovery em backlog estruturado — mapa de domínios e stakeholders, épicos, User Stories validadas por INVEST critério a critério, critérios de aceite em Gherkin e cards de Jira — sob um protocolo que proíbe inventar valores numéricos e transforma cada lacuna em `[A CONFIRMAR COM STAKEHOLDER]` mais uma pergunta endereçada ao stakeholder |
 | 002 | [Priorização de Backlog com IA](disciplinas/07-ferramentas-de-IA-para-gestao-de-projetos/projects/002-priorizacao-de-backlog/README.md) | Pontua o backlog do RouteWise em RICE e WSJF na mesma passada — alcance e evidência de um lado, custo de adiar dividido pelo tamanho do trabalho do outro — reconcilia os dois num ranking com desempate por Cost of Delay, e fecha com Flags que apontam onde a ordem não é acionável: Confidence abaixo de 70%, dependência técnica não resolvida e item que depende de trabalho ausente do backlog |
+| 003 | [Cronograma e Capacidade com IA](disciplinas/07-ferramentas-de-IA-para-gestao-de-projetos/projects/003-cronograma-e-capacidade/README.md) | Converte o backlog priorizado do RouteWise em cronograma de 6 sprints sob capacidade real a 65% — 22 SP por sprint, 18 na que absorve os feriados — inferindo dependências implícitas a partir de componente técnico compartilhado (gateway, pipeline, fornecedor, pessoa-chave), separando a cadeia que define a data final da que sustenta o OKR, e respondendo a três simulações what-if sobre o plano gerado com opções e trade-offs explícitos em vez de um único plano revisado |
 
 ---
 
