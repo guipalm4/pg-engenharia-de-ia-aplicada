@@ -4,10 +4,10 @@ Guia de retomada. Se você voltou depois de um tempo, leia daqui.
 
 ## Estado atual
 
-> **Módulo 1 — concluído.** README, índice raiz e commits feitos. As entregas Básica e
-> Intermediária ficaram enxutas, no formato do exercício: duas falhas, a alteração no prompt e a
-> comparação, mais a pergunta ao stakeholder no Intermediário. **Próximo passo: `/novo-modulo
-> 002-priorizacao-de-backlog`** — o backlog do M1 é o insumo do scoring. Branch: `modulo-7.1`.
+> **Módulos 1 a 4 — concluídos.** README, índice raiz e commits feitos; o M4 tem entregas Básica
+> (três pontos, PERT, P50/P85/P95 e decisão de prazo) e Intermediária (três histórias de maior
+> variância com risco e ação). **Próximo passo: `/novo-modulo 005-riscos-e-aiops`** — o Risk Monitor
+> parte do estado do case depois do cronograma e do forecast. Branch: `main`.
 > _Atualize estas três linhas ao terminar cada módulo._
 
 ## O ciclo de um módulo
