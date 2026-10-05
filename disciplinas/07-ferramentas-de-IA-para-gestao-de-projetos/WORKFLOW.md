@@ -4,6 +4,8 @@ Guia de retomada. Se você voltou depois de um tempo, leia daqui.
 
 ## Estado atual
 
+> ⏸️ **Disciplina pausada em 24/09/2026** para cursar a 08. Ao retomar, siga daqui.
+>
 > **Módulos 1 a 4 — concluídos.** README, índice raiz e commits feitos; o M4 tem entregas Básica
 > (três pontos, PERT, P50/P85/P95 e decisão de prazo) e Intermediária (três histórias de maior
 > variância com risco e ação). **Próximo passo: `/novo-modulo 005-riscos-e-aiops`** — o Risk Monitor
@@ -136,5 +138,5 @@ existe.
 
 - `CLAUDE.md` — convenções do repositório inteiro (carregado automaticamente em toda sessão)
 - `shared/templates/README_TEMPLATE.md` — a fonte única do padrão de README
-- `disciplinas/07-.../projects/README.md` — índice da disciplina
+- `projects/README.md` (nesta pasta) — índice da disciplina
 - Gabarito do professor: `~/Dev/Projects/Personal/unipds/unipds-gabarito/modulo07-*/`

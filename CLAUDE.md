@@ -37,23 +37,45 @@ estudos.
 
 | Command | Quando |
 |---|---|
-| `/novo-modulo NNN-slug` | Prepara a pasta de um módulo da disciplina 07 |
-| `/roda-prompt NNN v1\|v2` | Executa um prompt em subagente de contexto limpo e grava o output |
-| `/entrega-modulo NNN [nível]` | Escreve `entrega/<nível>/` (relato da iteração de prompt) |
-| `/corrige-entrega NNN [nível]` | Corrige uma entrega já escrita contra o enunciado, a rubrica e o exemplo do professor |
+| `/arq-novo-modulo NNN` | **08** — prepara a pasta, a checklist e o esqueleto da entrega |
+| `/arq-implementa NNN` | **08** — escreve `src/` a partir das decisões da entrega |
+| `/arq-roda NNN [script] [stdin=s,n]` | **08** — executa e grava `outputs/<script>-NN.md` com procedência |
+| `/arq-entrega NNN` | **08** — preenche logs e trechos de código e confere contra a checklist (idempotente) |
+| `/novo-modulo NNN-slug` | **07** — prepara a pasta de um módulo |
+| `/roda-prompt NNN v1\|v2` | **07** — executa um prompt em subagente de contexto limpo e grava o output |
+| `/entrega-modulo NNN [nível]` | **07** — escreve `entrega/<nível>/` (relato da iteração de prompt) |
+| `/corrige-entrega NNN [nível]` | **07** — corrige uma entrega contra o enunciado, a rubrica e o exemplo |
 | `/readme-projeto NNN` | README do projeto + índice raiz + commit |
 | `/commit-projeto NNN` | Commita os fontes do projeto |
 | `/finaliza-projeto NNN` | README + índice + commits, em sequência |
 | `/readme-index` | Reconstrói o índice raiz do zero |
 | `/nova-aula-aiops` | ⚠️ Congelado — específico da disciplina 06, encerrada |
 
-## Disciplina ativa: `07-ferramentas-de-IA-para-gestao-de-projetos`
+## Disciplina ativa: `08-arquitetura-de-sistemas-com-IA`
 
-**O ciclo de trabalho está em [`WORKFLOW.md`](./WORKFLOW.md) — leia-o antes de operar a 07.** Ele traz
-o estado atual (em que módulo paramos), a divisão do que é meu e do que é do usuário, e as
-armadilhas já encontradas. Mantenha a seção "Estado atual" dele atualizada ao fim de cada módulo.
+**O ciclo de trabalho está em
+[`disciplinas/08-arquitetura-de-sistemas-com-IA/WORKFLOW.md`](./disciplinas/08-arquitetura-de-sistemas-com-IA/WORKFLOW.md).
+Leia-o antes de operar a 08.** Mantenha a seção "Estado atual" dele atualizada ao fim de cada
+módulo. Cada disciplina com fluxo próprio tem o seu `WORKFLOW.md` dentro da pasta dela.
 
-Disciplinas 01–06 estão concluídas e permanecem no repo.
+Disciplinas 01–06 estão concluídas. A **07 está pausada** no M4, e o estado dela está em
+[`disciplinas/07-.../WORKFLOW.md`](./disciplinas/07-ferramentas-de-IA-para-gestao-de-projetos/WORKFLOW.md).
+
+A 08 tem 5 módulos, cada um com Missão de 3 a 5 Passos: decisões de arquitetura mais protótipo
+JavaScript (M2–M5). Consequências operacionais:
+
+- **O caso é um projeto pessoal real do usuário**, único nos 5 módulos, em
+  [`CASO.md`](./disciplinas/08-arquitetura-de-sistemas-com-IA/CASO.md). O enunciado proíbe caso
+  hipotético e proíbe repetir o TrialForge. Não invente o caso: sem `CASO.md` preenchido, pare.
+- **Sem rubrica de níveis.** A régua é a seção *Entrega* do enunciado, transcrita em
+  `entrega/checklist.md`. A entrega é um arquivo só, `entrega/README.md`, e o README do projeto
+  continua canônico.
+- **Decisão de arquitetura é do usuário** nos blocos `<!-- VOCÊ -->` da entrega.
+- **Engine: OpenRouter** (chat + embeddings), via `fetch` nativo, com `OPENROUTER_API_KEY`. Os
+  protótipos do professor usam Ollama e ficam em `material/` só como referência.
+- **Herança de código só do 004 para o 005.** O resto atravessa os módulos via `CASO.md`, seção 5.
+
+## Disciplina 07 (pausada): `07-ferramentas-de-IA-para-gestao-de-projetos`
 
 A 07 rompe com o padrão das anteriores: **quase não tem código**. Em 8 dos 10 módulos o artefato é
 um *system prompt* executado sobre um input fixo, e a entrega acadêmica é o **relato de uma
