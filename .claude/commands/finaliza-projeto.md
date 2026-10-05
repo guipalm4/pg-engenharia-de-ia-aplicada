@@ -35,6 +35,8 @@ fi
 echo "PREV=$PREV"
 # A disciplina 07 NÃO é incremental: cada módulo tem prompt e input próprios.
 case "$PROJECT" in *07-ferramentas-de-IA*) PREV=""; echo "disciplina 07 -> PREV zerado (sem herança de código)";; esac
+# A disciplina 08 só herda código do 004 para o 005 (o M5 estende o Gateway do M4).
+case "$PROJECT" in *08-arquitetura-de-sistemas*) [ "$NUM" = "005" ] || { PREV=""; echo "disciplina 08 -> PREV zerado (só 005 herda do 004)"; };; esac
 ```
 
 **Disciplina 07 — duas diferenças que mudam este passo:**
@@ -47,11 +49,23 @@ case "$PROJECT" in *07-ferramentas-de-IA*) PREV=""; echo "disciplina 07 -> PREV 
   nada de lá**: as falhas do V1, a comparação V1×V2, o anti-padrão e qualquer número medido ficam
   onde estão. É exatamente o material que o template proíbe no README.
 
+**Disciplina 08:** vale a mesma regra de `entrega/`: decisões, logs, limiares e custos medidos ficam
+lá. O código do projeto é o de `src/`, que chama o **OpenRouter**. Os `.js`/`.py` em `material/` são
+protótipos de referência do professor (Ollama, case TrialForge) e **não** são o projeto. Em `Como
+executar`: `OPENROUTER_API_KEY` definida e `node src/<script>.js`, ou `/arq-roda NNN <script>`. O
+caso vem de `disciplinas/08-.../CASO.md`, e a `Descrição` diz em uma linha sobre qual projeto
+pessoal a arquitetura foi desenhada.
+
+**`material/` fica fora do dump, nas duas disciplinas.** É enunciado, gabarito resolvido e código do
+professor. Não é fonte do README, e os PDFs, passados por `cat`, viram lixo binário no contexto.
+Liste só os nomes, para a `Estrutura do Projeto`: `find "$PROJECT/material" -type f | sort`.
+
 
 **Se `PREV` vier vazio** (projeto standalone, sem predecessor), dump completo de sempre:
 ```bash
 find "$PROJECT" -type f \
   ! -path "*/node_modules/*" ! -path "*/.venv/*" ! -path "*/__pycache__/*" \
+  ! -path "*/material/*" ! -name "*.pdf" ! -name "*.png" \
   ! -name "package-lock.json" \
   ! -name "yarn.lock" \
   ! -name "*.lock" \
@@ -72,13 +86,13 @@ ao anterior — o resto é runtime herdado que já foi documentado no README de 
 tudo de novo é ruído e é a causa mais comum de dump grande demais (>100KB, trunca na primeira leitura).
 Dump só do que mudou estruturalmente + conteúdo completo dos arquivos novos/alterados:
 ```bash
-diff -rq "$PREV" "$PROJECT" -x ".venv" -x "__pycache__" -x ".DS_Store" -x "README.md" -x "README.original.md" -x "*.lock" -x ".env" -x ".env.*"
+diff -rq "$PREV" "$PROJECT" -x ".venv" -x "__pycache__" -x ".DS_Store" -x "README.md" -x "README.original.md" -x "*.lock" -x ".env" -x ".env.*" -x "material" -x "*.pdf"
 
 echo "=== Conteúdo completo dos arquivos novos/alterados ==="
 {
-  diff -rq "$PREV" "$PROJECT" -x ".venv" -x "__pycache__" -x ".DS_Store" -x "README.md" -x "README.original.md" -x "*.lock" -x ".env" -x ".env.*" \
+  diff -rq "$PREV" "$PROJECT" -x ".venv" -x "__pycache__" -x ".DS_Store" -x "README.md" -x "README.original.md" -x "*.lock" -x ".env" -x ".env.*" -x "material" -x "*.pdf" \
     | grep "^Only in $PROJECT" | sed "s|^Only in ||;s|: |/|"
-  diff -rq "$PREV" "$PROJECT" -x ".venv" -x "__pycache__" -x ".DS_Store" -x "README.md" -x "README.original.md" -x "*.lock" -x ".env" -x ".env.*" \
+  diff -rq "$PREV" "$PROJECT" -x ".venv" -x "__pycache__" -x ".DS_Store" -x "README.md" -x "README.original.md" -x "*.lock" -x ".env" -x ".env.*" -x "material" -x "*.pdf" \
     | grep " differ\$" | awk '{print $4}'
 } | while read f; do
   if [ -d "$f" ]; then

@@ -17,6 +17,7 @@ Substitua `$PROJECT` pelo path retornado no passo 1.
 ```bash
 find "$PROJECT" -type f \
   ! -path "*/node_modules/*" \
+  ! -path "*/material/*" ! -name "*.pdf" ! -name "*.png" \
   ! -name "package-lock.json" \
   ! -name "yarn.lock" \
   ! -name "*.lock" \
@@ -57,6 +58,14 @@ duas fontes da verdade divergem, e foi assim que a disciplina 06 saiu do padrão
 os `Conceitos trabalhados`, e **nunca** conteúdo: falhas do V1, comparação V1×V2, anti-padrão e números
 medidos não atravessam para o README. Em `Como executar`, descreva como reproduzir a execução
 (`/roda-prompt NNN v1`), não o que o output deu.
+
+**Disciplina 08:** mesma regra para `entrega/`. O código do projeto é `src/` (OpenRouter). Os
+`.js`/`.py` de `material/` são referência do professor e não entram como código do projeto. Em
+`Como executar`: `OPENROUTER_API_KEY` + `node src/<script>.js` (ou `/arq-roda NNN <script>`). O caso é
+o de `disciplinas/08-.../CASO.md`. As regras completas estão em `/finaliza-projeto`, passo 2.
+
+`material/` fica fora do dump (enunciado, gabarito e código do professor; PDF em `cat` é lixo
+binário). Liste só os nomes para a `Estrutura do Projeto`.
 
 ### 4. Atualiza o índice raiz
 
