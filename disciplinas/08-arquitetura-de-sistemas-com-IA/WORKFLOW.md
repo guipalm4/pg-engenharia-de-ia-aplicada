@@ -4,11 +4,13 @@ Guia de retomada. Se você voltou depois de um tempo, leia daqui.
 
 ## Estado atual
 
-> **Fase de aulas (desde 05/10/2026).** As cinco pastas estão prontas, com material,
-> `entrega/checklist.md` e o esqueleto da entrega. Nenhuma Missão começou: as aulas vêm primeiro e
-> as atividades entram conforme sobrar tempo.
+> ⏸️ **Aulas concluídas em 14/10/2026; Missões não realizadas.** A disciplina foi pausada para cursar
+> a 09: as cinco Missões, encadeadas por um caso próprio e com protótipo escrito do zero, não
+> couberam no tempo da disciplina. As cinco pastas continuam prontas, com material,
+> `entrega/checklist.md` e o esqueleto da entrega. O mapa do material está em
+> [`MATERIAL.md`](./MATERIAL.md).
 >
-> **Para começar a primeira Missão:** preencher [`CASO.md`](./CASO.md) (seções 1 a 3), colocar
+> **Ao retomar, para começar a primeira Missão:** preencher [`CASO.md`](./CASO.md) (seções 1 a 3), colocar
 > `OPENROUTER_API_KEY` em `~/.config/zsh/secrets.zsh` (só a partir do M2) e abrir
 > `projects/001-fundamentos-ai-first/entrega/README.md`. Branch: `main`.
 > _Atualize estas linhas ao terminar cada módulo._
