@@ -153,7 +153,11 @@ Lê o `README.md` raiz, adiciona o projeto na seção e tema corretos, atualiza 
 
 ```bash
 git add "$PROJECT/README.md" README.md
-git commit -m "feat: adiciona $ARGUMENTS (<título resumido>) Finalizado em: DD/MM/AAAA"
+# Duas linhas, sem linha em branco: -m único põe tudo na linha 1, e -m duplo insere uma linha vazia.
+git commit -F - <<'EOF'
+feat: adiciona $ARGUMENTS (<título resumido>)
+Finalizado em: DD/MM/AAAA
+EOF
 git push
 ```
 
@@ -168,7 +172,11 @@ git push
 ```bash
 git ls-files --others --exclude-standard -z \
   -- "$PROJECT" ":(exclude)$PROJECT/README.md" | xargs -0 -r git add --
-git commit -m "feat: adiciona $ARGUMENTS (<título resumido>) Finalizado em: DD/MM/AAAA"
+# Duas linhas, sem linha em branco: -m único põe tudo na linha 1, e -m duplo insere uma linha vazia.
+git commit -F - <<'EOF'
+feat: adiciona $ARGUMENTS (<título resumido>)
+Finalizado em: DD/MM/AAAA
+EOF
 git push
 ```
 

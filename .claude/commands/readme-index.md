@@ -27,5 +27,5 @@ Use esta skill quando quiser reconstruir o índice completo do zero. Para adicio
 - **A linha descreve o que o projeto é e o que ele demonstra** — mesma voz do resumo do `>`. Não é lugar de veredito sobre o exemplo, de resultado medido, nem de configuração de runtime (nome de modelo, env var), a menos que o modelo seja o assunto do projeto.
 - Links relativos: `disciplinas/<disciplina>/projects/<pasta-do-projeto>/README.md`.
 - Commit inclui apenas o README raiz.
-- Padrão de commit: `docs: atualiza índice principal do repositório (N projetos)`
+- Padrão de commit, em duas linhas (sem linha em branco): `docs: atualiza índice principal do repositório (N projetos)` e `Finalizado em: DD/MM/AAAA`. Use `git commit -F -` com heredoc.
 - Sempre fazer push ao final.

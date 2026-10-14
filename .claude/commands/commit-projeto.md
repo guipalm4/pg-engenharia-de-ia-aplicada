@@ -34,7 +34,11 @@ git ls-files --others --exclude-standard -z \
 git diff --name-only -z \
   -- "$PROJECT" ":(exclude)$PROJECT/README.md" | xargs -0 -r git add --
 
-git commit -m "feat: adiciona $ARGUMENTS (<título do passo 1>) Finalizado em: DD/MM/AAAA"
+# Duas linhas, sem linha em branco: -m único põe tudo na linha 1, e -m duplo insere uma linha vazia.
+git commit -F - <<'EOF'
+feat: adiciona $ARGUMENTS (<título do passo 1>)
+Finalizado em: DD/MM/AAAA
+EOF
 git push
 ```
 
