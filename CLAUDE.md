@@ -51,15 +51,28 @@ estudos.
 | `/readme-index` | Reconstrói o índice raiz do zero |
 | `/nova-aula-aiops` | ⚠️ Congelado — específico da disciplina 06, encerrada |
 
-## Disciplina ativa: `08-arquitetura-de-sistemas-com-IA`
+## Disciplina ativa: `09-processamento-de-dados-e-fine-tuning-de-modelos`
 
 **O ciclo de trabalho está em
-[`disciplinas/08-arquitetura-de-sistemas-com-IA/WORKFLOW.md`](./disciplinas/08-arquitetura-de-sistemas-com-IA/WORKFLOW.md).
-Leia-o antes de operar a 08.** Mantenha a seção "Estado atual" dele atualizada ao fim de cada
+[`disciplinas/09-processamento-de-dados-e-fine-tuning-de-modelos/WORKFLOW.md`](./disciplinas/09-processamento-de-dados-e-fine-tuning-de-modelos/WORKFLOW.md).
+Leia-o antes de operar a 09.** Mantenha a seção "Estado atual" dele atualizada ao fim de cada
 módulo. Cada disciplina com fluxo próprio tem o seu `WORKFLOW.md` dentro da pasta dela.
 
 Disciplinas 01–06 estão concluídas. A **07 está pausada** no M4, e o estado dela está em
 [`disciplinas/07-.../WORKFLOW.md`](./disciplinas/07-ferramentas-de-IA-para-gestao-de-projetos/WORKFLOW.md).
+A **08 está pausada** com as aulas concluídas e nenhuma Missão feita; o estado está em
+[`disciplinas/08-.../WORKFLOW.md`](./disciplinas/08-arquitetura-de-sistemas-com-IA/WORKFLOW.md).
+
+A 09 tem 6 módulos, com a mesma mecânica da 08 (Missão, Passos, seção *Entrega* sem rubrica, caso
+real próprio, entrega em JavaScript), mas cada enunciado autoriza uma saída de custo baixo:
+
+- **Um módulo por vez.** A pasta de um módulo nasce quando a Missão dele começa.
+- **O código é a ferramenta do professor adaptada, mais testes**, como os enunciados mandam.
+- **Sem commands próprios ainda.** Os dois primeiros módulos se fazem à mão; só depois se decide se
+  os `/arq-*` se generalizam.
+- **O caso é decisão do usuário.** Não invente: sem caso escolhido, pare.
+
+## Disciplina 08 (pausada): `08-arquitetura-de-sistemas-com-IA`
 
 A 08 tem 5 módulos, cada um com Missão de 3 a 5 Passos: decisões de arquitetura mais protótipo
 JavaScript (M2–M5). Consequências operacionais:
