@@ -78,6 +78,8 @@ models/*.h5
 datasets/*.zip
 datasets/*.tar.gz
 *.joblib
+# Pesos de adaptadores LoRA e checkpoints (09, M4): até 1,9 GB; o adapter_config.json entra
+*.safetensors
 
 # Arquivos de Backup e Temp
 *~
