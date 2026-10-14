@@ -4,10 +4,11 @@ Guia de retomada. Se você voltou depois de um tempo, leia daqui.
 
 ## Estado atual
 
-> **Início em 14/10/2026.** Nenhum módulo começou e nenhuma pasta de projeto existe ainda.
+> **Início em 14/10/2026.** Caso escolhido: o extrator de despesas do Anotaí, em
+> [`CASO.md`](./CASO.md). Nenhum módulo começou e nenhuma pasta de projeto existe ainda.
 >
-> **Próximo passo: escolher o caso.** O M1 já exige um caso real, e o mesmo caso atravessa os seis
-> módulos. Sem ele, nada anda. Branch: `main`.
+> **Próximo passo: o M1**, depois das aulas dele. A pasta `projects/001-decision-framework` nasce
+> nessa hora. Branch: `main`.
 > _Atualize estas linhas ao terminar cada módulo._
 
 ## A lição da 08
@@ -44,7 +45,8 @@ decisão é do módulo, não de agora.
 
 ## O caso
 
-Os seis enunciados pedem um caso real, não hipotético. Para não repetir a 08, ele precisa de:
+Está em [`CASO.md`](./CASO.md). Os seis enunciados pedem um caso real, não hipotético, e ele foi
+escolhido por atender aos três critérios abaixo:
 
 - uma tarefa **estreita, com saída estruturada (JSON)**, porque as ferramentas medem schema e
   precisão por campo;
