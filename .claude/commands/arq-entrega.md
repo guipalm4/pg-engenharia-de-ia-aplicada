@@ -38,7 +38,10 @@ find "$P" -type f ! -path "*/node_modules/*" ! -path "*/material/*" ! -name ".DS
 echo "=== blocos pendentes ==="
 grep -n "<!-- VOCÊ\|<!-- /arq-entrega\|PREENCHER" "$P/entrega/README.md" || echo "(nenhum)"
 echo "=== números proibidos (TrialForge / nomic-embed-text) ==="
-grep -nE "0[,.]825|0[,.]667|0[,.]643|0[,.]75\b" "$P/entrega/README.md" "$P"/src/*.js 2>/dev/null || echo "(nenhum)"
+# find, nunca "$P"/src/*.js: no zsh o glob sem match (M1 não tem src/) aborta o bloco inteiro.
+PROIBIDOS=$(find "$P/entrega/README.md" "$P/src" -name "*.md" -o -name "*.js" 2>/dev/null | grep -v node_modules \
+  | xargs grep -HnE "0[,.]825|0[,.]667|0[,.]643|0[,.]75\b" 2>/dev/null)
+echo "${PROIBIDOS:-(nenhum)}"
 uvx --with pypdf --quiet python .claude/scripts/extrai-pdf.py \
   "$P/material/Atividade $((10#$NUM)) - Módulo $((10#$NUM)).pdf" \
   "$P/material/Exemplo - Módulo $((10#$NUM)).pdf"

@@ -21,7 +21,10 @@ script, que modelos, que stdin, que custo.
 
 ## Passos
 
-### 1. Resolver e executar (script único)
+### 1. Resolver, executar e gravar com procedência (script único)
+
+Execução e gravação ficam no mesmo script porque o estado do shell não sobrevive entre duas
+chamadas: modelos, custo e data são calculados aqui, sem marcador para trocar à mão.
 
 ```bash
 BASE="disciplinas/08-arquitetura-de-sistemas-com-IA/projects"
@@ -31,9 +34,14 @@ SCRIPT=$(echo "$ARGUMENTS" | tr ' ' '\n' | sed -n '2,$p' | grep -v '^stdin=' | h
 STDIN=$(echo "$ARGUMENTS" | tr ' ' '\n' | grep '^stdin=' | sed 's/^stdin=//')
 P=$(find "$BASE" -maxdepth 1 -type d -name "$(printf %03d $((10#$NUM)))-*" | head -1)
 [ -d "$P/src" ] || { echo "PARE: $P/src não existe — rode /arq-implementa $NUM"; exit 1; }
-[ -n "$OPENROUTER_API_KEY" ] || { echo "PARE: OPENROUTER_API_KEY ausente (defina em ~/.config/zsh/secrets.zsh)"; exit 1; }
 [ -z "$SCRIPT" ] && SCRIPT=$(node -p "require('./$P/src/package.json').main.replace(/\.js$/,'')")
 [ -f "$P/src/$SCRIPT.js" ] || { echo "PARE: $P/src/$SCRIPT.js não existe"; exit 1; }
+
+# Chave só para script que chama o OpenRouter (direto ou pelo client ./openrouter).
+CHAMA_MODELO=$(grep -qiE "openrouter" "$P/src/$SCRIPT.js" && echo sim || echo não)
+if [ "$CHAMA_MODELO" = sim ]; then
+  [ -n "$OPENROUTER_API_KEY" ] || { echo "PARE: OPENROUTER_API_KEY ausente (defina em ~/.config/zsh/secrets.zsh)"; exit 1; }
+fi
 
 # NN sequencial por script: gateway-01, gateway-02... Nunca sobrescreve uma execução anterior.
 N=$(find "$P/outputs" -maxdepth 1 -name "$SCRIPT-[0-9][0-9].md" | wc -l | tr -d ' ')
@@ -51,30 +59,23 @@ fi
 EXIT=$?
 cd - > /dev/null
 
-echo "OUT=$OUT  EXIT=$EXIT"
-echo "MODELOS:"; grep -hoE "const MODELO_[A-Z0-9_]+ *= *['\"][^'\"]+['\"]" "$P"/src/*.js | sort -u
-echo "CUSTO:"; grep -E '^\[Custo\] total' "$RAW" | tail -1
-echo "AUDIT:"; [ -f "$AUDIT" ] && wc -l < "$AUDIT" || echo "(nenhuma trilha escrita)"
-echo "=== primeiras e últimas linhas ==="; head -20 "$RAW"; echo "..."; tail -15 "$RAW"
-```
+# Modelos: só as constantes MODELO_* do próprio script, não as de todo o src/.
+MODELOS=$(grep -hoE "const MODELO_[A-Z0-9_]+ *= *['\"][^'\"]+['\"]" "$P/src/$SCRIPT.js" | sort -u | sed 's/^/  - /')
+CUSTO=$(grep -E '^\[Custo\] total' "$RAW" | tail -1 | grep -oE '[0-9]+([.,][0-9]+)?' | tail -1)
+if [ "$CHAMA_MODELO" = sim ]; then ENGINE="OpenRouter"; else ENGINE="nenhuma (script sem chamada de modelo)"; fi
+[ -n "$MODELOS" ] && MODELOS_BLOCO=$(printf '\n%s' "$MODELOS") || MODELOS_BLOCO=" —"
 
-Um `outputs/audit-trail.jsonl` sem prefixo de script significa que o script ignora `AUDIT_TRAIL`. Isso é
-bug do `src/` (convenção do `/arq-implementa`): corrija antes de rodar de novo.
-
-### 2. Gravar com procedência
-
-```bash
 { cat <<EOF
 ---
 script: src/$SCRIPT.js
 comando: node $SCRIPT.js${STDIN:+  (stdin: $STDIN)}
-modelos: <constantes MODELO_* do passo 1, uma por linha>
-engine: OpenRouter
+modelos:$MODELOS_BLOCO
+engine: $ENGINE
 node: $(node -v)
-custo_total_usd: <valor da linha [Custo], ou "não reportado">
+custo_total_usd: ${CUSTO:-não reportado}
 exit_code: $EXIT
 trilha: $( [ -f "$AUDIT" ] && basename "$AUDIT" || echo "—" )
-gerado_em: <data de currentDate>
+gerado_em: $(date +%F)
 ---
 
 \`\`\`text
@@ -82,12 +83,22 @@ EOF
   cat "$RAW"
   echo '```'
 } > "$OUT" && rm "$RAW"
+
+echo "OUT=$OUT  EXIT=$EXIT  ENGINE=$ENGINE  CUSTO=${CUSTO:-não reportado}"
+echo "AUDIT:"; [ -f "$AUDIT" ] && wc -l < "$AUDIT" || echo "(nenhuma trilha escrita)"
+echo "=== cabeçalho e últimas linhas ==="; sed -n '1,14p' "$OUT"; echo "..."; tail -15 "$OUT"
 ```
+
+`modelos` lista as constantes declaradas no script, não as efetivamente chamadas: uma constante
+declarada e não usada (um tier fora da demonstração) aparece. A trilha e o log dizem qual rota rodou.
+
+Um `outputs/audit-trail.jsonl` sem prefixo de script significa que o script ignora `AUDIT_TRAIL`. Isso é
+bug do `src/` (convenção do `/arq-implementa`): corrija antes de rodar de novo.
 
 O log vai inteiro para o `.md`. Não resuma e não corte: é a evidência que a entrega cita. Não use
 extensão `.log`, porque `*.log` está no `.gitignore` e o arquivo sumiria do commit sem aviso.
 
-### 3. Relatório
+### 2. Relatório
 
 Uma tela, no máximo:
 

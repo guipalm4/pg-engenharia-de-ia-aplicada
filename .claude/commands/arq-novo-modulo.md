@@ -31,7 +31,8 @@ echo "MOD=$MOD"
 echo "PROJECT=$P"
 [ -d "$P" ] && echo "AVISO: a pasta já existe — não sobrescreva nada sem conferir"
 echo "=== CASO.md: blocos PREENCHER restantes ==="
-grep -c "PREENCHER" "$DISC/CASO.md"
+# Fora as linhas de citação (`>`): o aviso no topo do CASO.md cita o próprio marcador.
+grep -v '^>' "$DISC/CASO.md" | grep -c "<!-- PREENCHER"
 
 # find, nunca `ls <glob>`: no zsh um glob sem match aborta o script inteiro.
 find "$MOD" -maxdepth 1 -type f ! -name ".DS_Store" | sort | while read -r f; do
