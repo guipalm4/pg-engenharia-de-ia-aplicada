@@ -78,7 +78,7 @@ O que cada módulo decidiu e o módulo seguinte herda. Uma linha por decisão, e
 | Módulo | Decisão herdável |
 |---|---|
 | 001 | Componentes: Gateway = bot do Telegram (regra) · Orquestrador = worker com fila pg-boss (regra) · extrator de chamada única (agente, contrato JSON fechado) · agente de consulta só-leitura (agente) · Approval Gate = Confirmar do dono antes de operação (RN-23), valor alto (RN-20) e parcela ambígua (RN-2) |
-| 002 | — |
+| 002 | Agente de consulta: memória só dentro da pergunta · loop ReAct até 6 chamadas de ferramenta (RN-32), no limite responde sem número · reflexão de superfície pelo código (bloco Números usados) · ferramenta de leitura `total_gasto`, sem gate · modelo `google/gemini-3.5-flash-lite` |
 | 003 | — |
 | 004 | — |
 | 005 | — |

@@ -1,0 +1,10 @@
+{
+  "name": "anotai-agente-consulta",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "agente-consulta.js",
+  "scripts": {
+    "start": "node agente-consulta.js"
+  }
+}
