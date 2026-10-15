@@ -1,0 +1,11 @@
+{
+  "name": "anotai-gateway",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "gateway.js",
+  "scripts": {
+    "start": "node gateway.js",
+    "calibra": "node calibra-limiar.js"
+  }
+}
