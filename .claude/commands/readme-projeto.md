@@ -64,6 +64,11 @@ medidos não atravessam para o README. Em `Como executar`, descreva como reprodu
 `Como executar`: `OPENROUTER_API_KEY` + `node src/<script>.js` (ou `/arq-roda NNN <script>`). O caso é
 o de `disciplinas/08-.../CASO.md`. As regras completas estão em `/finaliza-projeto`, passo 2.
 
+**Disciplina 09:** mesma regra para `entrega/`. O código do projeto é `src/`, adaptado da ferramenta
+do professor; `material/` é referência. Em `Como executar`: `node src/<script>.js` e `node --test`. O
+que foi simulado se declara em `Tecnologias e Ferramentas`. As regras completas estão em
+`/finaliza-projeto`, passo 2.
+
 `material/` fica fora do dump (enunciado, gabarito e código do professor; PDF em `cat` é lixo
 binário). Liste só os nomes para a `Estrutura do Projeto`.
 

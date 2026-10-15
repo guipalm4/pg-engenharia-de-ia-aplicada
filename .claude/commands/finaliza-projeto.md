@@ -37,6 +37,8 @@ echo "PREV=$PREV"
 case "$PROJECT" in *07-ferramentas-de-IA*) PREV=""; echo "disciplina 07 -> PREV zerado (sem herança de código)";; esac
 # A disciplina 08 só herda código do 004 para o 005 (o M5 estende o Gateway do M4).
 case "$PROJECT" in *08-arquitetura-de-sistemas*) [ "$NUM" = "005" ] || { PREV=""; echo "disciplina 08 -> PREV zerado (só 005 herda do 004)"; };; esac
+# A disciplina 09 herda por import e por dataset (src/ de um módulo lê o de outro), não por cópia da pasta.
+case "$PROJECT" in *09-processamento-de-dados*) PREV=""; echo "disciplina 09 -> PREV zerado (herança por import, não por cópia)";; esac
 ```
 
 **Disciplina 07 — duas diferenças que mudam este passo:**
@@ -56,7 +58,14 @@ executar`: `OPENROUTER_API_KEY` definida e `node src/<script>.js`, ou `/arq-roda
 caso vem de `disciplinas/08-.../CASO.md`, e a `Descrição` diz em uma linha sobre qual projeto
 pessoal a arquitetura foi desenhada.
 
-**`material/` fica fora do dump, nas duas disciplinas.** É enunciado, gabarito resolvido e código do
+**Disciplina 09:** vale a mesma regra de `entrega/`: decisões, NPV, val loss, precisão medida e
+veredito ficam lá. O código do projeto é o de `src/`, adaptado da ferramenta do professor; os
+`.js`/`.py`/`.ipynb` em `material/` são a referência (case Amplitude Seguros) e **não** são o projeto.
+Em `Como executar`: `node src/<script>.js` e `node --test`, mais a variável de ambiente que o script
+exigir. O que o módulo simulou se declara no item de `Tecnologias e Ferramentas` (*"**Vertex AI** —
+job simulado; a ficha usa o hash real do dataset"*). O caso vem de `disciplinas/09-.../CASO.md`.
+
+**`material/` fica fora do dump, nas três disciplinas.** É enunciado, gabarito resolvido e código do
 professor. Não é fonte do README, e os PDFs, passados por `cat`, viram lixo binário no contexto.
 Liste só os nomes, para a `Estrutura do Projeto`: `find "$PROJECT/material" -type f | sort`.
 
