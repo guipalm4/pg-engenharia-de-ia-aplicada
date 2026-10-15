@@ -7,8 +7,8 @@ Guia de retomada. Se você voltou depois de um tempo, leia daqui.
 > **Início em 14/10/2026.** Caso escolhido: o extrator de despesas do Anotaí, em
 > [`CASO.md`](./CASO.md). Nenhum módulo começou e nenhuma pasta de projeto existe ainda.
 >
-> **Próximo passo: o M1**, depois das aulas dele. A pasta `projects/001-decision-framework` nasce
-> nessa hora. Branch: `main`.
+> **Próximo passo: o M1**, depois das aulas dele: `/ft-novo-modulo 001` cria
+> `projects/001-decision-framework`. Branch: `main`.
 > _Atualize estas linhas ao terminar cada módulo._
 
 ## A lição da 08
@@ -21,8 +21,21 @@ checklists, commands) montada antes da primeira prática. Na 09 valem três regr
 2. **O código é a ferramenta do professor adaptada, mais testes.** Os enunciados mandam adaptar
    (`decision-framework-tool.js`, `dataset-cleaning-balancing-tool.js`, `local-lora-training-tool.js`,
    `veredito-escala-tool.js`). Nada de reescrever do zero.
-3. **Commands só depois de dois módulos feitos à mão.** Se o ciclo se repetir, aí se generalizam os
-   `/arq-*` da 08, que têm a mesma mecânica (Missão, Passos, seção *Entrega*, sem rubrica).
+3. **Command só para o que já se conhece.** A preparação é igual nos seis módulos e tem command. O
+   resto do ciclo se faz à mão até o M2, o primeiro módulo com código e teste; depois se decide
+   entre generalizar os `/arq-*` da 08 ou criar os `/ft-*`.
+
+## O ciclo de um módulo
+
+```
+1. /ft-novo-modulo NNN       → eu: copio o material, extraio a checklist, monto o esqueleto da entrega
+2. VOCÊ decide os blocos <!-- VOCÊ --> de entrega/README.md
+3. eu adapto a ferramenta do professor em src/, com testes   (à mão, por enquanto)
+4. eu rodo e gravo outputs/; o simulado sai marcado como tal  (à mão, por enquanto)
+5. /finaliza-projeto NNN-slug → eu: README + índice raiz + commits
+```
+
+Passe o slug completo para o `/finaliza-projeto` (armadilha 3).
 
 ## A trilha mínima válida
 

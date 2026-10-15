@@ -37,6 +37,7 @@ estudos.
 
 | Command | Quando |
 |---|---|
+| `/ft-novo-modulo NNN` | **09** — prepara a pasta, a checklist e o esqueleto da entrega |
 | `/arq-novo-modulo NNN` | **08** — prepara a pasta, a checklist e o esqueleto da entrega |
 | `/arq-implementa NNN` | **08** — escreve `src/` a partir das decisões da entrega |
 | `/arq-roda NNN [script] [stdin=s,n]` | **08** — executa e grava `outputs/<script>-NN.md` com procedência |
@@ -68,8 +69,9 @@ real próprio, entrega em JavaScript), mas cada enunciado autoriza uma saída de
 
 - **Um módulo por vez.** A pasta de um módulo nasce quando a Missão dele começa.
 - **O código é a ferramenta do professor adaptada, mais testes**, como os enunciados mandam.
-- **Sem commands próprios ainda.** Os dois primeiros módulos se fazem à mão; só depois se decide se
-  os `/arq-*` se generalizam.
+- **Só a preparação tem command:** `/ft-novo-modulo NNN`. Implementar, rodar e fechar a entrega se
+  fazem à mão até o M2, o primeiro módulo com código e teste; depois se decide entre generalizar os
+  `/arq-*` ou criar os `/ft-*`.
 - **O caso é decisão do usuário.** Não invente: sem caso escolhido, pare.
 
 ## Disciplina 08 (pausada): `08-arquitetura-de-sistemas-com-IA`
