@@ -79,6 +79,6 @@ O que cada módulo decidiu e o módulo seguinte herda. Uma linha por decisão, e
 |---|---|
 | 001 | Componentes: Gateway = bot do Telegram (regra) · Orquestrador = worker com fila pg-boss (regra) · extrator de chamada única (agente, contrato JSON fechado) · agente de consulta só-leitura (agente) · Approval Gate = Confirmar do dono antes de operação (RN-23), valor alto (RN-20) e parcela ambígua (RN-2) |
 | 002 | Agente de consulta: memória só dentro da pergunta · loop ReAct até 6 chamadas de ferramenta (RN-32), no limite responde sem número · reflexão de superfície pelo código (bloco Números usados) · ferramenta de leitura `total_gasto`, sem gate · modelo `google/gemini-3.5-flash-lite` |
-| 003 | — |
+| 003 | Recepção → Extrator → Orquestrador em Sequential pela fila; Orquestrador → agente de consulta em Supervisor; Orquestrador → Dono em Handoff (Confirmar). Timeouts: Recepção 1 s, Extrator 10 s (5 tentativas só em falha transitória), Orquestrador 5 s, agente 20 s; todos esperam (consistência), menos o agente. Idempotência pelas chaves da RN-14 e pela pendência aberta |
 | 004 | — |
 | 005 | — |

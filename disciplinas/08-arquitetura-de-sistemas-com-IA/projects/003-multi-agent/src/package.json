@@ -1,0 +1,10 @@
+{
+  "name": "anotai-fila-pagamento-fatura",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "fila.js",
+  "scripts": {
+    "start": "node fila.js"
+  }
+}
